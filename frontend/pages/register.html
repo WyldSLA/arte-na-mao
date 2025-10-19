@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Arte na Mão</title>
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/form.css">
+</head>
+<body>
+    <div class="auth-layout">
+        <!-- Left Side - Form -->
+        <div class="auth-form-container">
+            <div class="auth-form-wrapper">
+                <!-- Logo -->
+                <div class="auth-header">
+                    <a href="../index.html" class="auth-logo">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        <span class="logo-text">Arte na Mão</span>
+                    </a>
+                    
+                    <h1 class="auth-title">Crie sua conta</h1>
+                    <p class="auth-subtitle">Junte-se à comunidade de artistas e apreciadores</p>
+                </div>
+
+                <!-- Form -->
+                <form id="registerForm" class="auth-form" novalidate>
+                    <!-- Name Field -->
+                    <div class="form-group">
+                        <label for="name" class="form-label">Nome completo</label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name"
+                            class="form-input" 
+                            placeholder="Seu nome"
+                            aria-describedby="name-error"
+                            required
+                        >
+                        <span id="name-error" class="form-error" role="alert"></span>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <label for="email" class="form-label">E-mail</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email"
+                            class="form-input" 
+                            placeholder="seu@email.com"
+                            aria-describedby="email-error"
+                            required
+                        >
+                        <span id="email-error" class="form-error" role="alert"></span>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <label for="password" class="form-label">Senha</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password"
+                            class="form-input" 
+                            placeholder="Mínimo 8 caracteres"
+                            aria-describedby="password-error"
+                            required
+                        >
+                        <span id="password-error" class="form-error" role="alert"></span>
+                    </div>
+
+                    <!-- Confirm Password Field -->
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Confirmar senha</label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword"
+                            class="form-input" 
+                            placeholder="Digite a senha novamente"
+                            aria-describedby="confirmPassword-error"
+                            required
+                        >
+                        <span id="confirmPassword-error" class="form-error" role="alert"></span>
+                    </div>
+
+                    <!-- Account Type Radio Group -->
+                    <div class="form-group">
+                        <label class="form-label">Tipo de conta</label>
+                        <div class="radio-group">
+                            <!-- Cliente Option -->
+                            <label class="radio-card">
+                                <input 
+                                    type="radio" 
+                                    name="accountType" 
+                                    value="cliente" 
+                                    id="cliente"
+                                    class="radio-input"
+                                    checked
+                                >
+                                <div class="radio-card-content">
+                                    <div class="radio-indicator"></div>
+                                    <div class="radio-card-text">
+                                        <div class="radio-card-title">Cliente</div>
+                                        <div class="radio-card-description">
+                                            Explorar e adquirir obras de arte
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <!-- Artista Option -->
+                            <label class="radio-card">
+                                <input 
+                                    type="radio" 
+                                    name="accountType" 
+                                    value="artista" 
+                                    id="artista"
+                                    class="radio-input"
+                                >
+                                <div class="radio-card-content">
+                                    <div class="radio-indicator"></div>
+                                    <div class="radio-card-text">
+                                        <div class="radio-card-title">Artista</div>
+                                        <div class="radio-card-description">
+                                            Compartilhar e vender suas obras
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary btn-full">
+                        Criar conta
+                    </button>
+                </form>
+
+                <!-- Login Link -->
+                <div class="auth-footer">
+                    <p class="auth-footer-text">
+                        Já tem uma conta? 
+                        <a href="login.html" class="auth-link">Fazer login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Illustration -->
+        <div class="auth-illustration auth-illustration-register">
+            <div class="auth-illustration-content">
+                <h2 class="auth-illustration-title">Sua arte merece ser vista</h2>
+                <p class="auth-illustration-text">Conecte-se com uma comunidade vibrante de arte e cultura</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container (notificações) -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/register.js"></script>
+</body>
+</html>
