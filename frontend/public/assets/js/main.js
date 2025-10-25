@@ -57,7 +57,7 @@ async function handleLogout() {
         updateAuthUI(false);
         
         // Redireciona para a home
-        window.location.href = 'index.html';
+        window.location.href = '../../../public/index.html';
     } catch (error) {
         console.error('Erro ao fazer logout:', error);
         alert('Erro ao fazer logout. Tente novamente.');
