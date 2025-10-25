@@ -232,7 +232,12 @@ function viewEventDetails(eventId) {
     // showEventModal(eventId);
     
     // Por enquanto, apenas alerta
-    alert('Funcionalidade em desenvolvimento: Ver detalhes do evento');
+    if (typeof showToast === 'function') {
+    showToast(
+        'Funcionalidade em desenvolvimento', 
+        '"Ver Detalhes" será implementada em breve.', 
+        'info');
+    }
 }
 
 /**
@@ -240,21 +245,10 @@ function viewEventDetails(eventId) {
  */
 async function handleAttendEvent(eventId) {
     // Verifica se usuário está logado
-    if (!window.authData) {
-        if (typeof showToast === 'function') {
-            showToast(
-                'Login necessário',
-                'Você precisa estar logado para confirmar presença',
-                'info'
-            );
-        }
-        
-        // Redireciona para login após 1 segundo
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 1000);
-        return;
-    }
+    showToast(
+        'Funcionalidade em desenvolvimento', 
+        '"Confirmar Presença" será implementada em breve.', 
+        'info');
     
     try {
         // Desabilita o botão temporariamente
@@ -283,14 +277,14 @@ async function handleAttendEvent(eventId) {
         }
         
     } catch (error) {
-        if (typeof showToast === 'function') {
+        /* if (typeof showToast === 'function') {
             showToast(
                 'Erro ao confirmar presença',
                 'Tente novamente mais tarde',
                 'error'
             );
-        }
-        
+        } */
+
         button.disabled = false;
         button.textContent = originalText;
     }

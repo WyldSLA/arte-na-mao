@@ -105,11 +105,10 @@ function createArtCard(artwork, index) {
     card.className = 'art-card';
     card.style.animationDelay = `${index * 50}ms`;
     
-    const isLiked = likedArtworks.has(artwork.id);
     const currentLikes = likeCounts[artwork.id] || artwork.likes;
     
     card.innerHTML = `
-        <div class="art-card-image-container">
+        <div class="art-card-image-container" onclick="handleArtCard()">
             <img src="${artwork.imageUrl}" alt="${artwork.title}" class="art-card-image">
             
             <div class="art-card-overlay">
@@ -154,6 +153,20 @@ function renderArtworks(artworks, append = false) {
 // ========================================
 // HANDLERS DE EVENTOS
 // ========================================
+
+async function handleArtCard(){
+        showToast(
+        'Login necessário',
+        'Você precisa estar logado para interagir',
+        'info'
+    );
+    
+    // Redireciona para login após 1 segundo
+    setTimeout(() => {
+        window.location.href = 'login.html';
+    }, 2000);
+    return;
+}
 
 
 /**

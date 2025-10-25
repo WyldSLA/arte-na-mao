@@ -288,6 +288,175 @@ function createEventoCardHorizontal(evento) {
 }
 
 // ========================================
+// FILE UPLOAD COM PREVIEW
+// ========================================
+
+function initFileUpload() {
+    const fileInput = document.getElementById('obraFile');
+    const uploadBox = document.getElementById('uploadBox');
+    const fileLabel = document.getElementById('fileUploadLabel');
+    const previewContainer = document.getElementById('previewContainer');
+    
+    if (!fileInput || !uploadBox) return;
+    
+    // Previne comportamento padrão
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadBox.addEventListener(eventName, e => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    });
+    
+    // Highlight ao arrastar
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadBox.addEventListener(eventName, () => {
+            uploadBox.classList.add('highlight');
+        });
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadBox.addEventListener(eventName, () => {
+            uploadBox.classList.remove('highlight');
+        });
+    });
+    
+    // Handle drop
+    uploadBox.addEventListener('drop', e => {
+        const files = e.dataTransfer.files;
+        handleFiles(files);
+    });
+    
+    // Handle file select
+    fileInput.addEventListener('change', e => {
+        const files = e.target.files;
+        handleFiles(files);
+    });
+    
+    function handleFiles(files) {
+        previewContainer.innerHTML = '';
+        
+        Array.from(files).forEach((file) => {
+            // Valida tamanho (50MB)
+            if (file.size > 50 * 1024 * 1024) {
+                showToast('Erro', `${file.name} é muito grande (máx 50MB)`, 'error');
+                return;
+            }
+            
+            createPreview(file);
+        });
+        
+        if (files.length > 0) {
+            uploadBox.classList.add('filled');
+            fileLabel.textContent = files.length === 1 ? 
+                '1 arquivo selecionado' : 
+                `${files.length} arquivos selecionados`;
+        }
+    }
+    
+    function createPreview(file) {
+        const reader = new FileReader();
+        
+        reader.onload = e => {
+            const previewItem = document.createElement('div');
+            previewItem.className = 'preview-item';
+            
+            if (file.type.startsWith('image/')) {
+                previewItem.innerHTML = `
+                    <div class="preview-content">
+                        <img src="${e.target.result}" alt="${file.name}" class="preview-image">
+                        <div class="preview-info">
+                            <span class="preview-filename">${truncateFilename(file.name)}</span>
+                            <span class="preview-filesize">${formatFileSize(file.size)}</span>
+                        </div>
+                        <button type="button" class="preview-remove" onclick="this.closest('.preview-item').remove(); checkPreviews()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+            } else if (file.type.startsWith('video/')) {
+                previewItem.innerHTML = `
+                    <div class="preview-content">
+                        <video class="preview-video" controls>
+                            <source src="${e.target.result}" type="${file.type}">
+                        </video>
+                        <div class="preview-info">
+                            <span class="preview-filename">${truncateFilename(file.name)}</span>
+                            <span class="preview-filesize">${formatFileSize(file.size)}</span>
+                        </div>
+                        <button type="button" class="preview-remove" onclick="this.closest('.preview-item').remove(); checkPreviews()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+            } else if (file.type === 'application/pdf') {
+                previewItem.innerHTML = `
+                    <div class="preview-content preview-pdf">
+                        <div class="preview-pdf-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        <div class="preview-info">
+                            <span class="preview-filename">${truncateFilename(file.name)}</span>
+                            <span class="preview-filesize">${formatFileSize(file.size)}</span>
+                        </div>
+                        <button type="button" class="preview-remove" onclick="this.closest('.preview-item').remove(); checkPreviews()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+            }
+            
+            previewContainer.appendChild(previewItem);
+        };
+        
+        reader.readAsDataURL(file);
+    }
+    
+    function truncateFilename(filename, maxLength = 20) {
+        if (filename.length <= maxLength) return filename;
+        const extension = filename.split('.').pop();
+        const name = filename.substring(0, filename.lastIndexOf('.'));
+        return `${name.substring(0, maxLength - extension.length - 4)}...${extension}`;
+    }
+    
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+}
+
+function checkPreviews() {
+    const previewContainer = document.getElementById('previewContainer');
+    const uploadBox = document.getElementById('uploadBox');
+    const fileLabel = document.getElementById('fileUploadLabel');
+    
+    const remainingPreviews = previewContainer.querySelectorAll('.preview-item');
+    
+    if (remainingPreviews.length === 0) {
+        uploadBox.classList.remove('filled');
+        fileLabel.textContent = 'Arraste ou clique para enviar arquivos';
+    } else {
+        fileLabel.textContent = remainingPreviews.length === 1 ? 
+            '1 arquivo selecionado' : 
+            `${remainingPreviews.length} arquivos selecionados`;
+    }
+}
+
+// ========================================
 // MODAL - ADICIONAR/EDITAR OBRA
 // ========================================
 
@@ -532,6 +701,8 @@ async function initDashboardArtist() {
         const data = await loadArtistData();
         artistData.obras = data.obras;
         artistData.eventos = data.eventos;
+
+        initFileUpload()
         
         // Renderiza
         updateStats();
@@ -561,6 +732,7 @@ async function initDashboardArtist() {
 // Torna funções disponíveis globalmente
 window.openAddObraDialog = openAddObraDialog;
 window.closeObraDialog = closeObraDialog;
+window.checkPreviews = checkPreviews;
 
 // Executa quando o DOM estiver carregado
 if (document.readyState === 'loading') {

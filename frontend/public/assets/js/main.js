@@ -152,7 +152,7 @@ function clearErrors(form) {
 /**
  * Exibe toast de notificação
  */
-function showToast(message, type = 'info') {
+function showToast(title, message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     toast.style.cssText = `
@@ -167,15 +167,25 @@ function showToast(message, type = 'info') {
         z-index: 9999;
         animation: slideInRight 0.3s ease-out;
         max-width: 400px;
+        display: flex;
+        gap: 1rem;
     `;
-    
+
+    toast.innerHTML = `
+        <div>
+            <p style="font-weight: 600; margin: 0; color: var(--foreground);">${title}</p>
+            <p style="font-size: 0.9rem; margin: 0; color: var(--muted-foreground);">${message}</p>
+        </div>
+        `;
+        
     if (type === 'success') {
         toast.style.borderLeft = '4px solid var(--primary)';
     } else if (type === 'error') {
         toast.style.borderLeft = '4px solid var(--destructive)';
+    } else {
+        toast.style.borderLeft = '4px solid var(--accent)';
     }
     
-    toast.textContent = message;
     document.body.appendChild(toast);
     
     setTimeout(() => {
@@ -223,8 +233,6 @@ document.head.appendChild(style);
  * Inicializa funcionalidades globais
  */
 function initGlobal() {
-    
-    showLoading()
     // Verifica autenticação em todas as páginas
     checkAuth();
     
