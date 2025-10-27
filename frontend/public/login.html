@@ -5,16 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Arte na Mão</title>
     <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="../src/components/buttons.css">
     <link rel="stylesheet" href="assets/css/form.css">
+    <link rel="stylesheet" href="../src/components/buttons.css">
 </head>
 <body>
     <div class="auth-layout">
         <!-- Left Side - Form -->
-        <div class="auth-form-container">
+        <div class="auth-form-container login-form">
             <div class="auth-form-wrapper">
                 <!-- Logo -->
                 <div class="auth-header">
+
+                    <div class="back-to-home">
+                        <a href="index.html" aria-label="Voltar para página inicial" title="Voltar para página inicial">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M15 18l-6-6 6-6"/>
+                            </svg>
+                            Voltar
+                        </a>
+                    </div>
+
+                     
                     <a href="index.html" class="auth-logo">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -51,15 +62,23 @@
                                 Esqueceu a senha?
                             </button>
                         </div>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password"
-                            class="form-input" 
-                            placeholder="••••••••"
-                            aria-describedby="password-error"
-                            required
-                        >
+                        <div style="position:relative;">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password"
+                                class="form-input" 
+                                placeholder="••••••••"
+                                aria-describedby="password-error"
+                                required
+                            >
+                            <button type="button" id="togglePassword" aria-label="Mostrar senha" style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0;">
+                                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
                         <span id="password-error" class="form-error" role="alert"></span>
                     </div>
 

@@ -7,7 +7,13 @@
    AUTH LAYOUT - Layout de Autenticação
    ======================================== */
 
+.no-scroll-page {
+    height: 100vh; 
+    overflow: hidden;
+}
+
 .auth-layout {
+    height: 100%;
     min-height: 100vh;
     display: flex;
 }
@@ -17,12 +23,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 0;
+    max-height: 100vh; 
+    overflow-y: auto; 
+    overflow-x: hidden;
+}
+
+.form-register {
+    align-items: flex-start;
 }
 
 .auth-form-wrapper {
     width: 100%;
     max-width: 28rem;
+    padding: 2rem;
     animation: fadeInUp 0.8s ease-out;
 }
 
@@ -260,6 +274,67 @@
 
 .forgot-password-link:hover {
     text-decoration: underline;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.toggle-password:hover {
+    color: var(--foreground);
+}
+
+.toggle-password .eye-off-icon {
+    display: none;
+}
+
+.toggle-password.showing .eye-icon {
+    display: none;
+}
+
+.toggle-password.showing .eye-off-icon {
+    display: block;
+}
+
+/* ========================================
+   PASSWORD REQUIREMENTS - Requisitos de senha
+   ======================================== */
+
+.password-requirements {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+}
+
+.requirement {
+    margin: 0.25rem 0;
+    transition: all 0.3s ease;
+    max-height: 1.5rem;
+    opacity: 1;
+    overflow: hidden;
+}
+
+.requirement.met {
+    color: var(--primary);
+    animation: fadeOutUp 1.5s forwards;
 }
 
 /* ========================================
@@ -599,6 +674,8 @@
 @media (min-width: 1024px) {
     .auth-illustration {
         display: flex;
+        height: 100vh;
+        overflow: hidden; 
     }
 }
 
@@ -740,4 +817,15 @@
 
 .auth-illustration-register {
     background: linear-gradient(135deg, var(--secondary), var(--primary), var(--accent));
+}
+
+.auth-illustration-title,
+.auth-illustration-text {
+  transition: opacity 0.5s ease-in-out;
+  opacity: 1;
+}
+
+.auth-illustration-title.fade-out,
+.auth-illustration-text.fade-out {
+  opacity: 0;
 }

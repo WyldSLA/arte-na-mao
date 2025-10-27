@@ -1,92 +1,73 @@
-// ========================================
-// HANDLER DE SUBMISSÃO DE LOGIN
-// ========================================
-
-async function handleLoginSubmit(event) {
-
-    event.preventDefault(); 
-
+document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
-    const submitButton = form.querySelector('button[type="submit"]');
+    const emailError = document.getElementById('email-error');
+    const passwordError = document.getElementById('password-error');
+    const togglePassword = document.getElementById('togglePassword');
 
-
-    if (typeof clearErrors === 'function') {
-        clearErrors(form); 
-    }
-
-    let isValid = true;
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
-
-    if (!email || (typeof isValidEmail === 'function' && !isValidEmail(email))) {
-        isValid = false;
-        if (typeof showError === 'function') {
-            showError('Por favor, insira um e-mail válido.', emailInput.parentElement);
+    // Validação em tempo real - limpa erros ao digitar
+    emailInput.addEventListener('input', function() {
+        if (this.value.trim()) {
+            emailError.textContent = '';
+            this.style.borderColor = '';
         }
-    }
+    });
 
-    if (!password) {
-        isValid = false;
-        if (typeof showError === 'function') {
-            showError('A senha é obrigatória.', passwordInput.parentElement);
+    passwordInput.addEventListener('input', function() {
+        if (this.value.trim()) {
+            passwordError.textContent = '';
+            this.style.borderColor = '';
         }
-    }
-
-    if (!isValid) {
-        if (typeof showToast === 'function') {
-            showToast('Erro de validação', 'Verifique os campos destacados.', 'error');
-        }
-        return;
-    }
+    });
     
-    submitButton.textContent = 'Entrando...';
-    submitButton.disabled = true;
-
-    try {
-        await new Promise(resolve => setTimeout(resolve, 1500)); 
-
-        if (typeof showToast === 'function') {
-             showToast('Sucesso!', 'Login realizado com sucesso. Redirecionando...', 'success');
-        }
-       
-        setTimeout(() => {
-            window.location.href = '../src/pages/explorar/index.html'; 
-        }, 1000);
-
-    } catch (error) {
-        console.error('Erro de Login:', error);
-        if (typeof showError === 'function') {
-            showError('E-mail ou senha incorretos.', form);
-        }
-        if (typeof showToast === 'function') {
-            showToast('Erro', 'Não foi possível realizar o login. Tente novamente.', 'error');
-        }
-    } finally {
-        submitButton.textContent = 'Entrar';
-        submitButton.disabled = false;
-    }
-}
-
-// ========================================
-// INICIALIZAÇÃO
-// ========================================
-
-/**
- * Adiciona o listener de evento ao formulário de login
- */
-document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLoginSubmit);
-    }
-    const forgotPasswordLink = document.querySelector('.forgot-password-link');
-    if (forgotPasswordLink) {
-        forgotPasswordLink.addEventListener('click', () => {
-             if (typeof showToast === 'function') {
-                showToast('Funcionalidade em desenvolvimento', 'A recuperação de senha será implementada em breve.', 'info');
-             }
+    // Toggle mostrar/ocultar senha
+    if (togglePassword) {
+        togglePassword.addEventListener('click', function () {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            this.classList.toggle('showing');
+            this.setAttribute('aria-label', isPassword ? 'Ocultar senha' : 'Mostrar senha');
         });
+    }
+
+    // Validação no submit
+    form.addEventListener('submit', function (e) {
+        let valid = true;
+        
+        // Limpa mensagens anteriores
+        emailError.textContent = '';
+        passwordError.textContent = '';
+        emailInput.style.borderColor = '';
+        passwordInput.style.borderColor = '';
+
+        // Valida email
+        if (!emailInput.value.trim()) {
+            emailError.textContent = 'Por favor, preencha o e-mail.';
+            emailInput.style.borderColor = 'var(--destructive)';
+            valid = false;
+        } else if (!isValidEmail(emailInput.value)) {
+            emailError.textContent = 'Por favor, insira um e-mail válido.';
+            emailInput.style.borderColor = 'var(--destructive)';
+            valid = false;
+        }
+        
+        // Valida senha (apenas se está vazio - SEM validação forte no login!)
+        if (!passwordInput.value.trim()) {
+            passwordError.textContent = 'Por favor, preencha a senha.';
+            passwordInput.style.borderColor = 'var(--destructive)';
+            valid = false;
+        }
+        
+        if (!valid) {
+            e.preventDefault();
+        } else {
+            window.location.href = '../src/pages/explorar/index.html'
+        }
+    });
+
+    // Função auxiliar para validar email
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 });

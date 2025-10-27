@@ -1,110 +1,209 @@
-// ========================================
-// HANDLER DE SUBMISSÃO DE CADASTRO
-// ========================================
-
-async function handleRegisterSubmit(event) {
-    event.preventDefault(); 
-
-    const form = document.getElementById('registerForm');
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
+document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('password');
     const confirmPasswordInput = document.getElementById('confirmPassword');
-    const accountTypeRadios = document.querySelectorAll('input[name="accountType"]');
-    const submitButton = form.querySelector('button[type="submit"]');
-
-    if (typeof clearErrors === 'function') {
-        clearErrors(form); 
-    }
-
-    let isValid = true;
-    const name = nameInput.value.trim();
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
-    let accountType = null;
+    const form = document.getElementById('registerForm');
     
-    accountTypeRadios.forEach(radio => {
-        if (radio.checked) {
-            accountType = radio.value;
-        }
-    });
-
-    const handleError = (message, element) => {
-        if (typeof showError === 'function') {
-            showError(message, element.parentElement);
-        }
-    };
-
-    if (name.length < 3) {
-        isValid = false;
-        handleError('O nome deve ter pelo menos 3 caracteres.', nameInput);
-    }
-
-    if (!email || (typeof isValidEmail === 'function' && !isValidEmail(email))) {
-        isValid = false;
-        handleError('Por favor, insira um e-mail válido.', emailInput);
-    }
-
-    if (password.length < 8) {
-        isValid = false;
-        handleError('A senha deve ter no mínimo 8 caracteres.', passwordInput);
-    } else if (password !== confirmPassword) {
-        isValid = false;
-        handleError('As senhas não coincidem.', confirmPasswordInput);
-    }
-    
-    if (!accountType) {
-        isValid = false;
-        handleError('Selecione um tipo de conta.', accountTypeRadios[0].closest('.form-group').querySelector('.radio-group'));
-    }
-
-    if (!isValid) {
-        if (typeof showToast === 'function') {
-            showToast('Erro de validação', 'Verifique os campos obrigatórios e tente novamente.', 'error');
-        }
+    // Verifica se os elementos existem antes de continuar
+    if (!passwordInput || !confirmPasswordInput || !form) {
+        console.warn('Elementos do formulário de registro não encontrados');
         return;
     }
     
-    submitButton.textContent = 'Cadastrando...';
-    submitButton.disabled = true;
+    // ========================================
+    // TOGGLE DE SENHA
+    // ========================================
+    
+    const toggleButtons = document.querySelectorAll('.toggle-password');
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('input');
+            if (!input) return;
+            
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+            this.classList.toggle('showing');
+            this.setAttribute('aria-label', isPassword ? 'Ocultar senha' : 'Mostrar senha');
+        });
+    });
+    
+    // ========================================
+    // VALIDAÇÃO DE REQUISITOS DE SENHA
+    // ========================================
+    
+    const requirements = {
+        length: document.getElementById('req-length'),
+        uppercase: document.getElementById('req-uppercase'),
+        lowercase: document.getElementById('req-lowercase'),
+        number: document.getElementById('req-number'),
+        symbol: document.getElementById('req-symbol')
+    };
 
-    try {
+    // Verifica se todos os elementos de requisitos existem
+    const allRequirementsExist = Object.values(requirements).every(el => el !== null);
+    
+    if (allRequirementsExist) {
+        // Função para verificar cada requisito
+        function checkPassword(password) {
+            const checks = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                symbol: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+
+            // Atualiza a visualização dos requisitos
+            Object.keys(checks).forEach(requirement => {
+                const reqElement = requirements[requirement];
+                if (!reqElement) return;
+                
+                if (checks[requirement]) {
+                    if (!reqElement.classList.contains('met')) {
+                        reqElement.innerHTML = reqElement.innerHTML.replace('✗', '✓');
+                        reqElement.classList.add('met');
+                    }
+                } else {
+                    if (reqElement.classList.contains('met')) {
+                        reqElement.innerHTML = reqElement.innerHTML.replace('✓', '✗');
+                        reqElement.classList.remove('met');
+                    }
+                }
+            });
+
+            // Retorna true se todos os requisitos foram atendidos
+            return Object.values(checks).every(check => check === true);
+        }
+
+        // Listener para verificar a senha em tempo real
+        passwordInput.addEventListener('input', function() {
+            const isValid = checkPassword(this.value);
+            this.setCustomValidity(isValid ? '' : 'A senha deve atender a todos os requisitos');
+        });
+    }
+    
+    // ========================================
+    // VALIDAÇÃO DE CONFIRMAÇÃO DE SENHA
+    // ========================================
+    
+    confirmPasswordInput.addEventListener('input', function() {
+        const confirmError = document.getElementById('confirmPassword-error');
+        if (this.value && this.value === passwordInput.value) {
+            if (confirmError) confirmError.textContent = '';
+            this.style.borderColor = '';
+        }
+    });
+    
+    // ========================================
+    // VALIDAÇÃO NO SUBMIT
+    // ========================================
+    
+    form.addEventListener('submit', function(event) {
+        let valid = true;
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
         
-        await new Promise(resolve => setTimeout(resolve, 1500)); 
-        if (typeof showToast === 'function') {
-             showToast(
-                 'Bem-vindo(a) à Arte na Mão!', 
-                 'Seu cadastro foi concluído com sucesso. Redirecionando...', 
-                 'success'
-             );
+        // Limpa erros anteriores
+        const passwordError = document.getElementById('password-error');
+        const confirmError = document.getElementById('confirmPassword-error');
+        
+        if (passwordError) passwordError.textContent = '';
+        if (confirmError) confirmError.textContent = '';
+        
+        passwordInput.style.borderColor = '';
+        confirmPasswordInput.style.borderColor = '';
+        
+        // Valida requisitos da senha (se elementos existirem)
+        if (allRequirementsExist && !checkPassword(password)) {
+            event.preventDefault();
+            if (passwordError) {
+                passwordError.textContent = 'A senha deve atender a todos os requisitos';
+            }
+            passwordInput.style.borderColor = 'var(--destructive)';
+            valid = false;
         }
-       
+        
+        // Valida se as senhas coincidem
+        if (password !== confirmPassword) {
+            event.preventDefault();
+            if (confirmError) {
+                confirmError.textContent = 'As senhas não coincidem';
+            }
+            confirmPasswordInput.style.borderColor = 'var(--destructive)';
+            valid = false;
+        }
+        
+        if (!valid) {
+            // Foca no primeiro campo com erro
+            if (!allRequirementsExist || !checkPassword(password)) {
+                passwordInput.focus();
+            } else {
+                confirmPasswordInput.focus();
+            }
+        } else {
+            window.location.href = '../src/pages/explorar/index.html'
+        }
+    });
+    
+    // ========================================
+    // TROCA DE TEXTO NA ILUSTRAÇÃO (ARTISTA/CLIENTE)
+    // ========================================
+    
+    const artistaRadio = document.getElementById('artista');
+    const clienteRadio = document.getElementById('cliente');
+    const illustration = document.querySelector('.auth-illustration-register');
+    const title = document.querySelector('.auth-illustration-title');
+    const text = document.querySelector('.auth-illustration-text');
+
+    // Verifica se elementos existem
+    if (!artistaRadio || !clienteRadio || !illustration || !title || !text) {
+        console.warn('Elementos de ilustração não encontrados');
+        return;
+    }
+
+    // Função para trocar texto com efeito fade (melhorada)
+    function fadeTextChange(element, newText) {
+        // Previne múltiplas animações simultâneas
+        if (element.dataset.animating === 'true') return;
+        
+        element.dataset.animating = 'true';
+        element.classList.add('fade-out');
+        
         setTimeout(() => {
-            window.location.href = '../src/pages/explorar/index.html'; 
-        }, 1000);
-
-    } catch (error) {
-        console.error('Erro de Cadastro:', error);
-        if (typeof showToast === 'function') {
-            showToast('Erro', 'Não foi possível criar sua conta. Tente novamente.', 'error');
-        }
-    } finally {
-        submitButton.textContent = 'Criar conta';
-        submitButton.disabled = false;
+            element.textContent = newText;
+            element.classList.remove('fade-out');
+            delete element.dataset.animating;
+        }, 300);
     }
-}
 
-// ========================================
-// INICIALIZAÇÃO
-// ========================================
-
-/**
- * Adiciona o listener de evento ao formulário de cadastro
- */
-document.addEventListener('DOMContentLoaded', () => {
-    const registerForm = document.getElementById('registerForm');
-    if (registerForm) {
-        registerForm.addEventListener('submit', handleRegisterSubmit);
+    function setToArtista() {
+        fadeTextChange(title, 'Mostre seu talento');
+        fadeTextChange(text, 'Crie seu portfólio, compartilhe suas obras e venda diretamente na plataforma');
+        illustration.classList.add('artista-selected');
     }
+
+    function setToCliente() {
+        fadeTextChange(title, 'Explore as artes');
+        fadeTextChange(text, 'Conecte-se com uma comunidade vibrante de arte e cultura');
+        illustration.classList.remove('artista-selected');
+    }
+
+    // Inicializa conforme opção selecionada
+    if (artistaRadio.checked) {
+        // Não anima na primeira vez
+        title.textContent = 'Mostre seu talento';
+        text.textContent = 'Crie seu portfólio, compartilhe suas obras e venda diretamente na plataforma';
+        illustration.classList.add('artista-selected');
+    } else {
+        title.textContent = 'Explore as artes';
+        text.textContent = 'Conecte-se com uma comunidade vibrante de arte e cultura';
+    }
+
+    // Listeners para mudanças
+    artistaRadio.addEventListener('change', () => {
+        if (artistaRadio.checked) setToArtista();
+    });
+
+    clienteRadio.addEventListener('change', () => {
+        if (clienteRadio.checked) setToCliente();
+    });
 });

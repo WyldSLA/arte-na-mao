@@ -5,16 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Arte na Mão</title>
     <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="../src/components/buttons.css">
     <link rel="stylesheet" href="assets/css/form.css">
+    <link rel="stylesheet" href="../src/components/buttons.css">
 </head>
-<body>
+<body class="no-scroll-page">
     <div class="auth-layout">
         <!-- Left Side - Form -->
-        <div class="auth-form-container">
+        <div class="auth-form-container form-register">
             <div class="auth-form-wrapper">
                 <!-- Logo -->
                 <div class="auth-header">
+
+                    <div class="back-to-home">
+                        <a href="index.html" aria-label="Voltar para página inicial" title="Voltar para página inicial">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M15 18l-6-6 6-6"/>
+                            </svg>
+                            Voltar
+                        </a>
+                    </div>
+
                     <a href="index.html" class="auth-logo">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -61,30 +71,61 @@
                     <!-- Password Field -->
                     <div class="form-group">
                         <label for="password" class="form-label">Senha</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password"
-                            class="form-input" 
-                            placeholder="Mínimo 8 caracteres"
-                            aria-describedby="password-error"
-                            required
-                        >
+                        <div class="input-with-icon">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password"
+                                class="form-input" 
+                                placeholder="Mínimo 8 caracteres"
+                                aria-describedby="password-error password-requirements"
+                                required
+                            >
+                            <button type="button" class="toggle-password" aria-label="Mostrar senha">
+                                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 5C5.636 5 1 12 1 12s4.636 7 11 7 11-7 11-7-4.636-7-11-7z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-7-11-7a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                        </div>
                         <span id="password-error" class="form-error" role="alert"></span>
+                        <div id="password-requirements" class="password-requirements">
+                            <p class="requirement" id="req-length">✗ Mínimo de 8 caracteres</p>
+                            <p class="requirement" id="req-uppercase">✗ Pelo menos uma letra maiúscula</p>
+                            <p class="requirement" id="req-lowercase">✗ Pelo menos uma letra minúscula</p>
+                            <p class="requirement" id="req-number">✗ Pelo menos um número</p>
+                            <p class="requirement" id="req-symbol">✗ Pelo menos um símbolo especial</p>
+                        </div>
                     </div>
 
                     <!-- Confirm Password Field -->
                     <div class="form-group">
                         <label for="confirmPassword" class="form-label">Confirmar senha</label>
-                        <input 
-                            type="password" 
-                            id="confirmPassword" 
-                            name="confirmPassword"
-                            class="form-input" 
-                            placeholder="Digite a senha novamente"
-                            aria-describedby="confirmPassword-error"
-                            required
-                        >
+                        <div class="input-with-icon">
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                name="confirmPassword"
+                                class="form-input" 
+                                placeholder="Digite a senha novamente"
+                                aria-describedby="confirmPassword-error"
+                                required
+                            >
+                            <button type="button" class="toggle-password" aria-label="Mostrar senha">
+                                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 5C5.636 5 1 12 1 12s4.636 7 11 7 11-7 11-7-4.636-7-11-7z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-7-11-7a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                        </div>
                         <span id="confirmPassword-error" class="form-error" role="alert"></span>
                     </div>
 
@@ -154,7 +195,7 @@
         <!-- Right Side - Illustration -->
         <div class="auth-illustration auth-illustration-register">
             <div class="auth-illustration-content">
-                <h2 class="auth-illustration-title">Sua arte merece ser vista</h2>
+                <h2 class="auth-illustration-title">Explore as artes</h2>
                 <p class="auth-illustration-text">Conecte-se com uma comunidade vibrante de arte e cultura</p>
             </div>
         </div>
