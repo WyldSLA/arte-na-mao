@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explorar</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Explorar - Arte na Mão</title>
     <link rel="stylesheet" href="../../../public/assets/css/global.css">
-    <link rel="stylesheet" href="../../components/navbar.css">
     <link rel="stylesheet" href="../../components/buttons.css">
+    <link rel="stylesheet" href="../../components/navbar.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!-- Header -->
+    <!-- Header -->
     <header class="header">
         <nav class="nav-container">
-            <a href="index.html" class="logo-link">
+            <a href="../index.html" class="logo-link">
                 <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                 </svg>
@@ -21,9 +21,9 @@
             </a>
 
             <div class="nav-menu">
-                <a href="../explorar/" class="nav-link">Explorar</a>
+                <a href="explorar.html" class="nav-link active">Explorar</a>
                 <a href="../eventos/index.html" class="nav-link">Eventos</a>
-
+                
                 <div class="user-menu">
                     <button class="btn btn-ghost" onclick="window.location.href='../dashboard-cliente/index.html'">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -44,6 +44,58 @@
             </div>
         </nav>
     </header>
+
+    <!-- Filter Bar -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-container">
+                <button class="filter-btn active">Todos</button>
+                <button class="filter-btn">Pinturas</button>
+                <button class="filter-btn">Artesanato</button>
+                <button class="filter-btn">Fotografia</button>
+                <button class="filter-btn">Esculturas</button>
+                <button class="filter-btn">Xilogravura</button>
+                <button class="filter-btn">Cerâmica</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Artworks Section -->
+    <section class="artworks-section">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Explore Todas as Obras</h2>
+                    <p class="section-subtitle">Descubra a diversidade criativa dos artistas nordestinos</p>
+                </div>
+            </div>
+
+            <div class="artworks-grid" id="artworksGrid">
+                <!-- Os cards serão inseridos aqui pelo JavaScript -->
+            </div>
+
+            <div class="load-more-container">
+                <button class="btn btn-outline btn-lg" onclick="loadMoreArtworks()">
+                    Carregar mais obras
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <p class="footer-text">© 2025 Arte na Mão. Celebrando a cultura regional.</p>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Sobre</a>
+                <a href="#" class="footer-link">Contato</a>
+                <a href="#" class="footer-link">Termos</a>
+                <a href="#" class="footer-link">Privacidade</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../../public/assets/js/main.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

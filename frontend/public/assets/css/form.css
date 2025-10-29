@@ -337,6 +337,25 @@
     animation: fadeOutUp 1.5s forwards;
 }
 
+@keyframes fadeOutUp {
+    0% {
+        opacity: 1;
+        max-height: 1.5rem;
+        transform: translateY(0);
+    }
+    20% {
+        opacity: 1;
+        color: var(--primary);
+    }
+    100% {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-10px);
+        margin: 0;
+    }
+}
+
+
 /* ========================================
    AUTH ILLUSTRATION - Lado direito
    ======================================== */

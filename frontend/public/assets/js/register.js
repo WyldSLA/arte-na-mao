@@ -1,26 +1,44 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registerForm');
     const passwordInput = document.getElementById('password');
     const confirmPasswordInput = document.getElementById('confirmPassword');
-    const form = document.getElementById('registerForm');
     
-    // Verifica se os elementos existem antes de continuar
-    if (!passwordInput || !confirmPasswordInput || !form) {
+    if (!form || !passwordInput || !confirmPasswordInput) {
         console.warn('Elementos do formulário de registro não encontrados');
         return;
     }
     
     // ========================================
-    // TOGGLE DE SENHA
+    // TOGGLE MOSTRAR/OCULTAR SENHA
     // ========================================
     
     const toggleButtons = document.querySelectorAll('.toggle-password');
     toggleButtons.forEach(button => {
         button.addEventListener('click', function() {
-            const input = this.parentElement.querySelector('input');
+            const wrapper = this.closest('.password-wrapper') || this.parentElement;
+            const input = wrapper.querySelector('input[type="password"], input[type="text"]');
+            
             if (!input) return;
             
             const isPassword = input.type === 'password';
             input.type = isPassword ? 'text' : 'password';
+            
+            const eyeIcon = this.querySelector('svg');
+            if (eyeIcon) {
+                if (isPassword) {
+                    eyeIcon.innerHTML = `
+                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                        <line x1="2" y1="2" x2="22" y2="22" stroke="currentColor" stroke-width="2"/>
+                    `;
+                } else {
+                    eyeIcon.innerHTML = `
+                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    `;
+                }
+            }
+            
             this.classList.toggle('showing');
             this.setAttribute('aria-label', isPassword ? 'Ocultar senha' : 'Mostrar senha');
         });
@@ -38,12 +56,12 @@ document.addEventListener('DOMContentLoaded', function() {
         symbol: document.getElementById('req-symbol')
     };
 
-    // Verifica se todos os elementos de requisitos existem
     const allRequirementsExist = Object.values(requirements).every(el => el !== null);
     
+    let checkPassword;
+    
     if (allRequirementsExist) {
-        // Função para verificar cada requisito
-        function checkPassword(password) {
+        checkPassword = function(password) {
             const checks = {
                 length: password.length >= 8,
                 uppercase: /[A-Z]/.test(password),
@@ -52,7 +70,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 symbol: /[!@#$%^&*(),.?":{}|<>]/.test(password)
             };
 
-            // Atualiza a visualização dos requisitos
             Object.keys(checks).forEach(requirement => {
                 const reqElement = requirements[requirement];
                 if (!reqElement) return;
@@ -70,11 +87,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            // Retorna true se todos os requisitos foram atendidos
             return Object.values(checks).every(check => check === true);
-        }
+        };
 
-        // Listener para verificar a senha em tempo real
         passwordInput.addEventListener('input', function() {
             const isValid = checkPassword(this.value);
             this.setCustomValidity(isValid ? '' : 'A senha deve atender a todos os requisitos');
@@ -94,58 +109,150 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // ========================================
-    // VALIDAÇÃO NO SUBMIT
+    // SUBMIT DO FORMULÁRIO
     // ========================================
     
-    form.addEventListener('submit', function(event) {
-        let valid = true;
-        const password = passwordInput.value;
-        const confirmPassword = confirmPasswordInput.value;
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
         
-        // Limpa erros anteriores
-        const passwordError = document.getElementById('password-error');
-        const confirmError = document.getElementById('confirmPassword-error');
+        const formData = {
+            name: document.getElementById('name').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            password: passwordInput.value,
+            confirmPassword: confirmPasswordInput.value,
+            accountType: document.querySelector('input[name="accountType"]:checked')?.value || 'cliente'
+        };
         
-        if (passwordError) passwordError.textContent = '';
-        if (confirmError) confirmError.textContent = '';
+        clearAllErrors();
         
-        passwordInput.style.borderColor = '';
-        confirmPasswordInput.style.borderColor = '';
-        
-        // Valida requisitos da senha (se elementos existirem)
-        if (allRequirementsExist && !checkPassword(password)) {
-            event.preventDefault();
-            if (passwordError) {
-                passwordError.textContent = 'A senha deve atender a todos os requisitos';
-            }
-            passwordInput.style.borderColor = 'var(--destructive)';
-            valid = false;
+        if (!validateForm(formData)) {
+            return;
         }
         
-        // Valida se as senhas coincidem
-        if (password !== confirmPassword) {
-            event.preventDefault();
-            if (confirmError) {
-                confirmError.textContent = 'As senhas não coincidem';
-            }
-            confirmPasswordInput.style.borderColor = 'var(--destructive)';
-            valid = false;
-        }
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Criando conta...';
         
-        if (!valid) {
-            // Foca no primeiro campo com erro
-            if (!allRequirementsExist || !checkPassword(password)) {
-                passwordInput.focus();
-            } else {
-                confirmPasswordInput.focus();
-            }
-        } else {
-            window.location.href = '../src/pages/explorar/index.html'
+        try {
+            const response = await registerAPI(formData);
+            
+           showToast('Conta criada!', 'Bem-vindo à Arte Nordeste!', 'success');
+            
+            saveUserData(response);
+            
+            setTimeout(() => {
+                redirectToDashboard(response.user.role);
+            }, 1500);
+            
+        } catch (error) {
+            showToast('Erro no cadastro', error.message || 'Não foi possível criar a conta', 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
         }
     });
     
     // ========================================
-    // TROCA DE TEXTO NA ILUSTRAÇÃO (ARTISTA/CLIENTE)
+    // FUNÇÕES AUXILIARES
+    // ========================================
+    
+    function validateForm(data) {
+        let isValid = true;
+        
+        if (!data.name) {
+            showError('name', 'Nome completo é obrigatório');
+            isValid = false;
+        }
+        
+        if (!data.email) {
+            showError('email', 'E-mail é obrigatório');
+            isValid = false;
+        } else if (!window.isValidEmail(data.email)) {
+            showError('email', 'E-mail inválido');
+            isValid = false;
+        }
+        
+        if (allRequirementsExist && !checkPassword(data.password)) {
+            showError('password', 'A senha deve atender a todos os requisitos');
+            isValid = false;
+        }
+        
+        if (data.password !== data.confirmPassword) {
+            showError('confirmPassword', 'As senhas não coincidem');
+            isValid = false;
+        }
+        
+        return isValid;
+    }
+    
+    function showError(fieldId, message) {
+        const input = document.getElementById(fieldId);
+        const errorElement = document.getElementById(`${fieldId}-error`);
+        
+        if (errorElement) errorElement.textContent = message;
+        if (input) {
+            input.style.borderColor = 'var(--destructive)';
+            input.setAttribute('aria-invalid', 'true');
+        }
+    }
+    
+    function clearAllErrors() {
+        ['name', 'email', 'password', 'confirmPassword'].forEach(fieldId => {
+            const input = document.getElementById(fieldId);
+            const errorElement = document.getElementById(`${fieldId}-error`);
+            
+            if (errorElement) errorElement.textContent = '';
+            if (input) {
+                input.style.borderColor = '';
+                input.setAttribute('aria-invalid', 'false');
+            }
+        });
+    }
+    
+    // ========================================
+    // API - INTEGRAÇÃO COM BACKEND
+    // ========================================
+    
+    async function registerAPI(data) {
+        const API_URL = '/api/auth/register';
+        
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: data.name,
+                email: data.email,
+                password: data.password,
+                accountType: data.accountType
+            })
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Erro ao criar conta');
+        }
+        
+        return await response.json();
+    }
+    
+    function saveUserData(data) {
+        window.authData = data;
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('userData', JSON.stringify(data.user));
+    }
+    
+    function redirectToDashboard(role) {
+        if (role === 'ARTISTA') {
+            window.location.href = '../src/pages/dashboard-artista/index.html';
+        } else {
+            window.location.href = '../src/pages/explorar/index.html';
+        }
+    }
+    
+    // ========================================
+    // TROCA DE TEXTO NA ILUSTRAÇÃO
     // ========================================
     
     const artistaRadio = document.getElementById('artista');
@@ -154,56 +261,45 @@ document.addEventListener('DOMContentLoaded', function() {
     const title = document.querySelector('.auth-illustration-title');
     const text = document.querySelector('.auth-illustration-text');
 
-    // Verifica se elementos existem
-    if (!artistaRadio || !clienteRadio || !illustration || !title || !text) {
-        console.warn('Elementos de ilustração não encontrados');
-        return;
+    if (artistaRadio && clienteRadio && illustration && title && text) {
+        function fadeTextChange(element, newText) {
+            if (element.dataset.animating === 'true') return;
+            
+            element.dataset.animating = 'true';
+            element.classList.add('fade-out');
+            
+            setTimeout(() => {
+                element.textContent = newText;
+                element.classList.remove('fade-out');
+                delete element.dataset.animating;
+            }, 500);
+        }
+
+        function setToArtista() {
+            fadeTextChange(title, 'Mostre seu talento');
+            fadeTextChange(text, 'Crie seu portfólio, compartilhe suas obras e venda diretamente na plataforma');
+            illustration.classList.add('artista-selected');
+        }
+
+        function setToCliente() {
+            fadeTextChange(title, 'Explore as artes');
+            fadeTextChange(text, 'Conecte-se com uma comunidade vibrante de arte e cultura');
+            illustration.classList.remove('artista-selected');
+        }
+
+        // Inicializa sem animação
+        if (artistaRadio.checked) {
+            title.textContent = 'Mostre seu talento';
+            text.textContent = 'Crie seu portfólio, compartilhe suas obras e venda diretamente na plataforma';
+            illustration.classList.add('artista-selected');
+        }
+
+        artistaRadio.addEventListener('change', () => {
+            if (artistaRadio.checked) setToArtista();
+        });
+
+        clienteRadio.addEventListener('change', () => {
+            if (clienteRadio.checked) setToCliente();
+        });
     }
-
-    // Função para trocar texto com efeito fade (melhorada)
-    function fadeTextChange(element, newText) {
-        // Previne múltiplas animações simultâneas
-        if (element.dataset.animating === 'true') return;
-        
-        element.dataset.animating = 'true';
-        element.classList.add('fade-out');
-        
-        setTimeout(() => {
-            element.textContent = newText;
-            element.classList.remove('fade-out');
-            delete element.dataset.animating;
-        }, 300);
-    }
-
-    function setToArtista() {
-        fadeTextChange(title, 'Mostre seu talento');
-        fadeTextChange(text, 'Crie seu portfólio, compartilhe suas obras e venda diretamente na plataforma');
-        illustration.classList.add('artista-selected');
-    }
-
-    function setToCliente() {
-        fadeTextChange(title, 'Explore as artes');
-        fadeTextChange(text, 'Conecte-se com uma comunidade vibrante de arte e cultura');
-        illustration.classList.remove('artista-selected');
-    }
-
-    // Inicializa conforme opção selecionada
-    if (artistaRadio.checked) {
-        // Não anima na primeira vez
-        title.textContent = 'Mostre seu talento';
-        text.textContent = 'Crie seu portfólio, compartilhe suas obras e venda diretamente na plataforma';
-        illustration.classList.add('artista-selected');
-    } else {
-        title.textContent = 'Explore as artes';
-        text.textContent = 'Conecte-se com uma comunidade vibrante de arte e cultura';
-    }
-
-    // Listeners para mudanças
-    artistaRadio.addEventListener('change', () => {
-        if (artistaRadio.checked) setToArtista();
-    });
-
-    clienteRadio.addEventListener('change', () => {
-        if (clienteRadio.checked) setToCliente();
-    });
 });
