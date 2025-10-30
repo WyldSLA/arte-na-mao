@@ -35,7 +35,7 @@
 
 .tabs-list {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 0.5rem;
     margin-bottom: 1.5rem;
     border-bottom: 1px solid var(--border);
@@ -195,7 +195,7 @@
 }
 
 .obra-card:hover .obra-card-delete {
-    background-color: aliceblue;
+    background-color: var(--primary);
     opacity: 1;
 }
 

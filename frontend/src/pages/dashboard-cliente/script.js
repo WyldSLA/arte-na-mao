@@ -1,153 +1,58 @@
 // ========================================
-// DASHBOARD-CLIENT.JS - Lógica do Dashboard do Cliente
-// ========================================
-
-// ========================================
-// ESTADO DA APLICAÇÃO (Em memória)
+// DASHBOARD CLIENTE - MOCK VERSION
 // ========================================
 
 let clientData = {
-    favoritos: [], // Array de IDs de obras favoritas
-    carrinho: [],  // Array de objetos { obraId, quantity }
-    eventosConfirmados: [], // Array de IDs de eventos
-    compras: [], // Array de objetos de compras
-    obras: [], // Array de todas as obras disponíveis
-    eventos: [] // Array de todos os eventos disponíveis
+    favoritos: [],
+    carrinho: [],
+    eventos: [],
+    historico: []
 };
 
-// ========================================
-// MOCK DATA - Substituir por API
-// ========================================
-
-const mockObras = [
+// Mock data
+const mockFavoritos = [
     {
         id: "1",
         title: "Sertão em Cores",
         artist: "Maria Silva",
-        imageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&h=1200&fit=crop",
-        price: 1500.00
+        price: 1500,
+        imageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&q=80"
     },
     {
         id: "2",
         title: "Horizonte Atlântico",
         artist: "João Santos",
-        imageUrl: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&h=1200&fit=crop",
-        price: 2200.00
-    },
+        price: 2200,
+        imageUrl: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&q=80"
+    }
+];
+
+const mockCarrinho = [
     {
         id: "3",
         title: "Raízes Nordestinas",
         artist: "Ana Oliveira",
-        imageUrl: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800&h=1200&fit=crop",
-        price: 1800.00
+        price: 1800,
+        imageUrl: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800&q=80"
     }
 ];
 
 const mockEventos = [
     {
         id: "1",
-        title: "Festival de Arte Popular do Sertão",
-        imageUrl: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=600&fit=crop",
+        title: "Festival de Arte Popular",
         date: "15 de Dezembro, 2025",
         time: "18:00",
         location: "Recife, PE",
-        attendees: 234
-    },
-    {
-        id: "2",
-        title: "Mostra de Fotografia Contemporânea",
-        imageUrl: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&h=600&fit=crop",
-        date: "22 de Dezembro, 2025",
-        time: "19:00",
-        location: "Salvador, BA",
-        attendees: 156
+        attendees: 234,
+        imageUrl: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80"
     }
 ];
 
 // ========================================
-// FUNÇÕES DE API
+// TABS SYSTEM
 // ========================================
 
-/**
- * Carrega dados do cliente
- * Integração Spring Boot: GET /api/client/data
- */
-async function loadClientData() {
-    try {
-        // TODO: Substituir por chamada real
-        // const response = await fetch('/api/client/data', {
-        //     headers: { 'Authorization': `Bearer ${getAuthToken()}` }
-        // });
-        // const data = await response.json();
-        
-        // Mock
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return {
-            favoritos: ["1", "2"], // IDs de obras favoritas
-            carrinho: [{ obraId: "3", quantity: 1 }],
-            eventosConfirmados: ["1"],
-            compras: [],
-            obras: mockObras,
-            eventos: mockEventos
-        };
-    } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-        throw error;
-    }
-}
-
-/**
- * Remove obra dos favoritos
- * Spring Boot: DELETE /api/client/favoritos/{id}
- */
-async function removeFavorito(obraId) {
-    try {
-        // TODO: API call
-        await new Promise(resolve => setTimeout(resolve, 300));
-        return { success: true };
-    } catch (error) {
-        console.error('Erro ao remover favorito:', error);
-        throw error;
-    }
-}
-
-/**
- * Remove obra do carrinho
- * Spring Boot: DELETE /api/client/carrinho/{id}
- */
-async function removeCarrinho(obraId) {
-    try {
-        // TODO: API call
-        await new Promise(resolve => setTimeout(resolve, 300));
-        return { success: true };
-    } catch (error) {
-        console.error('Erro ao remover do carrinho:', error);
-        throw error;
-    }
-}
-
-/**
- * Cancela presença em evento
- * Spring Boot: DELETE /api/client/eventos/{id}
- */
-async function cancelarEvento(eventoId) {
-    try {
-        // TODO: API call
-        await new Promise(resolve => setTimeout(resolve, 300));
-        return { success: true };
-    } catch (error) {
-        console.error('Erro ao cancelar evento:', error);
-        throw error;
-    }
-}
-
-// ========================================
-// SISTEMA DE TABS
-// ========================================
-
-/**
- * Inicializa o sistema de tabs
- */
 function initTabs() {
     const triggers = document.querySelectorAll('.tab-trigger');
     
@@ -159,29 +64,22 @@ function initTabs() {
     });
 }
 
-/**
- * Troca de tab
- */
 function switchTab(tabName) {
-    // Remove active de todos os triggers
-    document.querySelectorAll('.tab-trigger').forEach(trigger => {
-        trigger.classList.remove('active');
-        trigger.setAttribute('aria-selected', 'false');
+    document.querySelectorAll('.tab-trigger').forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
     });
     
-    // Remove active de todos os conteúdos
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.remove('active');
+    document.querySelectorAll('.tab-content').forEach(c => {
+        c.classList.remove('active');
     });
     
-    // Ativa o trigger clicado
     const activeTrigger = document.querySelector(`[data-tab="${tabName}"]`);
     if (activeTrigger) {
         activeTrigger.classList.add('active');
         activeTrigger.setAttribute('aria-selected', 'true');
     }
     
-    // Ativa o conteúdo correspondente
     const activeContent = document.getElementById(`${tabName}-content`);
     if (activeContent) {
         activeContent.classList.add('active');
@@ -189,26 +87,16 @@ function switchTab(tabName) {
 }
 
 // ========================================
-// RENDERIZAÇÃO - FAVORITOS
+// RENDER FAVORITOS
 // ========================================
 
-/**
- * Renderiza obras favoritas
- */
 function renderFavoritos() {
     const container = document.getElementById('favoritos-list');
-    const countElement = document.getElementById('favoritos-count');
+    const count = document.getElementById('favoritos-count');
     
-    // Filtra obras favoritas
-    const obrasFavoritas = clientData.obras.filter(obra => 
-        clientData.favoritos.includes(obra.id)
-    );
+    count.textContent = `${clientData.favoritos.length} itens`;
     
-    // Atualiza contador
-    countElement.textContent = `${obrasFavoritas.length} itens`;
-    
-    // Empty state
-    if (obrasFavoritas.length === 0) {
+    if (clientData.favoritos.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -221,69 +109,41 @@ function renderFavoritos() {
         return;
     }
     
-    // Renderiza grid
     container.innerHTML = `
         <div class="obras-grid">
-            ${obrasFavoritas.map(obra => createObraCard(obra)).join('')}
-        </div>
-    `;
-    
-    // Adiciona event listeners
-    obrasFavoritas.forEach(obra => {
-        const deleteBtn = document.querySelector(`[data-delete-favorito="${obra.id}"]`);
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', () => handleRemoveFavorito(obra.id));
-        }
-    });
-}
-
-/**
- * Cria card de obra
- */
-function createObraCard(obra) {
-    return `
-        <div class="obra-card">
-            <div class="obra-card-image-wrapper">
-                <img src="${obra.imageUrl}" alt="${obra.title}" class="obra-card-image">
-                <button class="btn btn-secondary btn-icon obra-card-delete" data-delete-favorito="${obra.id}">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6"/>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="obra-card-content">
-                <h3 class="obra-card-title">${obra.title}</h3>
-                <p class="obra-card-artist">${obra.artist}</p>
-                <div class="obra-card-footer">
-                    <span class="obra-card-price">R$ ${formatPrice(obra.price)}</span>
+            ${clientData.favoritos.map(obra => `
+                <div class="obra-card">
+                    <div class="obra-card-image-wrapper">
+                        <img src="${obra.imageUrl}" alt="${obra.title}" class="obra-card-image">
+                        <button class="btn btn-secondary btn-icon obra-card-delete" onclick="handleRemoveFavorito('${obra.id}')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="obra-card-content">
+                        <h3 class="obra-card-title">${obra.title}</h3>
+                        <p class="obra-card-artist">${obra.artist}</p>
+                        <span class="obra-card-price">R$ ${formatPrice(obra.price)}</span>
+                    </div>
                 </div>
-            </div>
+            `).join('')}
         </div>
     `;
 }
 
 // ========================================
-// RENDERIZAÇÃO - CARRINHO
+// RENDER CARRINHO
 // ========================================
 
-/**
- * Renderiza carrinho de compras
- */
 function renderCarrinho() {
     const container = document.getElementById('carrinho-container');
-    const countElement = document.getElementById('carrinho-count');
+    const count = document.getElementById('carrinho-count');
     
-    // Filtra obras no carrinho
-    const obrasCarrinho = clientData.obras.filter(obra => 
-        clientData.carrinho.some(item => item.obraId === obra.id)
-    );
+    count.textContent = `${clientData.carrinho.length} itens`;
     
-    // Atualiza contador
-    countElement.textContent = `${obrasCarrinho.length} itens`;
-    
-    // Empty state
-    if (obrasCarrinho.length === 0) {
+    if (clientData.carrinho.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -298,14 +158,29 @@ function renderCarrinho() {
         return;
     }
     
-    // Calcula total
-    const total = obrasCarrinho.reduce((sum, obra) => sum + obra.price, 0);
+    const total = clientData.carrinho.reduce((sum, obra) => sum + obra.price, 0);
     
-    // Renderiza layout com items e resumo
     container.innerHTML = `
         <div class="carrinho-layout">
             <div class="carrinho-items">
-                ${obrasCarrinho.map(obra => createCarrinhoItem(obra)).join('')}
+                ${clientData.carrinho.map(obra => `
+                    <div class="carrinho-item">
+                        <div class="carrinho-item-content">
+                            <img src="${obra.imageUrl}" alt="${obra.title}" class="carrinho-item-image">
+                            <div class="carrinho-item-info">
+                                <h3 class="carrinho-item-title">${obra.title}</h3>
+                                <p class="carrinho-item-artist">${obra.artist}</p>
+                                <span class="carrinho-item-price">R$ ${formatPrice(obra.price)}</span>
+                            </div>
+                            <button class="btn btn-ghost btn-icon carrinho-item-delete" onclick="handleRemoveCarrinho('${obra.id}')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
             </div>
             
             <div class="order-summary">
@@ -330,61 +205,19 @@ function renderCarrinho() {
             </div>
         </div>
     `;
-    
-    // Adiciona event listeners
-    obrasCarrinho.forEach(obra => {
-        const deleteBtn = document.querySelector(`[data-delete-carrinho="${obra.id}"]`);
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', () => handleRemoveCarrinho(obra.id));
-        }
-    });
-}
-
-/**
- * Cria item do carrinho
- */
-function createCarrinhoItem(obra) {
-    return `
-        <div class="carrinho-item">
-            <div class="carrinho-item-content">
-                <img src="${obra.imageUrl}" alt="${obra.title}" class="carrinho-item-image">
-                <div class="carrinho-item-info">
-                    <h3 class="carrinho-item-title">${obra.title}</h3>
-                    <p class="carrinho-item-artist">${obra.artist}</p>
-                    <span class="carrinho-item-price">R$ ${formatPrice(obra.price)}</span>
-                </div>
-                <button class="btn btn-ghost btn-icon carrinho-item-delete" data-delete-carrinho="${obra.id}">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6"/>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    `;
 }
 
 // ========================================
-// RENDERIZAÇÃO - EVENTOS
+// RENDER EVENTOS
 // ========================================
 
-/**
- * Renderiza eventos confirmados
- */
 function renderEventos() {
     const container = document.getElementById('eventos-list');
-    const countElement = document.getElementById('eventos-count');
+    const count = document.getElementById('eventos-count');
     
-    // Filtra eventos confirmados
-    const eventosConfirmados = clientData.eventos.filter(evento => 
-        clientData.eventosConfirmados.includes(evento.id)
-    );
+    count.textContent = `${clientData.eventos.length} eventos`;
     
-    // Atualiza contador
-    countElement.textContent = `${eventosConfirmados.length} eventos`;
-    
-    // Empty state
-    if (eventosConfirmados.length === 0) {
+    if (clientData.eventos.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -400,62 +233,42 @@ function renderEventos() {
         return;
     }
     
-    // Renderiza grid
     container.innerHTML = `
         <div class="eventos-grid">
-            ${eventosConfirmados.map(evento => createEventoCard(evento)).join('')}
-        </div>
-    `;
-    
-    // Adiciona event listeners
-    eventosConfirmados.forEach(evento => {
-        const deleteBtn = document.querySelector(`[data-cancel-evento="${evento.id}"]`);
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', () => handleCancelarEvento(evento.id));
-        }
-    });
-}
-
-/**
- * Cria card de evento
- */
-function createEventoCard(evento) {
-    return `
-        <div class="evento-card">
-            <img src="${evento.imageUrl}" alt="${evento.title}" class="evento-card-image">
-            <div class="evento-card-content">
-                <h3 class="evento-card-title">${evento.title}</h3>
-                <div class="evento-card-details">
-                    <p class="evento-card-date">${evento.date} às ${evento.time}</p>
-                    <p class="evento-card-location">${evento.location}</p>
-                    <p class="evento-card-attendees">${evento.attendees} pessoas confirmadas</p>
+            ${clientData.eventos.map(evento => `
+                <div class="evento-card">
+                    <img src="${evento.imageUrl}" alt="${evento.title}" class="evento-card-image">
+                    <div class="evento-card-content">
+                        <h3 class="evento-card-title">${evento.title}</h3>
+                        <div class="evento-card-details">
+                            <p class="evento-card-date">${evento.date} às ${evento.time}</p>
+                            <p class="evento-card-location">${evento.location}</p>
+                            <p class="evento-card-attendees">${evento.attendees} pessoas confirmadas</p>
+                        </div>
+                        <div class="evento-card-actions">
+                            <button class="btn btn-outline" style="flex: 1;">Ver Detalhes</button>
+                            <button class="btn btn-ghost btn-icon" onclick="handleCancelarEvento('${evento.id}')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="evento-card-actions">
-                    <button class="btn btn-outline" style="flex: 1;">Ver Detalhes</button>
-                    <button class="btn btn-ghost btn-icon" data-cancel-evento="${evento.id}">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="3 6 5 6 21 6"/>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
+            `).join('')}
         </div>
     `;
 }
 
 // ========================================
-// RENDERIZAÇÃO - HISTÓRICO
+// RENDER HISTÓRICO
 // ========================================
 
-/**
- * Renderiza histórico de compras
- */
 function renderHistorico() {
     const container = document.getElementById('historico-list');
     
-    // Empty state
-    if (clientData.compras.length === 0) {
+    if (clientData.historico.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -470,171 +283,124 @@ function renderHistorico() {
         return;
     }
     
-    // Renderiza lista de compras
     container.innerHTML = `
         <div class="historico-list">
-            ${clientData.compras.map(compra => createCompraCard(compra)).join('')}
-        </div>
-    `;
-}
-
-/**
- * Cria card de compra
- */
-function createCompraCard(compra) {
-    return `
-        <div class="compra-card">
-            <div class="compra-header">
-                <div>
-                    <p class="compra-id">Pedido #${compra.id}</p>
-                    <p class="compra-date">${compra.date}</p>
-                </div>
-                <span class="compra-status">${compra.status}</span>
-            </div>
-            <div class="compra-items">
-                ${compra.items.map(item => `
-                    <div class="compra-item">
-                        <span>${item.title}</span>
-                        <span class="compra-item-price">R$ ${formatPrice(item.price)}</span>
+            ${clientData.historico.map(compra => `
+                <div class="compra-card">
+                    <div class="compra-header">
+                        <div>
+                            <p class="compra-id">Pedido #${compra.id}</p>
+                            <p class="compra-date">${compra.date}</p>
+                        </div>
+                        <span class="compra-status">${compra.status}</span>
                     </div>
-                `).join('')}
-            </div>
-            <div class="compra-footer">
-                <span>Total</span>
-                <span class="compra-total">R$ ${formatPrice(compra.total)}</span>
-            </div>
+                    <div class="compra-items">
+                        ${compra.items.map(item => `
+                            <div class="compra-item">
+                                <span>${item.title}</span>
+                                <span class="compra-item-price">R$ ${formatPrice(item.price)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="compra-footer">
+                        <span>Total</span>
+                        <span class="compra-total">R$ ${formatPrice(compra.total)}</span>
+                    </div>
+                </div>
+            `).join('')}
         </div>
     `;
 }
 
 // ========================================
-// HANDLERS DE EVENTOS
+// HANDLERS
 // ========================================
 
-/**
- * Remove favorito
- */
-async function handleRemoveFavorito(obraId) {
-    try {
-        await removeFavorito(obraId);
-        
-        // Atualiza estado local
-        clientData.favoritos = clientData.favoritos.filter(id => id !== obraId);
-        
-        // Re-renderiza
-        renderFavoritos();
-        
-        // Toast
-        showToast('Removido dos favoritos', 'A obra foi removida dos seus favoritos', 'success');
-    } catch (error) {
-        showToast('Erro', 'Não foi possível remover dos favoritos', 'error');
+function handleRemoveFavorito(obraId) {
+    clientData.favoritos = clientData.favoritos.filter(o => o.id !== obraId);
+    updateStats();
+    renderFavoritos();
+    
+    if (typeof showToast === 'function') {
+        showToast('Removido dos favoritos', 'A obra foi removida', 'success');
     }
 }
 
-/**
- * Remove do carrinho
- */
-async function handleRemoveCarrinho(obraId) {
-    try {
-        await removeCarrinho(obraId);
-        
-        // Atualiza estado local
-        clientData.carrinho = clientData.carrinho.filter(item => item.obraId !== obraId);
-        
-        // Re-renderiza
-        renderCarrinho();
-        
-        // Toast
-        showToast('Removido do carrinho', 'A obra foi removida do carrinho', 'success');
-    } catch (error) {
-        showToast('Erro', 'Não foi possível remover do carrinho', 'error');
+function handleRemoveCarrinho(obraId) {
+    clientData.carrinho = clientData.carrinho.filter(o => o.id !== obraId);
+    renderCarrinho();
+    
+    if (typeof showToast === 'function') {
+        showToast('Removido do carrinho', 'A obra foi removida', 'success');
     }
 }
 
-/**
- * Cancela evento
- */
-async function handleCancelarEvento(eventoId) {
-    try {
-        await cancelarEvento(eventoId);
-        
-        // Atualiza estado local
-        clientData.eventosConfirmados = clientData.eventosConfirmados.filter(id => id !== eventoId);
-        
-        // Re-renderiza
-        renderEventos();
-        
-        // Toast
-        showToast('Presença cancelada', 'Sua presença no evento foi cancelada', 'success');
-    } catch (error) {
-        showToast('Erro', 'Não foi possível cancelar presença', 'error');
+function handleCancelarEvento(eventoId) {
+    if (!confirm('Deseja cancelar sua presença neste evento?')) return;
+    
+    clientData.eventos = clientData.eventos.filter(e => e.id !== eventoId);
+    updateStats();
+    renderEventos();
+    
+    if (typeof showToast === 'function') {
+        showToast('Presença cancelada', 'Sua presença foi cancelada', 'success');
     }
 }
 
-/**
- * Finaliza compra
- */
 function handleFinalizarCompra() {
-    // TODO: Implementar fluxo de checkout
-    showToast('Em desenvolvimento', 'Funcionalidade de checkout em breve!', 'info');
+    if (typeof showToast === 'function') {
+        showToast('Em desenvolvimento', 'Funcionalidade de checkout em breve!', 'info');
+    } else {
+        alert('Funcionalidade em desenvolvimento');
+    }
 }
 
 // ========================================
-// UTILIDADES
+// UTILITIES
 // ========================================
 
-/**
- * Formata preço
- */
+function updateStats() {
+    document.getElementById('statFavoritos').textContent = clientData.favoritos.length;
+    document.getElementById('statEventos').textContent = clientData.eventos.length;
+    document.getElementById('statCompras').textContent = clientData.historico.length;
+}
+
 function formatPrice(price) {
     return price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-/**
- * Toast notification (usa a função de main.js)
- */
-function showToast(title, description, type = 'info') {
-    if (typeof window.showToast === 'function') {
-        window.showToast(title, description, type);
-    } else {
-        alert(`${title}: ${description}`);
-    }
-}
-
 // ========================================
-// INICIALIZAÇÃO
+// INIT
 // ========================================
 
-/**
- * Inicializa o dashboard
- */
-async function initDashboard() {
-    try {
-        // Carrega dados do cliente
-        const data = await loadClientData();
-        clientData = data;
-        
-        // Inicializa sistema de tabs
-        initTabs();
-        
-        // Renderiza todas as abas
-        renderFavoritos();
-        renderCarrinho();
-        renderEventos();
-        renderHistorico();
-        
-    } catch (error) {
-        console.error('Erro ao inicializar dashboard:', error);
-        showToast('Erro', 'Não foi possível carregar seus dados', 'error');
-    }
+async function init() {
+    // Carrega mock data
+    await new Promise(resolve => setTimeout(resolve, 500));
+    clientData.favoritos = [...mockFavoritos];
+    clientData.carrinho = [...mockCarrinho];
+    clientData.eventos = [...mockEventos];
+    clientData.historico = [];
+    
+    // Inicializa tabs
+    initTabs();
+    
+    // Renderiza
+    updateStats();
+    renderFavoritos();
+    renderCarrinho();
+    renderEventos();
+    renderHistorico();
 }
 
-// Torna funções disponíveis globalmente
+// Torna funções globais
+window.handleRemoveFavorito = handleRemoveFavorito;
+window.handleRemoveCarrinho = handleRemoveCarrinho;
+window.handleCancelarEvento = handleCancelarEvento;
 window.handleFinalizarCompra = handleFinalizarCompra;
 
-// Executa quando o DOM estiver carregado
+// Executa
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initDashboard);
+    document.addEventListener('DOMContentLoaded', init);
 } else {
-    initDashboard();
+    init();
 }
