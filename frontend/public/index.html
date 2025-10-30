@@ -5,107 +5,266 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arte na Mão</title>
     <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="../src/components/navbar.css">
-    <link rel="stylesheet" href="../src/components/buttons.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/index.css">
+    <link rel="icon" type="image/png" href="assets/midia/favicon.png" />
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <nav class="nav-container">
-            <a href="index.html" class="logo-link">
-                <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
-                <span class="logo-text">Arte na Mão</span>
-            </a>
-
-            <div class="nav-menu">
-                <div class="auth-buttons" id="authButtons">
-                    <a href="login.html" class="btn btn-ghost">Entrar</a>
-                    <a href="register.html" class="btn btn-primary">Criar Conta</a>
-                </div>
-
-                <div class="user-menu" id="userMenu" style="display: none;">
-                    <button class="btn btn-ghost">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg>
-                        Minha Conta
-                    </button>
-                    <button class="btn btn-outline" onclick="handleLogout()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                            <polyline points="16 17 21 12 16 7"/>
-                            <line x1="21" y1="12" x2="9" y2="12"/>
-                        </svg>
-                        Sair
-                    </button>
-                </div>
+    <header class="header" id="header">
+        <div class="header-container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span class="logo-text">Arte na Mão</span>
+                </a>
+                
+                <a href="login.html" class="btn btn-primary">Explorar</a>
             </div>
-        </nav>
+        </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-bg"></div>
-        <div class="container hero-content">
-            <div class="hero-badge">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
-                Plataforma de Arte Regional
+    <section class="hero">
+        <video class="hero-video" autoplay muted loop playsinline>
+            <source src="assets/midia/gallery.mp4" type="video/mp4">
+        </video>
+
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-container">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        Crie.<br>
+                        Cresça. <span class="highlight">Destaque.</span><br>
+                        Floresça.
+                    </h1>
+                    <p class="hero-subtitle">
+                        Uma missão de dar luz aos talentos e maravilhas do Nordeste brasileiro
+                    </p>
+                </div>
             </div>
+        </div>
 
-            <h1 class="hero-title">
-                Descubra o talento do <span class="primary-text">Nordeste</span>
-            </h1>
-
-            <p class="hero-subtitle">
-                Arte, cultura e identidade em um só lugar. Conecte-se com artistas regionais e explore obras únicas.
-            </p>
+        <div class="scroll-indicator">
+            <div class="scroll-indicator-inner">
+                <div class="scroll-dot"></div>
+            </div>
         </div>
     </section>
 
-    <!-- Artworks Grid -->
-    <section class="artworks-section">
-        <div class="container">
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title">Obras em Destaque</h2>
-                    <p class="section-subtitle">Explore a diversidade criativa dos artistas nordestinos</p>
-                </div>
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <div class="stat-number">3,587,929</div>
+                <div class="stat-label">Visualizações em Obras</div>
             </div>
-
-            <div class="artworks-grid" id="artworksGrid">
-                <!-- Os cards serão inseridos aqui pelo JavaScript -->
+            <div class="stat-item">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <div class="stat-number">12,000,000</div>
+                <div class="stat-label">Alcance da Rede</div>
             </div>
-
-            <div class="load-more-container">
-                <button class="btn btn-outline btn-lg" onclick="loadMoreArtworks()">
-                    Carregar mais obras
-                </button>
+            <div class="stat-item">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <div class="stat-number">90</div>
+                <div class="stat-label">Eventos Realizados</div>
             </div>
         </div>
-    </section> 
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <div class="container">
+            <div class="mission-grid">
+                <div>
+                    <div class="badge">Artista |</div>
+                    <h2 class="section-title">
+                        O Arte na Mão é o seu<br>
+                        espaço para <span class="highlight">brilhar</span>
+                    </h2>
+                    <p class="section-text">
+                        No Arte na Mão, talentos são encorajados a mostrar ao mundo sua criatividade 
+                        enquanto são apreciados por outros. Somos uma comunidade que conecta 
+                        criadores, colecionadores e apreciadores de arte.
+                    </p>
+                    <p class="section-text">
+                        Das cores vibrantes do sertão às texturas da caatinga, cada criação 
+                        reflete a riqueza cultural de uma das regiões mais inspiradoras do Brasil.
+                    </p>
+                </div>
+                <div class="mission-image-wrapper">
+                    <img src="https://i.pinimg.com/736x/46/04/b5/4604b5860f68347bf5ea222d3f14da8e.jpg" 
+                         alt="Arte Nordestina" class="mission-image">
+                    <div class="artist-card">
+                        <div class="artist-card-label">Destaque</div>
+                        <div class="artist-card-name">Maria Silva</div>
+                        <div class="artist-card-info">Xilogravura • Recife, PE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Artwork Section -->
+    <section class="featured-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Obras de artistas da <span class="highlight">comunidade</span></h2>
+                <div class="section-divider"></div>
+            </div>
+
+            <div class="artworks-grid" id="featuredGrid"></div>
+        </div>
+    </section>
+
+    <!-- Artists Section -->
+    <section class="artists-section">
+        <div class="section-container">
+            <div class="artists-intro">
+                <h2 class="artists-intro-title">Artistas e Suas <span class="highlight">Criações</span></h2>
+                <p class="artists-intro-text">
+                    Explore o trabalho de artistas talentosos e suas obras disponíveis
+                </p>
+            </div>
+
+            <div id="artistsContainer"></div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section class="events-section">
+        <div class="section-container">
+            <div class="section-header-center">
+                <h2 class="section-title-center">Eventos de <span class="highlight">Arte</span> e <span class="highlight">Cultura</span></h2>
+                <p class="section-subtitle-center">
+                    Participe de exposições, workshops e encontros com artistas nordestinos
+                </p>
+            </div>
+            <div class="events-grid" id="eventsGrid"></div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-background"></div>
+        <div class="cta-overlay"></div>
+        <div class="cta-content">
+            <h2 class="cta-title">Faça parte da comunidade Arte na Mão</h2>
+            <p class="cta-text">
+                Cadastre-se agora e comece a compartilhar sua arte com o mundo
+            </p>
+            <a href="#" class="btn btn-primary btn-lg">Criar Conta Grátis</a>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container footer-content">
-            <p class="footer-text">© 2025 Arte na Mão. Celebrando a cultura regional.</p>
-            <div class="footer-links">
-                <a href="#" class="footer-link">Sobre</a>
-                <a href="#" class="footer-link">Contato</a>
-                <a href="#" class="footer-link">Termos</a>
-                <a href="#" class="footer-link">Privacidade</a>
+        <div class="newsletter-section">
+            <div class="container">
+                <div class="newsletter-content">
+                    <h3 class="newsletter-title">
+                        Fique por dentro das <span class="highlight">novidades</span>
+                    </h3>
+                    <p class="newsletter-description">
+                        Receba atualizações sobre novos artistas, obras e eventos
+                    </p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Seu melhor e-mail" class="newsletter-input">
+                        <button type="submit" class="btn btn-primary">Inscrever</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-main">
+            <div class="container">
+                <div class="footer-grid">
+                    <div>
+                        <div class="footer-brand">Arte na <span class="highlight">Mão</span></div>
+                        <p class="footer-description">
+                            Celebrando e conectando os artistas mais talentosos do Nordeste brasileiro.
+                        </p>
+                        <div class="social-links">
+                            <div class="social-link">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                </svg>
+                            </div>
+                            <div class="social-link">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                                </svg>
+                            </div>
+                            <div class="social-link">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                                </svg>
+                            </div>
+                            <div class="social-link">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4>Explorar</h4>
+                        <ul class="footer-links">
+                            <li><a href="#">Artistas</a></li>
+                            <li><a href="#">Obras</a></li>
+                            <li><a href="#">Eventos</a></li>
+                            <li><a href="#">Coleções</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4>Recursos</h4>
+                        <ul class="footer-links">
+                            <li><a href="#">Como Vender</a></li>
+                            <li><a href="#">Guia do Artista</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">FAQ</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4>Empresa</h4>
+                        <ul class="footer-links">
+                            <li><a href="#">Sobre Nós</a></li>
+                            <li><a href="#">Contato</a></li>
+                            <li><a href="#">Termos de Uso</a></li>
+                            <li><a href="#">Privacidade</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>© 2025 Arte na Mão. Todos os direitos reservados.</p>
+                    <p>Feito com ❤️ no Nordeste brasileiro</p>
+                </div>
             </div>
         </div>
     </footer>
-
-    <script src="assets/js/main.js"></script>
     <script src="assets/js/index.js"></script>
 </body>
 </html>
