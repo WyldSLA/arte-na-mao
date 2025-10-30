@@ -8,6 +8,35 @@ document.addEventListener('DOMContentLoaded', function () {
     const forgotPasswordLink = document.querySelector('.forgot-password-link');
 
     // ========================================
+    // MOCK DATA - USUÁRIOS SIMULADOS
+    // ========================================
+    
+    const mockUsers = [
+        {
+            email: 'artista@exemplo.com',
+            password: '123456',
+            user: {
+                id: '1',
+                name: 'Maria Silva',
+                email: 'artista@exemplo.com',
+                role: 'ARTISTA',
+                avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop'
+            }
+        },
+        {
+            email: 'cliente@exemplo.com',
+            password: '123456',
+            user: {
+                id: '2',
+                name: 'João Santos',
+                email: 'cliente@exemplo.com',
+                role: 'CLIENTE',
+                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop'
+            }
+        }
+    ];
+
+    // ========================================
     // TOGGLE MOSTRAR/OCULTAR SENHA
     // ========================================
     
@@ -41,27 +70,34 @@ document.addEventListener('DOMContentLoaded', function () {
     // VALIDAÇÃO EM TEMPO REAL
     // ========================================
     
-    emailInput.addEventListener('input', function() {
-        if (this.value.trim()) {
-            clearError(emailInput, emailError);
-        }
-    });
+    if (emailInput) {
+        emailInput.addEventListener('input', function() {
+            if (this.value.trim()) {
+                clearError(emailInput, emailError);
+            }
+        });
+    }
 
-    passwordInput.addEventListener('input', function() {
-        if (this.value.trim()) {
-            clearError(passwordInput, passwordError);
-        }
-    });
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function() {
+            if (this.value.trim()) {
+                clearError(passwordInput, passwordError);
+            }
+        });
+    }
     
     if (forgotPasswordLink) {
         forgotPasswordLink.addEventListener('click', function(e) {
             e.preventDefault();
-            // Usa o showToast global do main.js
-            showToast(
-                'Recuperação de Senha',
-                'Esta funcionalidade estará disponível em breve. Entre em contato com o suporte.',
-                'info'
-            );
+            if (typeof showToast === 'function') {
+                showToast(
+                    'Recuperação de Senha',
+                    'Esta funcionalidade estará disponível em breve. Entre em contato com o suporte.',
+                    'info'
+                );
+            } else {
+                alert('Funcionalidade de recuperação de senha estará disponível em breve.');
+            }
         });
     }
 
@@ -69,45 +105,51 @@ document.addEventListener('DOMContentLoaded', function () {
     // SUBMIT DO FORMULÁRIO
     // ========================================
     
-    form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        
-        clearAllErrors();
-        
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
-        
-        if (!validateForm(email, password)) {
-            return;
-        }
-        
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Entrando...';
-        
-        try {
-            const response = await loginAPI(email, password);
+    if (form) {
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
             
-            showToast('Login realizado!', 'Bem-vindo de volta!', 'success');
-            showError
+            clearAllErrors();
             
-            saveUserData(response);
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
             
-            setTimeout(() => {
-                redirectToDashboard(response.user.role);
-            }, 1000);
+            if (!validateForm(email, password)) {
+                return;
+            }
             
-        } catch (error) {
-            // Usa toast global
-            window.showToast('Erro no login', error.message || 'Credenciais inválidas', 'error');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Entrando...';
             
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
-            passwordInput.value = '';
-            passwordInput.focus();
-        }
-    });
+            try {
+                const response = await loginAPI(email, password);
+                
+                if (typeof showToast === 'function') {
+                    showToast('Login realizado!', 'Bem-vindo de volta!', 'success');
+                }
+                
+                saveUserData(response);
+                
+                setTimeout(() => {
+                    redirectToDashboard(response.user.role);
+                }, 1000);
+                
+            } catch (error) {
+                if (typeof showToast === 'function') {
+                    showToast('Erro no login', error.message || 'Credenciais inválidas', 'error');
+                } else {
+                    alert(error.message || 'Credenciais inválidas');
+                }
+                
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        });
+    }
 
     // ========================================
     // FUNÇÕES AUXILIARES
@@ -119,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!email) {
             showError(emailInput, emailError, 'Por favor, preencha o e-mail');
             isValid = false;
-        } else if (!window.isValidEmail(email)) {
+        } else if (!isValidEmail(email)) {
             showError(emailInput, emailError, 'Por favor, insira um e-mail válido');
             isValid = false;
         }
@@ -132,16 +174,25 @@ document.addEventListener('DOMContentLoaded', function () {
         return isValid;
     }
     
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
     function showError(input, errorElement, message) {
         if (errorElement) errorElement.textContent = message;
-        input.style.borderColor = 'var(--destructive)';
-        input.setAttribute('aria-invalid', 'true');
+        if (input) {
+            input.style.borderColor = 'var(--destructive, #ef4444)';
+            input.setAttribute('aria-invalid', 'true');
+        }
     }
     
     function clearError(input, errorElement) {
         if (errorElement) errorElement.textContent = '';
-        input.style.borderColor = '';
-        input.setAttribute('aria-invalid', 'false');
+        if (input) {
+            input.style.borderColor = '';
+            input.setAttribute('aria-invalid', 'false');
+        }
     }
     
     function clearAllErrors() {
@@ -150,39 +201,48 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     // ========================================
-    // API - INTEGRAÇÃO COM BACKEND
+    // API MOCK - SIMULAÇÃO DE LOGIN
     // ========================================
     
     async function loginAPI(email, password) {
-        const API_URL = '/api/auth/login';
+        await new Promise(resolve => setTimeout(resolve, 500));
         
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
-        });
+        const user = mockUsers.find(u => u.email === email && u.password === password);
         
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Credenciais inválidas');
+        if (!user) {
+            throw new Error('E-mail ou senha incorretos');
         }
         
-        return await response.json();
+        return {
+            token: 'mock-jwt-token-' + Date.now(),
+            user: user.user
+        };
     }
     
     function saveUserData(data) {
         window.authData = data;
         localStorage.setItem('authToken', data.token);
         localStorage.setItem('userData', JSON.stringify(data.user));
+        
+        console.log('✅ Login mock realizado:', data.user);
     }
     
     function redirectToDashboard(role) {
+        console.log('🔄 Redirecionando para dashboard:', role);
+        
         if (role === 'ARTISTA') {
             window.location.href = '../src/pages/dashboard-artista/index.html';
         } else {
             window.location.href = '../src/pages/explorar/index.html';
         }
     }
+    
+    // ========================================
+    // INFO PARA DESENVOLVEDORES
+    // ========================================
+    
+    console.log('🎭 LOGIN MOCK ATIVO');
+    console.log('📧 Usuários disponíveis:');
+    console.log('   Artista: artista@exemplo.com / senha: 123456');
+    console.log('   Cliente: cliente@exemplo.com / senha: 123456');
 });

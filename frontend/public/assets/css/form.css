@@ -186,8 +186,38 @@
 }
 
 /* ========================================
-   BUTTONS - Botões (expandindo do styles.css)
+   BUTTONS - Botões de Form
    ======================================== */
+
+.back-to-home {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.back-to-home a {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+
+  border: none;
+  background: none;
+  background-color: rgba(0, 0, 0, 0);
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+}
 
 .btn-full {
     width: 100%;
