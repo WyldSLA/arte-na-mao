@@ -230,13 +230,11 @@
 
 .filter-btn:hover {
     background: var(--muted);
-    border-color: var(--primary);
 }
 
 .filter-btn.active {
     background: var(--primary);
     color: var(--primary-foreground);
-    border-color: var(--primary);
 }
 
 /* ========================================
