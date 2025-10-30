@@ -33,7 +33,7 @@ const mockCarrinho = [
         title: "Raízes Nordestinas",
         artist: "Ana Oliveira",
         price: 1800,
-        imageUrl: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800&q=80"
+        imageUrl: "https://img.elo7.com.br/product/main/4D47F51/pintura-em-tela-trio-nordestino-na-roca-50x40-quadro.jpg"
     }
 ];
 
