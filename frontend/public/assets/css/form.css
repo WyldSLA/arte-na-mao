@@ -262,6 +262,14 @@
     display: block;
 }
 
+.strength-bar{
+    padding-top: 2px;
+}
+
+.strength-text {
+    font-size: 0.875rem;
+}
+
 /* ========================================
    PASSWORD REQUIREMENTS - Requisitos de senha
    ======================================== */
