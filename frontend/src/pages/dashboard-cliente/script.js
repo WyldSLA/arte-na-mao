@@ -1,5 +1,5 @@
 // ========================================
-// DASHBOARD CLIENTE - MOCK VERSION
+// DASHBOARD CLIENTE - SERVICE-BACKED
 // ========================================
 
 let clientData = {
@@ -9,7 +9,7 @@ let clientData = {
     historico: []
 };
 
-// Mock data
+// Fallback mock data (usado apenas quando não houver usuário logado ou serviços ausentes)
 const mockFavoritos = [
     {
         id: "1",
@@ -316,22 +316,53 @@ function renderHistorico() {
 // HANDLERS
 // ========================================
 
-function handleRemoveFavorito(obraId) {
-    clientData.favoritos = clientData.favoritos.filter(o => o.id !== obraId);
-    updateStats();
-    renderFavoritos();
-    
-    if (typeof showToast === 'function') {
-        showToast('Removido dos favoritos', 'A obra foi removida', 'success');
+async function handleRemoveFavorito(obraId) {
+    const user = (function() {
+        try { return JSON.parse(localStorage.getItem('userData') || 'null'); } catch(e){ return null; }
+    })();
+
+    if (user && user.id && window.artworkService) {
+        try {
+            await window.artworkService.toggleFavorite(user.id, obraId);
+            // Recarrega favoritos do serviço para garantir sincronismo
+            const favs = await window.artworkService.getFavorites(user.id);
+            clientData.favoritos = favs.map(f => normalizeArtwork(f.obra || f));
+            updateStats();
+            renderFavoritos();
+
+            if (typeof showToast === 'function') showToast('Removido dos favoritos', 'A obra foi removida', 'success');
+        } catch (err) {
+            console.error('Erro ao remover favorito:', err);
+            alert('Não foi possível remover dos favoritos');
+        }
+    } else {
+        // Fallback local
+        clientData.favoritos = clientData.favoritos.filter(o => o.id !== obraId);
+        updateStats();
+        renderFavoritos();
     }
 }
 
-function handleRemoveCarrinho(obraId) {
-    clientData.carrinho = clientData.carrinho.filter(o => o.id !== obraId);
-    renderCarrinho();
-    
-    if (typeof showToast === 'function') {
-        showToast('Removido do carrinho', 'A obra foi removida', 'success');
+async function handleRemoveCarrinho(obraId) {
+    const user = (function() {
+        try { return JSON.parse(localStorage.getItem('userData') || 'null'); } catch(e){ return null; }
+    })();
+
+    if (user && user.id && window.artworkService) {
+        try {
+            await window.artworkService.removeFromCart(user.id, obraId);
+            // Atualiza view
+            clientData.carrinho = clientData.carrinho.filter(o => o.id !== obraId);
+            renderCarrinho();
+
+            if (typeof showToast === 'function') showToast('Removido do carrinho', 'A obra foi removida', 'success');
+        } catch (err) {
+            console.error('Erro ao remover do carrinho:', err);
+            alert('Não foi possível remover do carrinho');
+        }
+    } else {
+        clientData.carrinho = clientData.carrinho.filter(o => o.id !== obraId);
+        renderCarrinho();
     }
 }
 
@@ -347,11 +378,45 @@ function handleCancelarEvento(eventoId) {
     }
 }
 
-function handleFinalizarCompra() {
-    if (typeof showToast === 'function') {
-        showToast('Em desenvolvimento', 'Funcionalidade de checkout em breve!', 'info');
+async function handleFinalizarCompra() {
+    const user = (function() {
+        try { return JSON.parse(localStorage.getItem('userData') || 'null'); } catch(e){ return null; }
+    })();
+
+    if (!user || !user.id) {
+        alert('Faça login para finalizar a compra');
+        return;
+    }
+
+    if (window.artworkService && typeof window.artworkService.createPurchase === 'function') {
+        try {
+            // endereço pode ser nulo no mock
+            const res = await window.artworkService.createPurchase(user.id, null);
+            if (res && res.purchase) {
+                // Atualiza histórico e limpa carrinho local
+                const purchase = res.purchase;
+                const items = res.items || [];
+                clientData.historico.unshift({
+                    id: purchase.id,
+                    date: purchase.dataCriacao ? new Date(purchase.dataCriacao).toLocaleString() : '',
+                    status: purchase.status,
+                    items: items.map(i => ({ title: (i.obra && (i.obra.titulo || i.obra.title)) || i.obraId, price: i.precoUnitario })),
+                    total: purchase.valorTotal
+                });
+
+                clientData.carrinho = [];
+                updateStats();
+                renderCarrinho();
+                renderHistorico();
+
+                if (typeof showToast === 'function') showToast('Compra realizada', 'Sua compra foi registrada', 'success');
+            }
+        } catch (err) {
+            console.error('Erro ao finalizar compra:', err);
+            alert('Não foi possível finalizar a compra: ' + (err.message || 'erro'));
+        }
     } else {
-        alert('Funcionalidade em desenvolvimento');
+        alert('Funcionalidade de checkout indisponível');
     }
 }
 
@@ -370,20 +435,92 @@ function formatPrice(price) {
 }
 
 // ========================================
-// INIT
+// HELPERS
+// ========================================
+
+function normalizeArtwork(art) {
+    if (!art) return null;
+    return {
+        id: art.id,
+        title: art.titulo || art.title || art.nome || 'Obra',
+        artist: art.artistaNome || art.artist || art.artista || art.nomeArtista || 'Artista',
+        price: Number(art.preco || art.price || 0),
+        imageUrl: art.imagemUrl || art.imageUrl || ''
+    };
+}
+
+// ========================================
+// INIT (service-backed)
 // ========================================
 
 async function init() {
-    // Carrega mock data
-    await new Promise(resolve => setTimeout(resolve, 500));
-    clientData.favoritos = [...mockFavoritos];
-    clientData.carrinho = [...mockCarrinho];
-    clientData.eventos = [...mockEventos];
-    clientData.historico = [];
-    
     // Inicializa tabs
     initTabs();
-    
+
+    // Tenta carregar dados do usuário e dos serviços
+    const user = (function() {
+        try { return JSON.parse(localStorage.getItem('userData') || 'null'); } catch(e){ return null; }
+    })();
+
+    if (user && user.id && window.artworkService) {
+        try {
+            // Favoritos
+            const favs = await window.artworkService.getFavorites(user.id);
+            clientData.favoritos = favs.map(f => normalizeArtwork(f.obra || f));
+
+            // Carrinho
+            const cartItems = await window.artworkService.getCartItems(user.id);
+            clientData.carrinho = cartItems.map(i => normalizeArtwork(i.obra || i));
+
+            // Eventos
+            if (window.eventService && typeof window.eventService.getUserEvents === 'function') {
+                const parts = await window.eventService.getUserEvents(user.id);
+                clientData.eventos = parts.map(p => {
+                    const ev = p.event || {};
+                    return {
+                        id: ev.id,
+                        title: ev.titulo || ev.title || 'Evento',
+                        date: ev.data ? new Date(ev.data).toLocaleDateString() : '',
+                        time: ev.data ? new Date(ev.data).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '',
+                        location: ev.local || ev.location || '',
+                        attendees: ev.participantes || 0,
+                        imageUrl: ev.imagemUrl || ev.imageUrl || ''
+                    };
+                });
+            } else {
+                clientData.eventos = [...mockEventos];
+            }
+
+            // Histórico de compras
+            const purchases = await window.artworkService.getPurchaseHistory(user.id);
+            clientData.historico = purchases.map(p => ({
+                id: p.id,
+                date: p.dataCriacao ? new Date(p.dataCriacao).toLocaleString() : '',
+                status: p.status,
+                items: (p.items || []).map(i => ({
+                    title: (i.obra && (i.obra.titulo || i.obra.title)) || i.obraId || 'Obra',
+                    price: i.precoUnitario || 0
+                })),
+                total: p.valorTotal || 0
+            }));
+
+            } catch (err) {            
+                console.warn('Erro ao carregar dados do serviço:', err);
+                // Não usar fallback para dados que devem persistir
+                clientData.favoritos = [];
+                clientData.carrinho = [];
+                clientData.historico = [];
+                // Eventos podem usar mock pois não são persistidos ainda
+                clientData.eventos = [...mockEventos];
+        }
+    } else {
+            // Sem usuário logado ou sem serviços: começa vazio
+            clientData.favoritos = [];
+            clientData.carrinho = [];
+            clientData.historico = [];
+        clientData.eventos = [...mockEventos];
+    }
+
     // Renderiza
     updateStats();
     renderFavoritos();

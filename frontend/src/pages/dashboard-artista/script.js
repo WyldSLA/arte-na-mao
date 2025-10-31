@@ -1,68 +1,14 @@
 // ========================================
-// DASHBOARD ARTISTA - MOCK VERSION
+// DASHBOARD ARTISTA
 // ========================================
 
-let artistData = {
-    portfolio: [],
-    eventos: [],
-    favoritos: [],
-    carrinho: [],
-    historico: []
-};
+let userData = null;
+let artistData = null;
 
 let editingObra = null;
 let editingEvento = null;
-
-// Mock data
-const mockPortfolio = [
-    {
-        id: "1",
-        title: "Sertão em Cores",
-        category: "Pintura",
-        price: 1500,
-        imageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&q=80",
-        description: "Uma explosão de cores que representa a beleza do sertão nordestino"
-    },
-    {
-        id: "2",
-        title: "Horizonte Atlântico",
-        category: "Fotografia",
-        price: 2200,
-        imageUrl: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&q=80",
-        description: "Captura única do encontro entre céu e mar"
-    }
-];
-
-const mockEventos = [
-    {
-        id: "1",
-        title: "Exposição: Cores do Nordeste",
-        date: "2025-12-15",
-        location: "Recife, PE",
-        imageUrl: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80",
-        attendees: 45
-    }
-];
-
-const mockFavoritos = [
-    {
-        id: "3",
-        title: "Arte Popular",
-        artist: "Ana Costa",
-        price: 1800,
-        imageUrl: "https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=800&q=80"
-    }
-];
-
-const mockCarrinho = [
-    {
-        id: "4",
-        title: "Cerâmica Artesanal",
-        artist: "Pedro Lima",
-        price: 950,
-        imageUrl: "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=800&q=80"
-    }
-];
+// holds data URL of uploaded artwork (set when file is selected)
+let uploadedArtworkDataUrl = null;
 
 // ========================================
 // TABS SYSTEM
@@ -246,7 +192,7 @@ function renderFavoritos() {
                 <div class="obra-card">
                     <div class="obra-card-image-wrapper">
                         <img src="${obra.imageUrl}" alt="${obra.title}" class="obra-card-image">
-                        <button class="btn btn-secondary btn-icon obra-card-delete" onclick="handleRemoveFavorito('${obra.id}')">
+                            <button class="btn btn-secondary btn-icon obra-card-delete" onclick="window.handleRemoveFavorito('${obra.id}')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="3 6 5 6 21 6"/>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -292,7 +238,7 @@ function renderCarrinho() {
         return;
     }
     
-    const total = artistData.carrinho.reduce((sum, obra) => sum + obra.price, 0);
+    const total = artistData.carrinho.reduce((sum, obra) => sum + (Number(obra.price || 0) * (obra.quantity || 1)), 0);
     
     container.innerHTML = `
         <div class="carrinho-layout">
@@ -306,7 +252,7 @@ function renderCarrinho() {
                                 <p class="carrinho-item-artist">${obra.artist}</p>
                                 <span class="carrinho-item-price">R$ ${formatPrice(obra.price)}</span>
                             </div>
-                            <button class="btn btn-ghost btn-icon carrinho-item-delete" onclick="handleRemoveCarrinho('${obra.id}')">
+                                <button class="btn btn-ghost btn-icon carrinho-item-delete" onclick="window.handleRemoveCarrinho('${obra.id}')">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -367,7 +313,10 @@ function renderHistorico() {
         <div class="compra-card">
             <div class="compra-header">
                 <div>
-                    <p class="compra-id">Venda #${venda.id}</p>
+                        <p class="compra-id">
+                            <span>Venda #${venda.id}</span>
+                            ${venda.comprador ? `<span class="compra-buyer">para ${venda.comprador.nome}</span>` : ''}
+                        </p>
                     <p class="compra-date">${venda.date}</p>
                 </div>
                 <span class="compra-status">${venda.status}</span>
@@ -409,37 +358,59 @@ function closeObraDialog() {
     editingObra = null;
 }
 
-function handleObraSubmit(e) {
+async function handleObraSubmit(e) {
     e.preventDefault();
     
-    const novaObra = {
-        id: Date.now().toString(),
-        title: document.getElementById('obraTitle').value,
-        category: document.getElementById('obraCategory').value,
-        price: parseFloat(document.getElementById('obraPrice').value),
-        imageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&q=80",
-        description: document.getElementById('obraDescription').value
-    };
-    
-    artistData.portfolio.push(novaObra);
-    updateStats();
-    renderPortfolio();
-    closeObraDialog();
-    
-    if (typeof showToast === 'function') {
-        showToast('Obra adicionada!', 'Sua obra foi publicada com sucesso', 'success');
+    try {
+        const formData = {
+            title: document.getElementById('obraTitle').value,
+            category: document.getElementById('obraCategory').value,
+            price: parseFloat(document.getElementById('obraPrice').value),
+            description: document.getElementById('obraDescription').value
+        };
+
+        // TODO: Implementar upload de imagem real
+        // Use uploaded data URL if available (from file preview), otherwise fallback to placeholder
+        formData.imageUrl = uploadedArtworkDataUrl || "https://via.placeholder.com/800x600";
+
+        // Cria obra
+        await window.artworkService.createArtwork(userData.id, formData);
+        
+        // Recarrega dados
+        await loadData();
+        
+        // Fecha modal
+        closeObraDialog();
+    // clear uploaded preview data after submit
+    uploadedArtworkDataUrl = null;
+        
+        if (typeof showToast === 'function') {
+            showToast('Obra adicionada!', 'Sua obra foi publicada com sucesso', 'success');
+        }
+
+    } catch (error) {
+        console.error('Erro ao adicionar obra:', error);
+        if (typeof showToast === 'function') {
+            showToast('Erro', 'Não foi possível adicionar a obra', 'error');
+        }
     }
 }
 
-function handleDeleteObra(obraId) {
-    if (!confirm('Deseja remover esta obra?')) return;
+async function handleDeleteObra(obraId) {
+    if (!confirm('Tem certeza que deseja remover esta obra?')) return;
     
-    artistData.portfolio = artistData.portfolio.filter(o => o.id !== obraId);
-    updateStats();
-    renderPortfolio();
-    
-    if (typeof showToast === 'function') {
-        showToast('Obra removida', 'A obra foi removida do seu portfólio', 'success');
+    try {
+        await window.artworkService.deleteArtwork(obraId);
+        await loadData();
+        
+        if (typeof showToast === 'function') {
+            showToast('Obra removida', 'A obra foi removida do seu portfólio', 'success');
+        }
+    } catch (error) {
+        console.error('Erro ao remover obra:', error);
+        if (typeof showToast === 'function') {
+            showToast('Erro', 'Não foi possível remover a obra', 'error');
+        }
     }
 }
 
@@ -468,37 +439,53 @@ function closeEventoDialog() {
     editingEvento = null;
 }
 
-function handleEventoSubmit(e) {
+async function handleEventoSubmit(e) {
     e.preventDefault();
     
-    const novoEvento = {
-        id: Date.now().toString(),
-        title: document.getElementById('eventoTitle').value,
-        date: document.getElementById('eventoDate').value,
-        location: document.getElementById('eventoLocation').value,
-        imageUrl: document.getElementById('eventoImage').value,
-        attendees: 0
-    };
-    
-    artistData.eventos.push(novoEvento);
-    updateStats();
-    renderEventos();
-    closeEventoDialog();
-    
-    if (typeof showToast === 'function') {
-        showToast('Evento criado!', 'Seu evento foi publicado com sucesso', 'success');
+    try {
+        const formData = {
+            title: document.getElementById('eventoTitle').value,
+            date: document.getElementById('eventoDate').value,
+            location: document.getElementById('eventoLocation').value,
+            imageUrl: document.getElementById('eventoImage').value
+        };
+
+        // Cria evento
+        await window.eventService.createEvent(userData.id, formData);
+        
+        // Recarrega dados
+        await loadData();
+        
+        // Fecha modal
+        closeEventoDialog();
+        
+        if (typeof showToast === 'function') {
+            showToast('Evento criado!', 'Seu evento foi publicado com sucesso', 'success');
+        }
+
+    } catch (error) {
+        console.error('Erro ao criar evento:', error);
+        if (typeof showToast === 'function') {
+            showToast('Erro', 'Não foi possível criar o evento', 'error');
+        }
     }
 }
 
-function handleDeleteEvento(eventoId) {
-    if (!confirm('Deseja cancelar este evento?')) return;
+async function handleDeleteEvento(eventoId) {
+    if (!confirm('Tem certeza que deseja cancelar este evento?')) return;
     
-    artistData.eventos = artistData.eventos.filter(e => e.id !== eventoId);
-    updateStats();
-    renderEventos();
-    
-    if (typeof showToast === 'function') {
-        showToast('Evento cancelado', 'O evento foi removido', 'success');
+    try {
+        await window.eventService.deleteEvent(eventoId);
+        await loadData();
+        
+        if (typeof showToast === 'function') {
+            showToast('Evento cancelado', 'O evento foi removido', 'success');
+        }
+    } catch (error) {
+        console.error('Erro ao cancelar evento:', error);
+        if (typeof showToast === 'function') {
+            showToast('Erro', 'Não foi possível cancelar o evento', 'error');
+        }
     }
 }
 
@@ -506,29 +493,84 @@ function handleDeleteEvento(eventoId) {
 // HANDLERS
 // ========================================
 
-function handleRemoveFavorito(obraId) {
-    artistData.favoritos = artistData.favoritos.filter(o => o.id !== obraId);
-    renderFavoritos();
-    
-    if (typeof showToast === 'function') {
-        showToast('Removido dos favoritos', 'A obra foi removida', 'success');
+async function handleRemoveFavorito(obraId) {
+    try {
+        await window.artworkService.toggleFavorite(userData.id, obraId);
+        // Recarrega favoritos do serviço para garantir sincronismo
+        const favs = await window.artworkService.getFavorites(userData.id);
+        artistData.favoritos = favs.map(f => ({
+            id: f.obra.id,
+            title: f.obra.titulo || f.obra.title || '',
+            imageUrl: f.obra.imagemUrl || f.obra.imageUrl || '',
+            price: Number(f.obra.preco || f.obra.price || 0),
+            artist: f.obra.artistaNome || f.obra.artist || userData.nome || ''
+        })).filter(Boolean);
+        updateStats();
+        renderFavoritos();
+        if (typeof showToast === 'function') {
+            showToast('Removido dos favoritos', 'A obra foi removida', 'success');
+        }
+    } catch (error) {
+        console.error('Erro ao remover dos favoritos:', error);
+        if (typeof showToast === 'function') {
+            showToast('Erro', 'Não foi possível remover dos favoritos', 'error');
+        }
     }
 }
 
-function handleRemoveCarrinho(obraId) {
-    artistData.carrinho = artistData.carrinho.filter(o => o.id !== obraId);
-    renderCarrinho();
-    
-    if (typeof showToast === 'function') {
-        showToast('Removido do carrinho', 'A obra foi removida', 'success');
+async function handleRemoveCarrinho(obraId) {
+    try {
+        await window.artworkService.removeFromCart(userData.id, obraId);
+        // Recarrega carrinho do serviço para garantir sincronismo
+        const carrinho = await window.artworkService.getCartItems(userData.id);
+        artistData.carrinho = carrinho.map(i => {
+            const art = i.obra;
+            if (!art) return null;
+            return {
+                id: art.id,
+                title: art.titulo || art.title || '',
+                imageUrl: art.imagemUrl || art.imageUrl || '',
+                price: Number(art.preco || art.price || 0),
+                artist: art.artistaNome || art.artist || userData.nome || '',
+                quantity: i.quantidade || 1
+            };
+        }).filter(Boolean);
+        updateStats();
+        renderCarrinho();
+        if (typeof showToast === 'function') {
+            showToast('Removido do carrinho', 'A obra foi removida', 'success');
+        }
+    } catch (error) {
+        console.error('Erro ao remover do carrinho:', error);
+        if (typeof showToast === 'function') {
+            showToast('Erro', 'Não foi possível remover do carrinho', 'error');
+        }
     }
 }
 
-function handleFinalizarCompra() {
-    if (typeof showToast === 'function') {
-        showToast('Em desenvolvimento', 'Funcionalidade de checkout em breve!', 'info');
-    } else {
-        alert('Funcionalidade em desenvolvimento');
+async function handleFinalizarCompra() {
+    try {
+        // TODO: Implementar seleção de endereço
+        const address = (await window.userService.getUser(userData.id)).addresses[0];
+        
+        if (!address) {
+            if (typeof showToast === 'function') {
+                showToast('Atenção', 'Adicione um endereço antes de finalizar a compra', 'warning');
+            }
+            return;
+        }
+
+        await window.artworkService.createPurchase(userData.id, address.id);
+        await loadData();
+        
+        if (typeof showToast === 'function') {
+            showToast('Compra realizada!', 'Sua compra foi finalizada com sucesso', 'success');
+        }
+    } catch (error) {
+        console.error('Erro ao finalizar compra:', error);
+        if (typeof showToast === 'function') {
+            showToast('Erro', 'Não foi possível finalizar a compra', 'error');
+        }
     }
 }
 
@@ -604,6 +646,8 @@ function initFileUpload() {
         const reader = new FileReader();
         
         reader.onload = e => {
+            // store the latest uploaded file as data URL for submission
+            uploadedArtworkDataUrl = e.target.result;
             const previewItem = document.createElement('div');
             previewItem.className = 'preview-item';
             
@@ -718,46 +762,127 @@ function formatFileSize(bytes) {
 }
 
 // ========================================
-// UTILITIES
+// CARREGA DADOS
 // ========================================
 
-function formatPrice(price) {
-    return price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+async function loadData() {
+    try {
+        // Carrega obras do artista
+        const portfolio = await window.artworkService.listArtworks({
+            artistId: userData.id,
+            includeStats: true
+        });
+
+        // Carrega eventos do artista
+        const eventos = await window.eventService.listEvents({
+            artistId: userData.id
+        });
+
+        // Carrega favoritos
+        const favoritos = await window.artworkService.getFavorites(userData.id);
+
+        // Carrega carrinho
+        const carrinho = await window.artworkService.getCartItems(userData.id);
+
+        // Carrega histórico de vendas
+        const historico = await window.artworkService.getArtistSales(userData.id);
+
+        // Normaliza dados para a UI (converte chaves PT-BR -> esperado pela UI em inglês)
+        const normalizeArtwork = (a) => {
+            if (!a) return null;
+            return {
+                id: a.id || a.id,
+                title: a.titulo || a.title || '',
+                imageUrl: a.imagemUrl || a.imageUrl || '',
+                price: typeof a.preco !== 'undefined' ? Number(a.preco) : (typeof a.price !== 'undefined' ? Number(a.price) : 0),
+                category: a.categoria || a.category || '',
+                artist: a.artistaNome || a.artist || userData.name || userData.nome || ''
+            };
+        };
+
+        const normalizedPortfolio = (portfolio || []).map(normalizeArtwork).filter(Boolean);
+
+        // favoritos: artworkService.getFavorites returns wrappers { ...f, obra }
+        const normalizedFavoritos = (favoritos || []).map(f => normalizeArtwork(f.obra)).filter(Boolean);
+
+        // carrinho: getCartItems returns items with obra property and quantity
+        const normalizedCarrinho = (carrinho || []).map(i => {
+            const art = normalizeArtwork(i.obra);
+            if (!art) return null;
+            return {
+                ...art,
+                quantity: i.quantidade || i.quantity || 1
+            };
+        }).filter(Boolean);
+
+        // historico: map purchases to expected shape
+        const normalizedHistorico = (historico || []).map(p => ({
+            id: p.id,
+                date: p.dataCriacao ? new Date(p.dataCriacao).toLocaleString('pt-BR') : '',
+                status: window.artworkService._normalizeStatus(p.status),
+            total: p.valorTotal || p.total || 0,
+            items: (p.items || []).map(it => ({
+                id: it.id,
+                obra: normalizeArtwork(it.obra),
+                quantidade: it.quantidade || it.quantity || 1,
+                precoUnitario: it.precoUnitario || it.preco || 0
+            }))
+        }));
+
+        // Atualiza dados
+        artistData = {
+            portfolio: normalizedPortfolio,
+            eventos: (eventos || []).map(ev => ({
+                id: ev.id,
+                title: ev.titulo || ev.title || '',
+                imageUrl: ev.imagemUrl || ev.imageUrl || '',
+                date: ev.data || ev.date || '',
+                location: ev.local || ev.location || '',
+                attendees: ev.participantes || ev.attendees || 0,
+                status: ev.status || ''
+            })),
+            favoritos: normalizedFavoritos,
+            carrinho: normalizedCarrinho,
+            historico: normalizedHistorico
+        };
+
+        // Atualiza interface
+        updateStats();
+        renderPortfolio();
+        renderEventos();
+        renderFavoritos();
+        renderCarrinho();
+        renderHistorico();
+
+    } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        if (typeof showToast === 'function') {
+            showToast('Erro', 'Não foi possível carregar alguns dados', 'error');
+        }
+    }
 }
 
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+// ========================================
+// ATUALIZA INTERFACE
+// ========================================
+
+function updateUserInterface() {
+    // Avatar
+    const avatar = document.getElementById('profileAvatar');
+    if (avatar && userData.avatar) {
+        avatar.src = userData.avatar;
+        avatar.alt = userData.nome;
+    }
+
+    // Nome
+    const name = document.getElementById('profileName');
+    if (name) {
+        name.textContent = userData.nome;
+    }
 }
 
-// ========================================
-// INIT
-// ========================================
-
-async function init() {
-    // Carrega mock data
-    await new Promise(resolve => setTimeout(resolve, 500));
-    artistData.portfolio = [...mockPortfolio];
-    artistData.eventos = [...mockEventos];
-    artistData.favoritos = [...mockFavoritos];
-    artistData.carrinho = [...mockCarrinho];
-    artistData.historico = [];
-    
-    // Inicializa tabs
-    initTabs();
-    
-    // Inicializa file upload
-    initFileUpload();
-    
-    // Renderiza
-    updateStats();
-    renderPortfolio();
-    renderEventos();
-    renderFavoritos();
-    renderCarrinho();
-    renderHistorico();
-    
-    // Event listeners
+function setupEventListeners() {
+    // Forms
     const obraForm = document.getElementById('obraForm');
     if (obraForm) {
         obraForm.addEventListener('submit', handleObraSubmit);
@@ -777,6 +902,68 @@ async function init() {
     });
 }
 
+// ========================================
+// UTILITIES
+// ========================================
+
+function formatPrice(price) {
+    // Defensive: handle undefined/null
+    const p = (typeof price === 'number' && !isNaN(price)) ? price : (price ? Number(price) : 0);
+    try {
+        return p.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    } catch (err) {
+        return '0,00';
+    }
+}
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+// ========================================
+// INIT
+// ========================================
+
+async function init() {
+    try {
+        // Verifica autenticação
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            window.location.href = '../../../public/login.html';
+            return;
+        }
+
+        // Carrega dados do usuário
+        userData = JSON.parse(localStorage.getItem('userData'));
+        if (!userData || userData.tipo !== 'ARTISTA') {
+            handleLogout();
+            return;
+        }
+
+        // Atualiza interface com dados do usuário
+        updateUserInterface();
+        
+        // Inicializa abas
+        initTabs();
+        
+        // Inicializa upload de arquivos
+        initFileUpload();
+        
+        // Carrega dados
+        await loadData();
+        
+        // Adiciona event listeners
+        setupEventListeners();
+        
+    } catch (error) {
+        console.error('Erro ao inicializar dashboard:', error);
+        if (typeof showToast === 'function') {
+            showToast('Erro', 'Não foi possível carregar seus dados', 'error');
+        }
+    }
+}
+
 // Torna funções globais
 window.openAddObraDialog = openAddObraDialog;
 window.closeObraDialog = closeObraDialog;
@@ -789,9 +976,14 @@ window.handleRemoveCarrinho = handleRemoveCarrinho;
 window.handleFinalizarCompra = handleFinalizarCompra;
 window.removePreview = removePreview;
 window.checkPreviews = checkPreviews;
-window.removePreview = removePreview;
-window.checkPreviews = checkPreviews;
 
+// Garante listeners dos formulários e modais
+document.addEventListener('DOMContentLoaded', () => {
+    const obraForm = document.getElementById('obraForm');
+    if (obraForm) obraForm.addEventListener('submit', handleObraSubmit);
+    const eventoForm = document.getElementById('eventoForm');
+    if (eventoForm) eventoForm.addEventListener('submit', handleEventoSubmit);
+});
 // Executa
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

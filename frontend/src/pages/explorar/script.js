@@ -112,14 +112,62 @@ const icons = {
  */
 async function fetchArtworks(page = 0, size = 8) {
     try {
-        // TODO: Substituir por chamada real à API
-        // const response = await fetch(`/api/artworks?page=${page}&size=${size}`);
-        // const data = await response.json();
-        // return data;
-        
-        // Mock - simulando delay de rede
+        // Tenta carregar obras do serviço (persistência localStorage)
+        if (window.artworkService && typeof window.artworkService.listArtworks === 'function') {
+            const all = await window.artworkService.listArtworks({ status: 'DISPONIVEL' });
+
+            // Carrega dados dos artistas uma vez
+            let artistsData = {};
+            if (window.userService && typeof window.userService.getArtist === 'function') {
+                const uniqueArtistIds = [...new Set(all.map(a => a.artistaId))];
+                for (const artistId of uniqueArtistIds) {
+                    try {
+                        const artist = await window.userService.getArtist(artistId);
+                        if (artist) artistsData[artistId] = artist;
+                    } catch (err) {
+                        console.warn(`Não foi possível carregar dados do artista ${artistId}:`, err);
+                    }
+                }
+            }
+
+            // if service returned empty, fallback to mock sample artworks so page isn't empty
+            const source = (Array.isArray(all) && all.length > 0) ? all : mockArtworks;
+
+            // Paginação simples em memória
+            const start = page * size;
+            const slice = source.slice(start, start + size);
+
+            // Carrega contagem de curtidas (favoritos) para cada obra
+            const favoriteCounts = {};
+            if (window.artworkService.getFavoritesCount) {
+                for (const artwork of slice) {
+                    favoriteCounts[artwork.id] = await window.artworkService.getFavoritesCount(artwork.id);
+                }
+            }
+            
+            return {
+                content: slice.map(a => {
+                    // Tenta pegar dados do artista
+                    const artist = artistsData[a.artistaId] || {};
+                    return {
+                        id: a.id,
+                        imageUrl: a.imagemUrl || a.imageUrl || '',
+                        title: a.titulo || a.title || '',
+                        artistId: a.artistaId,
+                        artistName: artist.nome || artist.name || a.artistaNome || a.artist || 'Artista',
+                        artistPhoto: artist.avatar || artist.photo || a.artistaAvatar || 'https://i.pravatar.cc/150?img=7',
+                        price: Number(a.preco || a.price || 0),
+                        likes: favoriteCounts[a.id] || 0
+                    };
+                }),
+                page: page,
+                totalPages: Math.ceil(all.length / size),
+                hasMore: start + size < (Array.isArray(source) ? source.length : 0)
+            };
+        }
+
+        // Fallback mock - simulando delay de rede
         await new Promise(resolve => setTimeout(resolve, 500));
-        
         return {
             content: mockArtworks,
             page: page,
@@ -145,7 +193,7 @@ function createArtCard(artwork, index) {
     card.style.animationDelay = `${index * 50}ms`;
     
     const isLiked = likedArtworks.has(artwork.id);
-    const currentLikes = likeCounts[artwork.id] || artwork.likes;
+    const currentLikes = likeCounts[artwork.id] || artwork.likes || 0;
     
     card.innerHTML = `
         <div class="art-card-image-container">
@@ -154,7 +202,7 @@ function createArtCard(artwork, index) {
             <div class="art-card-overlay">
                 <div class="art-card-overlay-content">
                     <h3 class="art-card-title">${artwork.title}</h3>
-                    <p class="art-card-price">R$ ${artwork.price.toFixed(2)}</p>
+                    <p class="art-card-price">R$ ${formatPrice(artwork.price)}</p>
                 </div>
                 <div class="art-card-actions">
                     <button class="action-btn" onclick="handleAddToCart('${artwork.id}')" title="Adicionar ao carrinho">
@@ -182,6 +230,16 @@ function createArtCard(artwork, index) {
     return card;
 }
 
+// Defensive price formatter used in this page
+function formatPrice(price) {
+    const p = (typeof price === 'number' && !isNaN(price)) ? price : (price ? Number(price) : 0);
+    try {
+        return p.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    } catch (err) {
+        return '0,00';
+    }
+}
+
 /**
  * Renderiza as obras de arte na grid
  */
@@ -206,45 +264,82 @@ function renderArtworks(artworks, append = false) {
  * Toggle do like na obra
  */
 function handleToggleLike(artworkId) {
-    const isLiked = likedArtworks.has(artworkId);
-    
-    if (isLiked) {
-        likedArtworks.delete(artworkId);
-        likeCounts[artworkId]--;
-    } else {
-        likedArtworks.add(artworkId);
-        likeCounts[artworkId]++;
+    // If user is logged, persist favorite via service
+    const user = (function() {
+        try { return JSON.parse(localStorage.getItem('userData') || 'null'); } catch(e){ return null; }
+    })();
+
+    if (!user || !user.id) {
+        alert('Faça login para favoritar obras');
+        return;
     }
-    
-    // Atualiza o contador de likes
-    const likesElement = document.querySelector(`[data-artwork-id="${artworkId}"]`);
-    if (likesElement) {
-        likesElement.textContent = likeCounts[artworkId];
-    }
-    
-    // Atualiza o botão de like
-    const cards = document.querySelectorAll('.art-card');
-    cards.forEach(card => {
-        const btn = card.querySelector(`button[onclick="handleToggleLike('${artworkId}')"]`);
-        if (btn) {
-            btn.classList.toggle('liked', !isLiked);
-            btn.innerHTML = !isLiked ? icons.heartFilled : icons.heart;
+
+    (async () => {
+        try {
+            const wasLiked = likedArtworks.has(artworkId);
+            const res = await window.artworkService.toggleFavorite(user.id, artworkId);
+            
+            if (res && res.added) {
+                likedArtworks.add(artworkId);
+            } else {
+                likedArtworks.delete(artworkId);
+            }
+
+            // Busca contagem real atualizada
+            const currentCount = await window.artworkService.getFavoritesCount(artworkId);
+            likeCounts[artworkId] = currentCount;
+
+            // Update UI: contador e visual do botão
+            const likesElement = document.querySelector(`[data-artwork-id="${artworkId}"]`);
+            if (likesElement) likesElement.textContent = currentCount;
+
+            const cards = document.querySelectorAll('.art-card');
+            cards.forEach(card => {
+                const btn = card.querySelector(`button[onclick="handleToggleLike('${artworkId}')"]`);
+                if (btn) {
+                    const nowLiked = likedArtworks.has(artworkId);
+                    btn.classList.toggle('liked', nowLiked);
+                    btn.innerHTML = nowLiked ? icons.heartFilled : icons.heart;
+                }
+            });
+
+        } catch (err) {
+            console.error('Erro ao favoritar:', err);
+            alert('Não foi possível favoritar. Tente novamente.');
+            
+            // Reverte estado local em caso de erro
+            if (likedArtworks.has(artworkId)) {
+                likedArtworks.delete(artworkId);
+            } else {
+                likedArtworks.add(artworkId);
+            }
         }
-    });
-    
-    console.log(`Obra ${artworkId} ${!isLiked ? 'favoritada' : 'desfavoritada'}`);
+    })();
 }
 
 /**
  * Adiciona obra ao carrinho
  */
 function handleAddToCart(artworkId) {
-    const artwork = mockArtworks.find(a => a.id === artworkId);
-    if (artwork) {
-        console.log('Adicionado ao carrinho:', artwork.title);
-        // TODO: Implementar adição real ao carrinho
-        alert(`"${artwork.title}" adicionado ao carrinho!`);
+    const user = (function() {
+        try { return JSON.parse(localStorage.getItem('userData') || 'null'); } catch(e){ return null; }
+    })();
+
+    if (!user || !user.id) {
+        alert('Faça login para adicionar ao carrinho');
+        return;
     }
+
+    (async () => {
+        try {
+            await window.artworkService.addToCart(user.id, artworkId, 1);
+            if (typeof showToast === 'function') showToast('Adicionado', 'Obra adicionada ao carrinho', 'success');
+            else alert('Obra adicionada ao carrinho');
+        } catch (err) {
+            console.error('Erro ao adicionar ao carrinho:', err);
+            alert('Não foi possível adicionar ao carrinho.');
+        }
+    })();
 }
 
 /**
@@ -293,13 +388,34 @@ async function loadMoreArtworks() {
  */
 async function initExplorar() {
     try {
-        // Carrega as obras iniciais
+        // Se usuário logado, carregue favoritos reais primeiro
+        const user = (function() {
+            try { return JSON.parse(localStorage.getItem('userData') || 'null'); } catch(e){ return null; }
+        })();
+
+        // Limpa estado
+        likedArtworks.clear();
+        for (const key in likeCounts) delete likeCounts[key];
+
+        if (user && user.id && window.artworkService) {
+            try {
+                const favs = await window.artworkService.getFavorites(user.id);
+                favs.forEach(f => {
+                    const obra = f.obra || f;
+                    if (obra && obra.id) likedArtworks.add(obra.id);
+                });
+            } catch (err) {
+                console.warn('Não foi possível carregar favoritos do usuário:', err);
+            }
+        }
+
+        // Carrega as obras e renderiza
         const data = await fetchArtworks(0);
         renderArtworks(data.content);
         
-        // Inicializa os contadores de likes
+        // Atualiza contadores de likes
         data.content.forEach(artwork => {
-            likeCounts[artwork.id] = artwork.likes;
+            likeCounts[artwork.id] = artwork.likes || 0;
         });
         
     } catch (error) {

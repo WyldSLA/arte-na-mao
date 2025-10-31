@@ -131,9 +131,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 
                 saveUserData(response);
-                
+
+                // Use normalized role (user.tipo or user.role) to decide redirect
+                const roleForRedirect = (response.user && (response.user.role || response.user.tipo)) || null;
                 setTimeout(() => {
-                    redirectToDashboard(response.user.role);
+                    redirectToDashboard(roleForRedirect);
                 }, 1000);
                 
             } catch (error) {
@@ -201,30 +203,34 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     // ========================================
-    // API MOCK - SIMULAÇÃO DE LOGIN
+    // LOGIN DE USUÁRIO
     // ========================================
     
     async function loginAPI(email, password) {
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        const user = mockUsers.find(u => u.email === email && u.password === password);
-        
-        if (!user) {
-            throw new Error('E-mail ou senha incorretos');
+        try {
+            return await window.userService.login(email, password);
+        } catch (error) {
+            console.error('❌ Erro no login:', error);
+            throw error;
         }
-        
-        return {
-            token: 'mock-jwt-token-' + Date.now(),
-            user: user.user
-        };
     }
     
     function saveUserData(data) {
         window.authData = data;
         localStorage.setItem('authToken', data.token);
-        localStorage.setItem('userData', JSON.stringify(data.user));
-        
-        console.log('✅ Login mock realizado:', data.user);
+
+        // Normalize stored user to have expected keys (name, role)
+        const rawUser = data.user || {};
+        const normalizedUser = {
+            ...rawUser,
+            name: rawUser.nome || rawUser.name || '',
+            role: rawUser.tipo || rawUser.role || ''
+        };
+
+        localStorage.setItem('userData', JSON.stringify(normalizedUser));
+        console.log('✅ Login mock realizado (normalizado):', normalizedUser);
     }
     
     function redirectToDashboard(role) {

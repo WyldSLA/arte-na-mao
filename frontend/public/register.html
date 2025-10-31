@@ -91,6 +91,66 @@
                         <span id="name-error" class="form-error" role="alert"></span>
                     </div>
 
+                        <!-- CPF Field -->
+                        <div class="form-group">
+                            <label for="cpf" class="form-label">CPF</label>
+                            <input
+                                type="text"
+                                id="cpf"
+                                name="cpf"
+                                class="form-input"
+                                placeholder="000.000.000-00"
+                                aria-describedby="cpf-error"
+                                inputmode="numeric"
+                                required
+                            >
+                            <span id="cpf-error" class="form-error" role="alert"></span>
+                        </div>
+
+                        <!-- Gender Field -->
+                        <div class="form-group">
+                            <label for="genero" class="form-label">Gênero</label>
+                            <select id="genero" name="genero" class="form-input" aria-describedby="genero-error">
+                                <option value="">Selecione</option>
+                                <option value="feminino">Feminino</option>
+                                <option value="masculino">Masculino</option>
+                                <option value="nao-binario">Não-binário</option>
+                                <option value="prefiro-nao-dizer">Prefiro não dizer</option>
+                            </select>
+                            <span id="genero-error" class="form-error" role="alert"></span>
+                        </div>
+
+                        <!-- Phone Field -->
+                        <div class="form-group">
+                            <label for="telefone" class="form-label">Telefone</label>
+                            <input
+                                type="tel"
+                                id="telefone"
+                                name="telefone"
+                                class="form-input"
+                                placeholder="(00) 90000-0000"
+                                aria-describedby="telefone-error"
+                            >
+                            <span id="telefone-error" class="form-error" role="alert"></span>
+                        </div>
+
+                        <!-- Birth Date & Age -->
+                        <div class="form-group form-row">
+                            <div style="flex: 1; margin-right: 10px;">
+                                <label for="data_de_nascimento" class="form-label">Data de nascimento</label>
+                                <input
+                                    type="date"
+                                    id="data_de_nascimento"
+                                    name="data_de_nascimento"
+                                    class="form-input"
+                                    aria-describedby="data_de_nascimento-error"
+                                >
+                                <span id="data_de_nascimento-error" class="form-error" role="alert"></span>
+                            </div>
+
+                            <!-- idade removida: será derivada a partir da data de nascimento -->
+                        </div>
+
                     <!-- Email Field -->
                     <div class="form-group">
                         <label for="email" class="form-label">E-mail</label>
@@ -115,7 +175,7 @@
                                 id="password" 
                                 name="password"
                                 class="form-input" 
-                                placeholder="Mínimo 8 caracteres"
+                                placeholder="Mínimo 6 caracteres"
                                 aria-describedby="password-error password-requirements"
                                 required
                             >
@@ -131,12 +191,9 @@
                             </button>
                         </div>
                         <span id="password-error" class="form-error" role="alert"></span>
-                        <div id="password-requirements" class="password-requirements">
-                            <p class="requirement" id="req-length">✗ Mínimo de 8 caracteres</p>
-                            <p class="requirement" id="req-uppercase">✗ Pelo menos uma letra maiúscula</p>
-                            <p class="requirement" id="req-lowercase">✗ Pelo menos uma letra minúscula</p>
-                            <p class="requirement" id="req-number">✗ Pelo menos um número</p>
-                            <p class="requirement" id="req-symbol">✗ Pelo menos um símbolo especial</p>
+                        <div id="password-strength" class="password-strength">
+                            <div id="strength-bar" class="strength-bar" aria-hidden="true"></div>
+                            <span id="strength-text" class="strength-text">Força da senha: <strong>fraca</strong></span>
                         </div>
                     </div>
 
@@ -242,6 +299,10 @@
     <!-- Toast Container (notificações) -->
     <div id="toastContainer" class="toast-container"></div>
 
+    <!-- Services -->
+    <script src="assets/js/services/userService.js"></script>
+    
+    <!-- Main Scripts -->
     <script src="assets/js/main.js"></script>
     <script src="assets/js/register.js"></script>
 </body>

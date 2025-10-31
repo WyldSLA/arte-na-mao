@@ -3,18 +3,32 @@
 // ========================================
 
 /**
- * Verifica se o usuário está logado
+ * Verifica se o usuário está logado e atualiza dados
  */
-function checkAuth() {
+async function checkAuth() {
     const token = getAuthToken();
-    const isLoggedIn = !!token;
+    const userData = getUserData();
+    const isLoggedIn = !!(token && userData);
+    
+    if (isLoggedIn) {
+        try {
+            // Recarrega dados do usuário
+            const updatedUser = await window.userService.getUser(userData.id);
+            // Normalize and save user so other scripts can rely on `name` and `role`
+            normalizeAndSaveUser(updatedUser);
+        } catch (error) {
+            console.error('Erro ao atualizar dados do usuário:', error);
+            handleLogout();
+            return false;
+        }
+    }
     
     updateAuthUI(isLoggedIn);
     return isLoggedIn;
 }
 
 /**
- * Redireciona para o perfil do usuário baseado no role
+ * Redireciona para o perfil do usuário baseado no tipo
  */
 function redirectToProfile() {
     const token = getAuthToken();
@@ -98,6 +112,21 @@ function getUserData() {
         console.error('Erro ao obter dados do usuário:', error);
         return null;
     }
+}
+
+/**
+ * Normaliza o objeto de usuário e salva em localStorage com chaves previsíveis
+ * (mantém campos originais, mas adiciona `name` e `role`).
+ */
+function normalizeAndSaveUser(rawUser) {
+    if (!rawUser) return null;
+    const normalized = {
+        ...rawUser,
+        name: rawUser.nome || rawUser.name || '',
+        role: rawUser.tipo || rawUser.role || ''
+    };
+    localStorage.setItem('userData', JSON.stringify(normalized));
+    return normalized;
 }
 
 /**

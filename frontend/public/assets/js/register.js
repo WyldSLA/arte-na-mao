@@ -2,6 +2,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('registerForm');
     const passwordInput = document.getElementById('password');
     const confirmPasswordInput = document.getElementById('confirmPassword');
+    const cpfInput = document.getElementById('cpf');
+    const dobInput = document.getElementById('data_de_nascimento');
+    const strengthBar = document.getElementById('strength-bar');
+    const strengthText = document.getElementById('strength-text');
+    const passwordStrengthContainer = document.getElementById('password-strength');
     
     if (!form || !passwordInput || !confirmPasswordInput) {
         console.warn('Elementos do formulário de registro não encontrados');
@@ -45,61 +50,151 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // ========================================
-    // VALIDAÇÃO DE REQUISITOS DE SENHA
+    // PASSWORD STRENGTH (min 6 required)
     // ========================================
-    
-    const requirements = {
-        length: document.getElementById('req-length'),
-        uppercase: document.getElementById('req-uppercase'),
-        lowercase: document.getElementById('req-lowercase'),
-        number: document.getElementById('req-number'),
-        symbol: document.getElementById('req-symbol')
-    };
 
-    const allRequirementsExist = Object.values(requirements).every(el => el !== null);
-    
-    let checkPassword;
-    
-    if (allRequirementsExist) {
-        checkPassword = function(password) {
-            const checks = {
-                length: password.length >= 8,
-                uppercase: /[A-Z]/.test(password),
-                lowercase: /[a-z]/.test(password),
-                number: /[0-9]/.test(password),
-                symbol: /[!@#$%^&*(),.?":{}|<>]/.test(password)
-            };
-
-            Object.keys(checks).forEach(requirement => {
-                const reqElement = requirements[requirement];
-                if (!reqElement) return;
-                
-                if (checks[requirement]) {
-                    if (!reqElement.classList.contains('met')) {
-                        reqElement.innerHTML = reqElement.innerHTML.replace('✗', '✓');
-                        reqElement.classList.add('met');
-                    }
-                } else {
-                    if (reqElement.classList.contains('met')) {
-                        reqElement.innerHTML = reqElement.innerHTML.replace('✓', '✗');
-                        reqElement.classList.remove('met');
-                    }
-                }
-            });
-
-            return Object.values(checks).every(check => check === true);
-        };
-
-        passwordInput.addEventListener('input', function() {
-            const isValid = checkPassword(this.value);
-            this.setCustomValidity(isValid ? '' : 'A senha deve atender a todos os requisitos');
-        });
-    } else {
-        // Versão simplificada sem requisitos visuais
-        checkPassword = function(password) {
-            return password.length >= 6;
-        };
+    function calculatePasswordScore(pw) {
+        if (!pw) return 0;
+        let score = 0;
+        if (pw.length >= 6) score += 1; // minimum
+        if (pw.length >= 8) score += 1;
+        if (/[A-Z]/.test(pw)) score += 1;
+        if (/[0-9]/.test(pw)) score += 1;
+        if (/[!@#$%^&*(),.?":{}|<>]/.test(pw)) score += 1;
+        return score;
     }
+
+    function updatePasswordStrengthUI(pw) {
+        const score = calculatePasswordScore(pw);
+        // determine label
+        let label = 'fraca';
+        let pct = 0;
+        // muito forte for long passwords
+        if (pw && pw.length >= 15) {
+            label = 'muito forte'; pct = 100;
+        } else if (score <= 1) { label = 'fraca'; pct = 20; }
+        else if (score === 2 || score === 3) { label = 'média'; pct = 60; }
+        else if (score === 4) { label = 'forte'; pct = 80; }
+        else { label = 'forte'; pct = 100; }
+
+        if (strengthBar) {
+            strengthBar.style.width = pct + '%';
+            let color = '#ef4444'; // red
+            if (label === 'média') color = '#f59e0b';
+            else if (label === 'forte') color = '#10b981';
+            else if (label === 'muito forte') color = '#064e3b';
+            strengthBar.style.background = color;
+        }
+        if (strengthText) {
+            strengthText.innerHTML = `Força da senha: <strong>${label}</strong>`;
+            // color the label text for accessibility
+            const strongEl = strengthText.querySelector('strong');
+            if (strongEl) strongEl.style.color = (label === 'fraca' ? '#ef4444' : (label === 'média' ? '#f59e0b' : (label === 'muito forte' ? '#064e3b' : '#10b981')));
+        }
+
+        // set validity: only minimum 6 chars required
+        if (passwordInput) {
+            passwordInput.setCustomValidity(pw.length >= 6 ? '' : 'A senha deve ter no mínimo 6 caracteres');
+        }
+    }
+
+    // initialize UI: hide strength until user starts typing
+    if (passwordStrengthContainer) passwordStrengthContainer.style.display = 'none';
+    updatePasswordStrengthUI('');
+
+    passwordInput.addEventListener('input', function() {
+        const val = this.value || '';
+        if (val.length > 0) {
+            if (passwordStrengthContainer) passwordStrengthContainer.style.display = '';
+        } else {
+            if (passwordStrengthContainer) passwordStrengthContainer.style.display = 'none';
+        }
+        updatePasswordStrengthUI(val);
+    });
+
+    // ========================================
+    // CPF MASK & VALIDATION, DOB -> AGE
+    // ========================================
+
+    function onlyDigits(str) {
+        return (str || '').replace(/\D+/g, '');
+    }
+
+    function formatCPF(value) {
+        const v = onlyDigits(value).slice(0, 11);
+        let out = v;
+        if (v.length > 9) out = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        else if (v.length > 6) out = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+        else if (v.length > 3) out = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+        return out;
+    }
+
+    function validateCPF(cpf) {
+        const s = onlyDigits(cpf);
+        if (!s || s.length !== 11) return false;
+        // invalid known patterns
+        if (/^(\d)\1{10}$/.test(s)) return false;
+
+        const calc = (t) => {
+            let sum = 0;
+            for (let i = 0; i < t; i++) {
+                sum += parseInt(s.charAt(i)) * (t + 1 - i);
+            }
+            const d = 11 - (sum % 11);
+            return d > 9 ? 0 : d;
+        };
+
+        return calc(9) === parseInt(s.charAt(9)) && calc(10) === parseInt(s.charAt(10));
+    }
+
+    if (cpfInput) {
+        cpfInput.addEventListener('input', function(e) {
+            const formatted = formatCPF(this.value);
+            this.value = formatted;
+            const err = document.getElementById('cpf-error');
+            if (formatted && !validateCPF(formatted)) {
+                if (err) err.textContent = 'CPF inválido';
+                this.style.borderColor = 'var(--destructive, #ef4444)';
+            } else {
+                if (err) err.textContent = '';
+                this.style.borderColor = '';
+            }
+        });
+    }
+
+    // derive age from DOB helper (does not update any input - age will be sent to service)
+    function computeAgeFromDOB(dobValue) {
+        if (!dobValue) return null;
+        const birth = new Date(dobValue);
+        if (isNaN(birth.getTime())) return null;
+        const today = new Date();
+        let age = today.getFullYear() - birth.getFullYear();
+        const m = today.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+        return age >= 0 ? age : null;
+    }
+
+    // Clear field error when user starts typing/selecting after a failed submit
+    const interactiveFields = form.querySelectorAll('input, select, textarea');
+    interactiveFields.forEach(field => {
+        field.addEventListener('input', function() {
+            const id = this.id;
+            if (!id) return;
+            const err = document.getElementById(`${id}-error`);
+            if (err) err.textContent = '';
+            this.style.borderColor = '';
+            this.setAttribute('aria-invalid', 'false');
+        });
+        // also clear on focus for selects / other controls
+        field.addEventListener('focus', function() {
+            const id = this.id;
+            if (!id) return;
+            const err = document.getElementById(`${id}-error`);
+            if (err) err.textContent = '';
+            this.style.borderColor = '';
+            this.setAttribute('aria-invalid', 'false');
+        });
+    });
     
     // ========================================
     // VALIDAÇÃO DE CONFIRMAÇÃO DE SENHA
@@ -125,8 +220,15 @@ document.addEventListener('DOMContentLoaded', function() {
             email: document.getElementById('email').value.trim(),
             password: passwordInput.value,
             confirmPassword: confirmPasswordInput.value,
-            accountType: document.querySelector('input[name="accountType"]:checked')?.value || 'cliente'
+            accountType: document.querySelector('input[name="accountType"]:checked')?.value || 'cliente',
+            cpf: document.getElementById('cpf') ? document.getElementById('cpf').value.trim() : '',
+            genero: document.getElementById('genero') ? document.getElementById('genero').value : '',
+            telefone: document.getElementById('telefone') ? document.getElementById('telefone').value.trim() : '',
+            data_de_nascimento: document.getElementById('data_de_nascimento') ? document.getElementById('data_de_nascimento').value : ''
         };
+
+        // derive age from dob for storage
+        formData.idade = computeAgeFromDOB(formData.data_de_nascimento);
         
         clearAllErrors();
         
@@ -149,10 +251,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             saveUserData(response);
-            
+
+            // usa campo 'tipo' retornado pelo serviço (ARTISTA | CLIENTE)
             setTimeout(() => {
-                redirectToDashboard(response.user.role);
-            }, 1500);
+                redirectToDashboard(response.user.tipo);
+            }, 800);
             
         } catch (error) {
             if (typeof showToast === 'function') {
@@ -184,8 +287,22 @@ document.addEventListener('DOMContentLoaded', function() {
             showError('email', 'E-mail inválido');
             isValid = false;
         }
+
+        if (!data.cpf) {
+            showError('cpf', 'CPF é obrigatório');
+            isValid = false;
+        } else if (!validateCPF(data.cpf)) {
+            showError('cpf', 'CPF inválido');
+            isValid = false;
+        }
+
+        // Data de nascimento ou idade: pelo menos uma deve estar preenchida
+        if (!data.data_de_nascimento) {
+            showError('data_de_nascimento', 'Data de nascimento é obrigatória');
+            isValid = false;
+        }
         
-        if (!checkPassword(data.password)) {
+        if (!data.password || data.password.length < 6) {
             showError('password', 'A senha deve ter no mínimo 6 caracteres');
             isValid = false;
         }
@@ -215,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function clearAllErrors() {
-        ['name', 'email', 'password', 'confirmPassword'].forEach(fieldId => {
+        ['name', 'email', 'password', 'confirmPassword', 'cpf', 'genero', 'telefone', 'data_de_nascimento'].forEach(fieldId => {
             const input = document.getElementById(fieldId);
             const errorElement = document.getElementById(`${fieldId}-error`);
             
@@ -228,55 +345,52 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // ========================================
-    // API MOCK - SIMULAÇÃO DE REGISTRO
+    // REGISTRO DE USUÁRIO
     // ========================================
     
     async function registerAPI(data) {
-        // Simula delay de rede (800ms)
+        // Simula delay de rede
         await new Promise(resolve => setTimeout(resolve, 800));
         
-        // Simula verificação de email duplicado
-        const existingUsers = JSON.parse(localStorage.getItem('mockRegisteredUsers') || '[]');
-        
-        if (existingUsers.some(u => u.email === data.email)) {
-            throw new Error('Este e-mail já está cadastrado');
+        try {
+            // Usa o serviço de usuário para criar conta
+            const response = await window.userService.createUser({
+                name: data.name,
+                email: data.email,
+                password: data.password,
+                accountType: data.accountType,
+                cpf: data.cpf,
+                genero: data.genero,
+                telefone: data.telefone,
+                dataDeNascimento: data.data_de_nascimento,
+                idade: data.idade
+            });
+            
+            console.log('✅ Novo usuário registrado:', response.user);
+            
+            return response;
+            
+        } catch (error) {
+            console.error('❌ Erro ao registrar usuário:', error);
+            throw error;
         }
-        
-        // Cria novo usuário mock
-        const newUser = {
-            id: 'user-' + Date.now(),
-            name: data.name,
-            email: data.email,
-            role: data.accountType === 'artista' ? 'ARTISTA' : 'CLIENTE',
-            avatar: data.accountType === 'artista' 
-                ? 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop'
-                : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
-            createdAt: new Date().toISOString()
-        };
-        
-        // Salva na lista de usuários registrados (mock)
-        existingUsers.push({
-            email: data.email,
-            password: data.password,
-            user: newUser
-        });
-        localStorage.setItem('mockRegisteredUsers', JSON.stringify(existingUsers));
-        
-        console.log('✅ Novo usuário registrado (mock):', newUser);
-        
-        // Retorna resposta simulada
-        return {
-            token: 'mock-jwt-token-' + Date.now(),
-            user: newUser
-        };
     }
     
     function saveUserData(data) {
         window.authData = data;
         localStorage.setItem('authToken', data.token);
-        localStorage.setItem('userData', JSON.stringify(data.user));
-        
-        console.log('✅ Dados salvos:', data.user);
+
+        // Normalize user object so other scripts can rely on consistent keys (name, role)
+        const rawUser = data.user || {};
+        const normalizedUser = {
+            ...rawUser,
+            // keep existing portuguese keys but provide english aliases expected elsewhere
+            name: rawUser.nome || rawUser.name || '',
+            role: rawUser.tipo || rawUser.role || ''
+        };
+
+        localStorage.setItem('userData', JSON.stringify(normalizedUser));
+        console.log('✅ Dados salvos (normalizados):', normalizedUser);
     }
     
     function redirectToDashboard(role) {
