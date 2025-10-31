@@ -186,19 +186,6 @@
     transform: scale(1.05);
 }
 
-.obra-card-delete {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-.obra-card:hover .obra-card-delete {
-    background-color: aliceblue;
-    opacity: 1;
-}
-
 .obra-card-content {
     padding: 1rem;
 }
