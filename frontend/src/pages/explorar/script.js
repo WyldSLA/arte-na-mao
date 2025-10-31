@@ -12,80 +12,72 @@ const mockArtworks = [
         imageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&h=1200&fit=crop",
         title: "Sertão em Cores — Série Nordeste Vibrante",
         artistName: "Maria Oliveira",
+        artistPhoto: "https://i.pravatar.cc/150?img=1",
         price: 145,
         likes: 234,
-        views: 2100,
-        comments: 18,
     },
     {
         id: "2",
         imageUrl: "https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=800&h=1200&fit=crop",
         title: "Mandacaru",
         artistName: "João Santos",
+        artistPhoto: "https://i.pravatar.cc/150?img=12",
         price: 225,
         likes: 156,
-        views: 1300,
-        comments: 7,
     },
     {
         id: "3",
         imageUrl: "https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=800&h=1200&fit=crop",
         title: "Cultura Popular — Festa Junina",
         artistName: "Ana Costa",
+        artistPhoto: "https://i.pravatar.cc/150?img=5",
         price: 109,
         likes: 421,
-        views: 3800,
-        comments: 32,
     },
     {
         id: "4",
         imageUrl: "https://images.unsplash.com/photo-1621619856624-42fd193a0661?w=1080&h=1200&fit=crop",
         title: "Retratos do Sertão",
         artistName: "Paulo Almeida",
+        artistPhoto: "https://i.pravatar.cc/150?img=13",
         price: 200,
         likes: 189,
-        views: 1500,
-        comments: 12,
     },
     {
         id: "5",
         imageUrl: "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=800&h=1200&fit=crop",
         title: "Cerâmica Artesanal",
         artistName: "Carla Mendes",
+        artistPhoto: "https://i.pravatar.cc/150?img=9",
         price: 365,
         likes: 312,
-        views: 2600,
-        comments: 24,
     },
     {
         id: "6",
         imageUrl: "https://images.unsplash.com/photo-1515405295579-ba7b45403062?w=800&h=1200&fit=crop",
         title: "Paisagem Costeira",
         artistName: "Rafael Lima",
+        artistPhoto: "https://i.pravatar.cc/150?img=14",
         price: 220,
         likes: 267,
-        views: 2200,
-        comments: 19,
     },
     {
         id: "7",
         imageUrl: "https://images.unsplash.com/photo-1578301978162-7aae4d755744?w=800&h=1200&fit=crop",
         title: "Xilogravura Nordestina",
         artistName: "Beatriz Silva",
+        artistPhoto: "https://i.pravatar.cc/150?img=10",
         price: 189,
         likes: 445,
-        views: 4100,
-        comments: 38,
     },
     {
         id: "8",
         imageUrl: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800&h=1200&fit=crop",
         title: "Arquitetura Colonial",
         artistName: "Fernando Rocha",
+        artistPhoto: "https://i.pravatar.cc/150?img=15",
         price: 220,
         likes: 198,
-        views: 1700,
-        comments: 14,
     },
 ];
 
@@ -101,12 +93,13 @@ const icons = {
     heart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
     </svg>`,
-    eye: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-        <circle cx="12" cy="12" r="3"/>
+    heartFilled: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
     </svg>`,
-    message: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    cart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="9" cy="21" r="1"/>
+        <circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
     </svg>`
 };
 
@@ -147,44 +140,47 @@ async function fetchArtworks(page = 0, size = 8) {
  * Cria um card de obra de arte
  */
 function createArtCard(artwork, index) {
-      const card = document.createElement('article');
-      card.className = 'art-card';
-      card.style.animationDelay = `${index * 50}ms`;
-      
-      card.innerHTML = `
+    const card = document.createElement('article');
+    card.className = 'art-card';
+    card.style.animationDelay = `${index * 50}ms`;
+    
+    const isLiked = likedArtworks.has(artwork.id);
+    const currentLikes = likeCounts[artwork.id] || artwork.likes;
+    
+    card.innerHTML = `
         <div class="art-card-image-container">
-          <img src="${artwork.imageUrl}" alt="${artwork.title}" class="art-card-image">
-          
-          <div class="art-card-overlay">
-            <div class="art-card-overlay-content">
-              <h3 class="art-card-title">${artwork.title}</h3>
-              <p class="art-card-price">R$ ${artwork.price}</p>
-              <p class="art-card-artist">por <span>${artwork.artistName}</span></p>
+            <img src="${artwork.imageUrl}" alt="${artwork.title}" class="art-card-image">
+            
+            <div class="art-card-overlay">
+                <div class="art-card-overlay-content">
+                    <h3 class="art-card-title">${artwork.title}</h3>
+                    <p class="art-card-price">R$ ${artwork.price.toFixed(2)}</p>
+                </div>
+                <div class="art-card-actions">
+                    <button class="action-btn" onclick="handleAddToCart('${artwork.id}')" title="Adicionar ao carrinho">
+                        ${icons.cart}
+                    </button>
+                    <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="handleToggleLike('${artwork.id}')" title="Favoritar">
+                        ${isLiked ? icons.heartFilled : icons.heart}
+                    </button>
+                </div>
             </div>
-          </div>
         </div>
         
         <div class="art-card-info">
-          <span class="art-card-artist-name">${artwork.artistName}</span>
-          <div class="art-card-stats">
-            <div class="stat-item">
-              ${icons.heart}
-              <span>${artwork.likes}</span>
+            <div class="artist-info">
+                <img src="${artwork.artistPhoto}" alt="${artwork.artistName}" class="artist-photo">
+                <span class="artist-name">${artwork.artistName}</span>
             </div>
-            <div class="stat-item">
-              ${icons.eye}
-              <span>${artwork.views}</span>
+            <div class="likes-info">
+                ${icons.heart}
+                <span class="likes-count" data-artwork-id="${artwork.id}">${currentLikes}</span>
             </div>
-            <div class="stat-item">
-              ${icons.message}
-              <span>${artwork.comments}</span>
-            </div>
-          </div>
         </div>
-      `;
-      
-      return card;
-    }
+    `;
+    
+    return card;
+}
 
 /**
  * Renderiza as obras de arte na grid
@@ -207,17 +203,47 @@ function renderArtworks(artworks, append = false) {
 // ========================================
 
 /**
- * Handler para click no card da obra
+ * Toggle do like na obra
  */
-function handleArtworkClick(artworkId) {
-    console.log('Obra clicada:', artworkId);
-    // TODO: Redirecionar para página de detalhes da obra
-    // window.location.href = `obra.html?id=${artworkId}`;
+function handleToggleLike(artworkId) {
+    const isLiked = likedArtworks.has(artworkId);
     
-    // Temporário: mostra alert
+    if (isLiked) {
+        likedArtworks.delete(artworkId);
+        likeCounts[artworkId]--;
+    } else {
+        likedArtworks.add(artworkId);
+        likeCounts[artworkId]++;
+    }
+    
+    // Atualiza o contador de likes
+    const likesElement = document.querySelector(`[data-artwork-id="${artworkId}"]`);
+    if (likesElement) {
+        likesElement.textContent = likeCounts[artworkId];
+    }
+    
+    // Atualiza o botão de like
+    const cards = document.querySelectorAll('.art-card');
+    cards.forEach(card => {
+        const btn = card.querySelector(`button[onclick="handleToggleLike('${artworkId}')"]`);
+        if (btn) {
+            btn.classList.toggle('liked', !isLiked);
+            btn.innerHTML = !isLiked ? icons.heartFilled : icons.heart;
+        }
+    });
+    
+    console.log(`Obra ${artworkId} ${!isLiked ? 'favoritada' : 'desfavoritada'}`);
+}
+
+/**
+ * Adiciona obra ao carrinho
+ */
+function handleAddToCart(artworkId) {
     const artwork = mockArtworks.find(a => a.id === artworkId);
     if (artwork) {
-        alert(`Você clicou em: ${artwork.title}\nArtista: ${artwork.artistName}`);
+        console.log('Adicionado ao carrinho:', artwork.title);
+        // TODO: Implementar adição real ao carrinho
+        alert(`"${artwork.title}" adicionado ao carrinho!`);
     }
 }
 
@@ -258,46 +284,6 @@ async function loadMoreArtworks() {
         button.textContent = 'Carregar mais obras';
     }
 }
-
-/**
- * Handler de logout
- */
-function handleLogout() {
-    if (confirm('Deseja realmente sair?')) {
-        // TODO: Implementar logout real
-        // await fetch('/api/auth/logout', { method: 'POST' });
-        // localStorage.removeItem('token');
-        window.location.href = '../index.html';
-    }
-}
-
-// ========================================
-// FILTROS
-// ========================================
-
-/**
- * Inicializa os filtros
- */
-function initFilters() {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Remove active de todos
-            filterBtns.forEach(b => b.classList.remove('active'));
-            
-            // Adiciona active no clicado
-            this.classList.add('active');
-            
-            const filterType = this.textContent.trim();
-            console.log('Filtro selecionado:', filterType);
-            
-            // TODO: Implementar filtro real
-            // filterArtworks(filterType);
-        });
-    });
-}
-
 // ========================================
 // INICIALIZAÇÃO
 // ========================================
@@ -315,9 +301,6 @@ async function initExplorar() {
         data.content.forEach(artwork => {
             likeCounts[artwork.id] = artwork.likes;
         });
-        
-        // Inicializa os filtros
-        initFilters();
         
     } catch (error) {
         console.error('Erro ao inicializar página:', error);

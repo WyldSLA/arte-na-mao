@@ -1,4 +1,4 @@
- // ========================================
+// ========================================
 // AUTENTICAÇÃO
 // ========================================
 
@@ -6,22 +6,98 @@
  * Verifica se o usuário está logado
  */
 function checkAuth() {
-    // TODO: Implementar Autenticação
-    
     const token = getAuthToken();
-    const isLoggedIn = !!token; // Simplificado - implementar lógica real
+    const isLoggedIn = !!token;
     
     updateAuthUI(isLoggedIn);
     return isLoggedIn;
 }
 
 /**
+ * Redireciona para o perfil do usuário baseado no role
+ */
+function redirectToProfile() {
+    const token = getAuthToken();
+    const userData = getUserData();
+
+    // Não logado → redireciona para login
+    if (!token || !userData || !userData.role) {
+        console.log('❌ Usuário não logado. Redirecionando para login.');
+        
+        if (typeof showToast === 'function') {
+            showToast('Login necessário', 'Você precisa estar logado para acessar seu perfil', 'info');
+        }
+        
+        // Determina caminho correto baseado na URL atual
+        const currentPath = window.location.pathname;
+        let loginPath;
+        
+        if (currentPath.includes('/pages/')) {
+            loginPath = '../../login.html';
+        } else if (currentPath.includes('/public/')) {
+            loginPath = 'login.html';
+        } else {
+            loginPath = '/login.html';
+        }
+        
+        setTimeout(() => {
+            window.location.href = loginPath;
+        }, 1000);
+        return;
+    }
+
+    console.log('✅ Usuário autenticado:', userData.name, '| Role:', userData.role);
+
+    // Redireciona para o dashboard correto baseado no role
+    const currentPath = window.location.pathname;
+    let dashboardPath;
+    
+    if (userData.role === 'ARTISTA') {
+        if (currentPath.includes('/pages/')) {
+            dashboardPath = '../dashboard-artista/index.html';
+        } else if (currentPath.includes('/public/')) {
+            dashboardPath = '../src/pages/dashboard-artista/index.html';
+        } else {
+            dashboardPath = 'src/pages/dashboard-artista/index.html';
+        }
+    } else if (userData.role === 'CLIENTE') {
+        if (currentPath.includes('/pages/')) {
+            dashboardPath = '../dashboard-cliente/index.html';
+        } else if (currentPath.includes('/public/')) {
+            dashboardPath = '../src/pages/dashboard-cliente/index.html';
+        } else {
+            dashboardPath = 'src/pages/dashboard-cliente/index.html';
+        }
+    } else {
+        console.error('⚠️ Role desconhecido:', userData.role);
+        if (typeof showToast === 'function') {
+            showToast('Erro', 'Tipo de usuário não reconhecido', 'error');
+        }
+        return;
+    }
+    
+    console.log('🔄 Redirecionando para:', dashboardPath);
+    window.location.href = dashboardPath;
+}
+
+/**
  * Obtém o token de autenticação
  */
 function getAuthToken() {
-    // TODO: Implementar obtenção do token do Spring Security
-    // return localStorage.getItem('authToken');
-    return null; // Mock - usuário não logado
+    return localStorage.getItem('authToken');
+}
+
+/**
+ * Obtém os dados do usuário
+ */
+function getUserData() {
+    try {
+        const userData = localStorage.getItem('userData');
+        return userData ? JSON.parse(userData) : null;
+    } catch (error) {
+        console.error('Erro ao obter dados do usuário:', error);
+        return null;
+    }
 }
 
 /**
@@ -36,6 +112,15 @@ function updateAuthUI(isLoggedIn) {
     if (isLoggedIn) {
         authButtons.style.display = 'none';
         userMenu.style.display = 'flex';
+        
+        // Atualiza nome do usuário se disponível
+        const userData = getUserData();
+        if (userData && userData.name) {
+            const userNameElement = userMenu.querySelector('.user-name');
+            if (userNameElement) {
+                userNameElement.textContent = userData.name;
+            }
+        }
     } else {
         authButtons.style.display = 'flex';
         userMenu.style.display = 'none';
@@ -47,17 +132,36 @@ function updateAuthUI(isLoggedIn) {
  */
 async function handleLogout() {
     try {
-        // TODO: Chamar endpoint de logout da API
+        console.log('🚪 Realizando logout...');
         
         // Limpa os dados locais
         localStorage.removeItem('authToken');
         localStorage.removeItem('userData');
+        localStorage.removeItem('authData');
+        
+        if (typeof showToast === 'function') {
+            showToast('Logout realizado', 'Até logo!', 'success');
+        }
         
         // Atualiza a UI
         updateAuthUI(false);
         
-        // Redireciona para a home
-        window.location.href = '../../../../frontend/public/index.html';
+        // Redireciona para a home após 1 segundo
+        setTimeout(() => {
+            // Determina caminho correto baseado na URL atual
+            const currentPath = window.location.pathname;
+            let homePath;
+            
+            if (currentPath.includes('/pages/')) {
+                homePath = '../../../public/index.html';
+            } else if (currentPath.includes('/public/')) {
+                homePath = 'index.html';
+            } else {
+                homePath = '/index.html';
+            }
+            
+            window.location.href = homePath;
+        }, 1000);
     } catch (error) {
         console.error('Erro ao fazer logout:', error);
         alert('Erro ao fazer logout. Tente novamente.');
@@ -72,10 +176,18 @@ async function handleLogout() {
  * Mostra estado de carregamento
  */
 function showLoading() {
-    const eventsList = document.getElementById('eventsList');
-    eventsList.innerHTML = `
-        <div class="events-loading">
-            <div class="loading-spinner"></div>
+    return `
+        <div style="text-align: center; padding: 3rem; color: var(--muted-foreground);">
+            <div style="
+                width: 40px;
+                height: 40px;
+                border: 3px solid var(--border);
+                border-top-color: var(--primary);
+                border-radius: 50%;
+                margin: 0 auto 1rem;
+                animation: spin 0.8s linear infinite;
+            "></div>
+            <p>Carregando...</p>
         </div>
     `;
 }
@@ -153,6 +265,10 @@ function clearErrors(form) {
  * Exibe toast de notificação
  */
 function showToast(title, message, type = 'info') {
+    // Remove toasts antigos
+    const oldToasts = document.querySelectorAll('.toast');
+    oldToasts.forEach(t => t.remove());
+    
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     toast.style.cssText = `
@@ -171,19 +287,31 @@ function showToast(title, message, type = 'info') {
         gap: 1rem;
     `;
 
+    const iconMap = {
+        success: '✓',
+        error: '✕',
+        info: 'ℹ',
+        warning: '⚠'
+    };
+
+    const icon = iconMap[type] || 'ℹ';
+
     toast.innerHTML = `
+        <div style="font-size: 1.5rem;">${icon}</div>
         <div>
             <p style="font-weight: 600; margin: 0; color: var(--foreground);">${title}</p>
             <p style="font-size: 0.9rem; margin: 0; color: var(--muted-foreground);">${message}</p>
         </div>
-        `;
+    `;
         
     if (type === 'success') {
         toast.style.borderLeft = '4px solid var(--primary)';
     } else if (type === 'error') {
-        toast.style.borderLeft = '4px solid var(--destructive)';
+        toast.style.borderLeft = '4px solid #ef4444';
+    } else if (type === 'warning') {
+        toast.style.borderLeft = '4px solid #f59e0b';
     } else {
-        toast.style.borderLeft = '4px solid var(--accent)';
+        toast.style.borderLeft = '4px solid var(--secondary)';
     }
     
     document.body.appendChild(toast);
@@ -198,7 +326,6 @@ function showToast(title, message, type = 'info') {
 // ANIMAÇÕES
 // ========================================
 
-// Adiciona estilos para animações de toast
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideInRight {
@@ -222,6 +349,23 @@ style.textContent = `
             opacity: 0;
         }
     }
+    
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 `;
 document.head.appendChild(style);
 
@@ -229,16 +373,21 @@ document.head.appendChild(style);
 // INICIALIZAÇÃO GLOBAL
 // ========================================
 
-/**
- * Inicializa funcionalidades globais
- */
 function initGlobal() {
-    // Verifica autenticação em todas as páginas
+    // Verifica autenticação
     checkAuth();
     
-    // Adiciona listeners globais
+    // Adiciona listener ao botão de perfil (se existir)
+    const profileButtons = document.querySelectorAll('[data-action="profile"], .btn-profile');
+    profileButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            redirectToProfile();
+        });
+    });
+    
+    // Fecha dropdowns ao clicar fora
     document.addEventListener('click', (e) => {
-        // Fecha dropdowns ao clicar fora
         const dropdowns = document.querySelectorAll('.dropdown');
         dropdowns.forEach(dropdown => {
             if (!dropdown.contains(e.target)) {
@@ -273,12 +422,22 @@ if (document.readyState === 'loading') {
 // EXPORTS (para uso em outros scripts)
 // ========================================
 
-// Torna funções disponíveis globalmente
 window.handleLogout = handleLogout;
+window.redirectToProfile = redirectToProfile;
 window.showToast = showToast;
 window.formatNumber = formatNumber;
 window.isValidEmail = isValidEmail;
 window.showError = showError;
 window.clearErrors = clearErrors;
 window.getAuthToken = getAuthToken;
+window.getUserData = getUserData;
 window.showLoading = showLoading;
+window.checkAuth = checkAuth;
+
+// Log de inicialização
+console.log('✅ Main.js carregado');
+console.log('🔐 Auth status:', !!getAuthToken());
+if (getAuthToken()) {
+    const user = getUserData();
+    console.log('👤 Usuário:', user?.name, '| Role:', user?.role);
+}
