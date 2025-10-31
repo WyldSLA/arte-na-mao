@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arte na Mão</title>
+    <title>Explorar - Arte na Mão</title>
     <link rel="stylesheet" href="../../../public/assets/css/global.css">
     <link rel="stylesheet" href="../../components/artcard.css">
     <link rel="stylesheet" href="../../components/buttons.css">
@@ -15,7 +15,7 @@
     <!-- Header -->
     <header class="header">
         <nav class="nav-container">
-            <a href="#" class="logo">
+            <a href="../index.html" class="logo">
                 <svg class="logo-icon" version="1.0" xmlns="http://www.w3.org/2000/svg"
                     width="28" height="28" viewBox="0 0 546.000000 457.000000"
                     preserveAspectRatio="xMidYMid meet" fill="currentColor">
@@ -59,9 +59,9 @@
             </a>
 
             <div class="nav-menu">
-                <a href="explorar.html" class="nav-link active">Explorar</a>
+                <a href="index.html" class="nav-link active">Explorar</a>
                 <a href="../eventos/index.html" class="nav-link">Eventos</a>
-                
+
                 <div class="user-menu">
                     <button class="btn btn-ghost" onclick="redirectToProfile()">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -70,7 +70,7 @@
                         </svg>
                         Perfil
                     </button>
-                    <button class="btn btn-outline" onclick="window.location.href = '../../../../frontend/public/index.html'">
+                    <button class="btn btn-outline" onclick="handleLogout()">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                             <polyline points="16 17 21 12 16 7"/>
@@ -82,21 +82,6 @@
             </div>
         </nav>
     </header>
-
-    <!-- Filter Bar -->
-    <section class="filter-section">
-        <div class="container">
-            <div class="filter-container">
-                <button class="filter-btn active">Todos</button>
-                <button class="filter-btn">Pinturas</button>
-                <button class="filter-btn">Artesanato</button>
-                <button class="filter-btn">Fotografia</button>
-                <button class="filter-btn">Esculturas</button>
-                <button class="filter-btn">Xilogravura</button>
-                <button class="filter-btn">Cerâmica</button>
-            </div>
-        </div>
-    </section>
 
     <!-- Artworks Section -->
     <section class="artworks-section">

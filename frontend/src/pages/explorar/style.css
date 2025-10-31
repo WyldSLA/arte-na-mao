@@ -1,247 +1,10 @@
-.header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: var(--card);
-    border-bottom: 1px solid hsla(30, 15%, 88%, 0.4);
-    z-index: 100;
-    box-shadow: var(--shadow-soft);
-}
-
-.nav-link.active {
-    color: var(--primary);
-    font-weight: 600;
-}
-
-/* ========================================
-   FILTER SECTION
-   ======================================== */
-
-.filter-section {
-    position: fixed;
-    top: 65px;
-    left: 0;
-    right: 0;
-    background: var(--card);
-    border-bottom: 1px solid hsla(30, 15%, 88%, 0.4);
-    z-index: 90;
-    padding: 1rem 0;
-    box-shadow: var(--shadow-soft);
-}
-
-.filter-container {
-    display: flex;
-    gap: 0.75rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding: 0.25rem 0;
-}
-
-.filter-container::-webkit-scrollbar {
-    display: none;
-}
-
-.filter-btn {
-    padding: 0.5rem 1.25rem;
-    border: 1px solid var(--border);
-    background: var(--card);
-    border-radius: 9999px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: var(--transition-smooth);
-    color: var(--foreground);
-}
-
-.filter-btn:hover {
-    background: var(--muted);
-    border-color: var(--primary);
-}
-
-.filter-btn.active {
-    background: var(--primary);
-    color: var(--primary-foreground);
-    border-color: var(--primary);
-}
-
 /* ========================================
    ARTWORKS SECTION
    ======================================== */
 
 .artworks-section {
-    padding-top: 145px;
+    padding-top: 20px;
     padding-bottom: 4rem;
-    min-height: 100vh;
-}
-
-.art-card-overlay {
-    cursor: pointer;
-}
-
-.art-card-info {
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-}
-
-.art-card-artist-name {
-    font-weight: 500;
-    color: var(--foreground);
-}
-
-.art-card-stats {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
-    color: var(--muted-foreground);
-}
-
-.stat-item svg {
-    width: 1rem;
-    height: 1rem;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2;
-}
-
-.stat-item span {
-    font-size: 0.75rem;
-}
-
-/* ========================================
-   LOAD MORE
-   ======================================== */
-
-.load-more-container {
-    text-align: center;
-    margin-top: 3rem;
-}
-
-/* ========================================
-   ANIMATIONS
-   ======================================== */
-
-@keyframes fadeInCard {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.art-card {
-    animation: fadeInCard 0.5s ease-out;
-    animation-fill-mode: both;
-}
-
-/* ========================================
-   RESPONSIVE
-   ======================================== */
-
-@media (max-width: 768px) {
-    .filter-section {
-        top: 60px;
-    }
-
-    .artworks-section {
-        padding-top: 135px;
-    }
-
-    .nav-menu {
-        gap: 0.5rem;
-    }
-
-    .nav-link {
-        font-size: 0.875rem;
-    }
-}
-
-@media (max-width: 640px) {
-    .section-header {
-        margin-bottom: 1.5rem;
-    }
-
-    .filter-container {
-        gap: 0.5rem;
-    }
-
-    .filter-btn {
-        padding: 0.4rem 1rem;
-        font-size: 0.8125rem;
-    }
-}
-
-/* ========================================
-       FILTER BAR
-       ======================================== */
-.filter-bar {
-    position: fixed;
-    top: 65px;
-    left: 0;
-    right: 0;
-    background: var(--card);
-    border-bottom: 1px solid hsla(30, 15%, 88%, 0.4);
-    z-index: 90;
-    padding: 1rem 0;
-    box-shadow: var(--shadow-soft);
-}
-
-.filter-container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 1rem;
-    display: flex;
-    gap: 0.75rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-}
-
-.filter-container::-webkit-scrollbar {
-    display: none;
-}
-
-.filter-btn {
-    padding: 0.5rem 1.25rem;
-    border: 1px solid var(--border);
-    background: var(--card);
-    border-radius: 9999px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: var(--transition-smooth);
-    color: var(--foreground);
-}
-
-.filter-btn:hover {
-    background: var(--muted);
-}
-
-.filter-btn.active {
-    background: var(--primary);
-    color: var(--primary-foreground);
-}
-
-/* ========================================
-       MAIN CONTENT
-       ======================================== */
-.main-content {
-    padding-top: 145px;
     min-height: 100vh;
 }
 
@@ -252,7 +15,7 @@
 }
 
 .section-header {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 .section-title {
@@ -269,8 +32,9 @@
 }
 
 /* ========================================
-       ARTWORKS GRID
-       ======================================== */
+   ARTWORKS GRID
+   ======================================== */
+
 .artworks-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -279,8 +43,9 @@
 }
 
 /* ========================================
-       ART CARD
-       ======================================== */
+   ART CARD
+   ======================================== */
+
 .art-card {
     position: relative;
     overflow: hidden;
@@ -288,7 +53,7 @@
     background-color: var(--card);
     box-shadow: var(--shadow-soft);
     transition: var(--transition-smooth);
-    animation: fadeIn 0.5s ease-out;
+    animation: fadeInCard 0.5s ease-out;
     animation-fill-mode: both;
 }
 
@@ -297,6 +62,7 @@
     box-shadow: var(--shadow-strong);
 }
 
+/* Imagem */
 .art-card-image-container {
     position: relative;
     aspect-ratio: 3/4;
@@ -316,18 +82,22 @@
     transform: scale(1.1);
 }
 
+/* Overlay no hover */
 .art-card-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top,
-            rgba(0, 0, 0, 0.8),
-            rgba(0, 0, 0, 0.2) 40%,
-            transparent);
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.85),
+        rgba(0, 0, 0, 0.3) 50%,
+        transparent
+    );
     opacity: 0;
     transition: opacity 0.3s;
     display: flex;
-    align-items: flex-end;
-    padding: 1rem;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.25rem;
 }
 
 .art-card:hover .art-card-overlay {
@@ -335,8 +105,8 @@
 }
 
 .art-card-overlay-content {
-    width: 100%;
-    transform: translateY(8px);
+    margin-top: auto;
+    transform: translateY(10px);
     transition: transform 0.3s;
 }
 
@@ -349,47 +119,108 @@
     font-size: 1.25rem;
     font-weight: 700;
     color: white;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
 }
 
-.art-card-artist,
 .art-card-price {
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--primary);
 }
 
-.art-card-artist span {
-    font-weight: 500;
+/* Botões de ação */
+.art-card-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    transform: translateY(-10px);
+    transition: transform 0.3s;
 }
 
+.art-card:hover .art-card-actions {
+    transform: translateY(0);
+}
+
+.action-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    backdrop-filter: blur(10px);
+}
+
+.action-btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    stroke: var(--foreground);
+    stroke-width: 2;
+}
+
+.action-btn:hover {
+    transform: scale(1.1);
+    background: white;
+}
+
+.action-btn.liked svg {
+    fill: #ef4444;
+    stroke: #ef4444;
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+}
+
+/* Informações do card */
 .art-card-info {
     padding: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.875rem;
-    color: var(--muted-foreground);
-}
-
-.art-card-artist-name {
-    font-weight: 500;
-    color: var(--foreground);
-}
-
-.art-card-stats {
-    display: flex;
-    align-items: center;
     gap: 1rem;
 }
 
-.stat-item {
+.artist-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.artist-photo {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+}
+
+.artist-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--foreground);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.likes-info {
     display: flex;
     align-items: center;
     gap: 0.375rem;
     color: var(--muted-foreground);
+    flex-shrink: 0;
 }
 
-.stat-item svg {
+.likes-info svg {
     width: 1rem;
     height: 1rem;
     stroke: currentColor;
@@ -397,52 +228,24 @@
     stroke-width: 2;
 }
 
-.stat-item span {
-    font-size: 0.75rem;
+.likes-count {
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
 /* ========================================
-       LOAD MORE
-       ======================================== */
+   LOAD MORE
+   ======================================== */
+
 .load-more-container {
     text-align: center;
     margin: 3rem 0;
 }
 
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    border-radius: 0.5rem;
-    transition: var(--transition-smooth);
-    cursor: pointer;
-    border: none;
-    font-family: inherit;
-}
-
-.btn-outline {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--foreground);
-}
-
-.btn-outline:hover {
-    background: var(--muted);
-    border-color: var(--primary);
-}
-
-.btn-lg {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-}
-
 /* ========================================
-       FOOTER
-       ======================================== */
+   FOOTER
+   ======================================== */
+
 .footer {
     border-top: 1px solid hsla(30, 15%, 88%, 0.4);
     padding: 3rem 0;
@@ -478,14 +281,14 @@
 }
 
 /* ========================================
-       ANIMATIONS
-       ======================================== */
-@keyframes fadeIn {
+   ANIMATIONS
+   ======================================== */
+
+@keyframes fadeInCard {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -493,9 +296,14 @@
 }
 
 /* ========================================
-       RESPONSIVE
-       ======================================== */
+   RESPONSIVE
+   ======================================== */
+
 @media (max-width: 768px) {
+    .artworks-section {
+        padding-top: 90px;
+    }
+
     .artworks-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 1rem;
@@ -505,6 +313,10 @@
         font-size: 1.5rem;
     }
 
+    .art-card-title {
+        font-size: 1.125rem;
+    }
+
     .footer-content {
         text-align: center;
     }
@@ -512,5 +324,29 @@
     .footer-links {
         flex-wrap: wrap;
         justify-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .artworks-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .artist-name {
+        font-size: 0.8125rem;
+    }
+
+    .action-btn {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .action-btn svg {
+        width: 1.125rem;
+        height: 1.125rem;
     }
 }
