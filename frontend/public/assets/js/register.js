@@ -94,6 +94,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const isValid = checkPassword(this.value);
             this.setCustomValidity(isValid ? '' : 'A senha deve atender a todos os requisitos');
         });
+    } else {
+        // Versão simplificada sem requisitos visuais
+        checkPassword = function(password) {
+            return password.length >= 6;
+        };
     }
     
     // ========================================
@@ -137,7 +142,11 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await registerAPI(formData);
             
-           showToast('Conta criada!', 'Bem-vindo à Arte Nordeste!', 'success');
+            if (typeof showToast === 'function') {
+                showToast('Conta criada!', 'Bem-vindo à Arte na Mão!', 'success');
+            } else {
+                alert('Conta criada com sucesso!');
+            }
             
             saveUserData(response);
             
@@ -146,7 +155,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 1500);
             
         } catch (error) {
-            showToast('Erro no cadastro', error.message || 'Não foi possível criar a conta', 'error');
+            if (typeof showToast === 'function') {
+                showToast('Erro no cadastro', error.message || 'Não foi possível criar a conta', 'error');
+            } else {
+                alert(error.message || 'Erro ao criar conta');
+            }
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
@@ -167,13 +180,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!data.email) {
             showError('email', 'E-mail é obrigatório');
             isValid = false;
-        } else if (!window.isValidEmail(data.email)) {
+        } else if (!isValidEmail(data.email)) {
             showError('email', 'E-mail inválido');
             isValid = false;
         }
         
-        if (allRequirementsExist && !checkPassword(data.password)) {
-            showError('password', 'A senha deve atender a todos os requisitos');
+        if (!checkPassword(data.password)) {
+            showError('password', 'A senha deve ter no mínimo 6 caracteres');
             isValid = false;
         }
         
@@ -185,13 +198,18 @@ document.addEventListener('DOMContentLoaded', function() {
         return isValid;
     }
     
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
     function showError(fieldId, message) {
         const input = document.getElementById(fieldId);
         const errorElement = document.getElementById(`${fieldId}-error`);
         
         if (errorElement) errorElement.textContent = message;
         if (input) {
-            input.style.borderColor = 'var(--destructive)';
+            input.style.borderColor = 'var(--destructive, #ef4444)';
             input.setAttribute('aria-invalid', 'true');
         }
     }
@@ -210,40 +228,60 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // ========================================
-    // API - INTEGRAÇÃO COM BACKEND
+    // API MOCK - SIMULAÇÃO DE REGISTRO
     // ========================================
     
     async function registerAPI(data) {
-        const API_URL = '/api/auth/register';
+        // Simula delay de rede (800ms)
+        await new Promise(resolve => setTimeout(resolve, 800));
         
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: data.name,
-                email: data.email,
-                password: data.password,
-                accountType: data.accountType
-            })
-        });
+        // Simula verificação de email duplicado
+        const existingUsers = JSON.parse(localStorage.getItem('mockRegisteredUsers') || '[]');
         
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Erro ao criar conta');
+        if (existingUsers.some(u => u.email === data.email)) {
+            throw new Error('Este e-mail já está cadastrado');
         }
         
-        return await response.json();
+        // Cria novo usuário mock
+        const newUser = {
+            id: 'user-' + Date.now(),
+            name: data.name,
+            email: data.email,
+            role: data.accountType === 'artista' ? 'ARTISTA' : 'CLIENTE',
+            avatar: data.accountType === 'artista' 
+                ? 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop'
+                : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
+            createdAt: new Date().toISOString()
+        };
+        
+        // Salva na lista de usuários registrados (mock)
+        existingUsers.push({
+            email: data.email,
+            password: data.password,
+            user: newUser
+        });
+        localStorage.setItem('mockRegisteredUsers', JSON.stringify(existingUsers));
+        
+        console.log('✅ Novo usuário registrado (mock):', newUser);
+        
+        // Retorna resposta simulada
+        return {
+            token: 'mock-jwt-token-' + Date.now(),
+            user: newUser
+        };
     }
     
     function saveUserData(data) {
         window.authData = data;
         localStorage.setItem('authToken', data.token);
         localStorage.setItem('userData', JSON.stringify(data.user));
+        
+        console.log('✅ Dados salvos:', data.user);
     }
     
     function redirectToDashboard(role) {
+        console.log('🔄 Redirecionando para dashboard:', role);
+        
         if (role === 'ARTISTA') {
             window.location.href = '../src/pages/dashboard-artista/index.html';
         } else {
