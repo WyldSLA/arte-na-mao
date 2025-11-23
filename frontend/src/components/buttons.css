@@ -47,3 +47,86 @@
 .btn-ghost:hover {
     background-color: var(--muted);
 }
+
+/* ========================================
+   BUTTONS - Botões de Form
+   ======================================== */
+
+.back-to-home {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.back-to-home a {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+
+  border: none;
+  background: none;
+  background-color: rgba(0, 0, 0, 0);
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.btn:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+}
+
+/* Variantes adicionais de botões */
+.btn-destructive {
+    background-color: var(--destructive);
+    color: var(--primary-foreground);
+}
+
+.btn-destructive:hover {
+    background-color: hsl(0, 75%, 50%);
+}
+
+.btn-secondary {
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
+}
+
+.btn-secondary:hover {
+    background-color: hsl(200, 65%, 50%);
+}
+
+.btn-link {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+.btn-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+}
