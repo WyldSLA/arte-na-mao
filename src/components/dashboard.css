@@ -7,22 +7,90 @@
    ======================================== */
 
 .dashboard-page {
-    min-height: 100vh;
-    padding: 2rem 0 4rem;
+    min-height: calc(100vh - var(--header-height));
+    padding: 2rem;
+    background-color: var(--background);
 }
 
-.dashboard-header {
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Profile Card com novo design do Nordeste Canvas */
+.profile-card {
+    background-color: var(--card);
+    border-radius: 1rem;
+    padding: 0;
     margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
 }
 
-.dashboard-title {
-    font-size: 2.25rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
+.profile-cover {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--accent-muted);
 }
 
-.dashboard-subtitle {
+.profile-content {
+    position: relative;
+    margin-top: -60px;
+    padding: 0 2rem 2rem;
+    display: flex;
+    gap: 2rem;
+    align-items: flex-end;
+}
+
+.profile-avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 4px solid var(--card);
+    overflow: hidden;
+    flex-shrink: 0;
+    background-color: var(--card);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info {
+    flex: 1;
+    padding-bottom: 1rem;
+}
+
+.profile-name {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--foreground);
+}
+
+.profile-role {
     color: var(--muted-foreground);
+    margin: 0.5rem 0;
+    font-size: 1rem;
+}
+
+.profile-location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 3rem;
+    margin-top: 1.5rem;
 }
 
 /* ========================================
@@ -69,8 +137,17 @@
 }
 
 .tab-trigger.active {
+    /* Selected tab should look like a subtle 'cinza' pill as requested */
+    color: var(--foreground);
+    background: var(--muted);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    /* keep a thin orange bottom highlight to indicate selection */
+    border-bottom: 3px solid var(--primary);
+}
+
+/* Make only the tab label text orange when active (keeps icons in foreground color) */
+.tab-trigger.active .tab-trigger-text {
     color: var(--primary);
-    border-bottom-color: var(--primary);
 }
 
 .tab-trigger svg {
@@ -233,11 +310,13 @@
 .carrinho-layout {
     display: grid;
     gap: 1.5rem;
+    grid-column: 1 / -1;
 }
 
 @media (min-width: 1024px) {
     .carrinho-layout {
         grid-template-columns: 2fr 1fr;
+        gap: 2rem;
     }
 }
 
@@ -257,6 +336,14 @@
 .carrinho-item-content {
     display: flex;
     gap: 1rem;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .carrinho-item-content {
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
 }
 
 .carrinho-item-image {
@@ -269,6 +356,7 @@
 
 .carrinho-item-info {
     flex: 1;
+    min-width: 0;
 }
 
 .carrinho-item-title {
@@ -473,6 +561,13 @@
 /* ========================================
    RESPONSIVE
    ======================================== */
+
+@media (max-width: 640px) {
+    .carrinho-item-image {
+        width: 5rem;
+        height: 5rem;
+    }
+}
 
 @media (max-width: 768px) {
     .dashboard-page {

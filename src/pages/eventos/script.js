@@ -1,4 +1,16 @@
 // ========================================
+// AUTENTICAÇÃO: BLOQUEIO DE ACESSO
+// ========================================
+(function() {
+    const user = (function() {
+        try { return JSON.parse(localStorage.getItem('userData') || 'null'); } catch(e){ return null; }
+    })();
+    if (!user || !user.id) {
+        window.location.href = '../../../public/login.html';
+    }
+})();
+
+// ========================================
 // CONFIGURAÇÃO E CONSTANTES
 // ========================================
 
@@ -58,11 +70,40 @@ const mockEvents = [
  */
 async function fetchEvents() {
     try {
-        // TODO: Substituir por chamada real à API
+        if (window.eventService && typeof window.eventService.listEvents === 'function') {
+            // Carrega eventos do serviço
+            const events = await window.eventService.listEvents();
+            
+            // Normaliza dados
+            const normalizedEvents = events.map(ev => ({
+                id: ev.id,
+                title: ev.titulo || ev.title || '',
+                imageUrl: ev.imagemUrl || ev.imageUrl || '',
+                date: ev.data ? new Date(ev.data).toLocaleString('pt-BR', { 
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : '',
+                location: ev.local || ev.location || '',
+                attendees: ev.participantes || 0,
+                description: ev.descricao || ev.description || '',
+                category: ev.categoria || ev.category || 'outros'
+            }));
+
+            // Se tiver eventos reais, retorna apenas eles
+            if (normalizedEvents.length > 0) {
+                return normalizedEvents;
+            }
+        }
         
-        // Mock - simulando delay de rede
+        // Fallback para mock se serviço não disponível ou sem eventos
         await new Promise(resolve => setTimeout(resolve, 500));
-        return mockEvents;
+        return mockEvents.map(mock => ({
+            ...mock,
+            isDemo: true // Marca eventos de exemplo
+        }));
     } catch (error) {
         console.error('Erro ao buscar eventos:', error);
         throw error;
@@ -144,12 +185,25 @@ function createEventCard(event, index) {
             </div>
             
             <div class="event-card-actions">
-                <button class="btn btn-primary" onclick="viewEventDetails('${event.id}')">
-                    Ver Detalhes
-                </button>
-                <button class="btn btn-outline" onclick="handleAttendEvent('${event.id}')">
-                    Confirmar Presença
-                </button>
+                ${event.isDemo ? `
+                    <div class="event-demo-badge" style="
+                        background: var(--muted);
+                        color: var(--muted-foreground);
+                        padding: 0.5rem;
+                        text-align: center;
+                        border-radius: var(--radius);
+                        font-size: 0.875rem;
+                    ">
+                        Evento Demonstrativo
+                    </div>
+                ` : `
+                    <button class="btn btn-primary" onclick="viewEventDetails('${event.id}')">
+                        Ver Detalhes
+                    </button>
+                    <button class="btn btn-outline" onclick="handleAttendEvent('${event.id}')">
+                        Confirmar Presença
+                    </button>
+                `}
             </div>
         </div>
     `;
@@ -222,6 +276,19 @@ function filterEvents(category) {
  * Visualiza detalhes do evento
  */
 function viewEventDetails(eventId) {
+    // Verifica se é um evento demonstrativo
+    const event = allEvents.find(e => e.id === eventId);
+    if (event?.isDemo) {
+        if (typeof showToast === 'function') {
+            showToast(
+                'Evento demonstrativo',
+                'Este evento é apenas um exemplo para demonstração',
+                'info'
+            );
+        }
+        return;
+    }
+    
     // TODO: Implementar página de detalhes ou modal
     console.log(`Ver detalhes do evento ${eventId}`);
     
@@ -244,6 +311,19 @@ function viewEventDetails(eventId) {
  * Confirma presença em um evento
  */
 async function handleAttendEvent(eventId) {
+    // Verifica se é um evento demonstrativo
+    const event = allEvents.find(e => e.id === eventId);
+    if (event?.isDemo) {
+        if (typeof showToast === 'function') {
+            showToast(
+                'Evento demonstrativo',
+                'Este evento é apenas um exemplo para demonstração',
+                'info'
+            );
+        }
+        return;
+    }
+
     // Verifica se usuário está logado
     showToast(
         'Funcionalidade em desenvolvimento', 

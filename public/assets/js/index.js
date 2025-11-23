@@ -298,34 +298,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Render static events/examples (guide)
     renderEvents();
 
-    // Optionally replace featured artworks with real featured artworks from the service
-    const featuredGrid = document.getElementById("featuredGrid");
-    try {
-      const featuredArtworksFromService = await window.artworkService.getFeaturedArtworks();
-      if (featuredArtworksFromService && featuredGrid && featuredArtworksFromService.length > 0) {
-        featuredGrid.innerHTML = '';
-        featuredArtworksFromService.forEach((artwork, index) => {
-          const card = document.createElement("div");
-          card.className = "artwork-card";
-          card.style.animationDelay = `${index * 100}ms`;
+    // Mantém apenas exemplos estáticos na tela pública, não carrega artes reais do serviço
+    // ...existing code...
 
-          card.innerHTML = `
-            <img src="${artwork.imagemUrl}" alt="${artwork.titulo}">
-            <div class="artwork-overlay">
-              <div class="artwork-info">
-                <div class="artwork-category">${artwork.categoria}</div>
-                <h3 class="artwork-title">${artwork.titulo}</h3>
-                <p class="artwork-artist">${artwork.artistaNome}</p>
-              </div>
-            </div>
-          `;
-
-          featuredGrid.appendChild(card);
-        });
-      }
-    } catch (err) {
-      console.warn('Não foi possível carregar featured do serviço, deixando exemplos estáticos.');
-    }
     } catch (error) {
         console.error('Erro ao carregar dados da página inicial:', error);
         if (typeof showToast === 'function') {

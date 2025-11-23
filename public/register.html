@@ -110,7 +110,7 @@
                         <!-- Gender Field -->
                         <div class="form-group">
                             <label for="genero" class="form-label">Gênero</label>
-                            <select id="genero" name="genero" class="form-input" aria-describedby="genero-error">
+                            <select id="genero" name="genero" class="form-input" aria-describedby="genero-error" required>
                                 <option value="">Selecione</option>
                                 <option value="feminino">Feminino</option>
                                 <option value="masculino">Masculino</option>
@@ -130,6 +130,7 @@
                                 class="form-input"
                                 placeholder="(00) 90000-0000"
                                 aria-describedby="telefone-error"
+                                required
                             >
                             <span id="telefone-error" class="form-error" role="alert"></span>
                         </div>
@@ -144,6 +145,7 @@
                                     name="data_de_nascimento"
                                     class="form-input"
                                     aria-describedby="data_de_nascimento-error"
+                                    required
                                 >
                                 <span id="data_de_nascimento-error" class="form-error" role="alert"></span>
                             </div>

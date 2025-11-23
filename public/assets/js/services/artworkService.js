@@ -44,11 +44,15 @@ class ArtworkService {
             titulo: artworkData.title,
             descricao: artworkData.description || '',
             categoria: artworkData.category,
-            preco: parseFloat(artworkData.price),
+            preco: parseFloat(artworkData.price) || 0,
+            software: artworkData.software || '',
+            tags: Array.isArray(artworkData.tags) ? artworkData.tags : [],
+            isForSale: artworkData.isForSale !== false,
             dimensoes: artworkData.dimensions || null,
             tecnica: artworkData.technique || '',
             dataProducao: artworkData.productionDate || now,
             imagemUrl: artworkData.imageUrl,
+            imageUrl: artworkData.imageUrl, // mantém ambas as formas para compatibilidade
             status: 'DISPONIVEL',
             dataCriacao: now,
             dataAtualizacao: now
@@ -163,11 +167,13 @@ class ArtworkService {
             };
             favorites.push(newFavorite);
             this._saveCollection(this.STORAGE_KEYS.FAVORITES, favorites);
+            try { localStorage.setItem('artwork-updated', Date.now()); } catch(e) {}
             return { added: true, favorite: newFavorite };
         } else {
             // Remove dos favoritos
             favorites.splice(existingIndex, 1);
             this._saveCollection(this.STORAGE_KEYS.FAVORITES, favorites);
+            try { localStorage.setItem('artwork-updated', Date.now()); } catch(e) {}
             return { added: false };
         }
     }

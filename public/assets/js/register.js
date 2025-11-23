@@ -162,11 +162,36 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function formatTelefone(value) {
+        const v = onlyDigits(value).slice(0, 11);
+        let out = v;
+        if (v.length > 10) out = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+        else if (v.length > 6) out = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+        else if (v.length > 2) out = v.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+        return out;
+    }
+
+    const telefoneInput = document.getElementById('telefone');
+    if (telefoneInput) {
+        telefoneInput.addEventListener('input', function() {
+            const formatted = formatTelefone(this.value);
+            this.value = formatted;
+        });
+    }
+
     // derive age from DOB helper (does not update any input - age will be sent to service)
     function computeAgeFromDOB(dobValue) {
         if (!dobValue) return null;
         const birth = new Date(dobValue);
         if (isNaN(birth.getTime())) return null;
+        
+        // Valida se o ano está dentro de um intervalo razoável (entre 1900 e ano atual)
+        const birthYear = birth.getFullYear();
+        const currentYear = new Date().getFullYear();
+        if (birthYear < 1900 || birthYear > currentYear) {
+            return null;
+        }
+        
         const today = new Date();
         let age = today.getFullYear() - birth.getFullYear();
         const m = today.getMonth() - birth.getMonth();
@@ -195,6 +220,47 @@ document.addEventListener('DOMContentLoaded', function() {
             this.setAttribute('aria-invalid', 'false');
         });
     });
+
+    // Validação imediata para data de nascimento (evita que o usuário veja o erro só no submit)
+    if (dobInput) {
+        // Define a data máxima permitida como hoje para evitar datas futuras
+        try {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const maxDate = `${yyyy}-${mm}-${dd}`;
+            dobInput.setAttribute('max', maxDate);
+        } catch (e) {
+            // ignore if setAttribute fails in very old browsers
+        }
+
+        dobInput.addEventListener('change', function() {
+            const val = this.value;
+            const selectedDate = val ? new Date(val) : null;
+            const today = new Date();
+            const age = computeAgeFromDOB(val);
+            
+            if (!val) {
+                showError('data_de_nascimento', 'Data de nascimento é obrigatória');
+            } else if (isNaN(selectedDate.getTime())) {
+                showError('data_de_nascimento', 'Data inválida');
+            } else if (selectedDate > today) {
+                showError('data_de_nascimento', 'Data de nascimento não pode ser no futuro');
+            } else if (selectedDate.getFullYear() < 1900) {
+                showError('data_de_nascimento', 'Data de nascimento deve ser a partir de 1900');
+            } else if (age === null) {
+                showError('data_de_nascimento', 'Data inválida');
+            } else if (age < 13) {
+                showError('data_de_nascimento', 'Você deve ter pelo menos 13 anos para se cadastrar');
+            } else {
+                const err = document.getElementById('data_de_nascimento-error');
+                if (err) err.textContent = '';
+                this.style.borderColor = '';
+                this.setAttribute('aria-invalid', 'false');
+            }
+        });
+    }
     
     // ========================================
     // VALIDAÇÃO DE CONFIRMAÇÃO DE SENHA
@@ -296,10 +362,43 @@ document.addEventListener('DOMContentLoaded', function() {
             isValid = false;
         }
 
+        if (!data.genero) {
+            showError('genero', 'Gênero é obrigatório');
+            isValid = false;
+        }
+
+        if (!data.telefone) {
+            showError('telefone', 'Telefone é obrigatório');
+            isValid = false;
+        }
+
         // Data de nascimento ou idade: pelo menos uma deve estar preenchida
         if (!data.data_de_nascimento) {
             showError('data_de_nascimento', 'Data de nascimento é obrigatória');
             isValid = false;
+        } else {
+            // valida data não futura e idade mínima (13 anos)
+            const selected = new Date(data.data_de_nascimento);
+            const today = new Date();
+            if (isNaN(selected.getTime())) {
+                showError('data_de_nascimento', 'Data inválida');
+                isValid = false;
+            } else if (selected > today) {
+                showError('data_de_nascimento', 'Data de nascimento não pode ser no futuro');
+                isValid = false;
+            } else if (selected.getFullYear() < 1900) {
+                showError('data_de_nascimento', 'Data de nascimento deve ser a partir de 1900');
+                isValid = false;
+            } else {
+                const age = computeAgeFromDOB(data.data_de_nascimento);
+                if (age === null) {
+                    showError('data_de_nascimento', 'Data inválida');
+                    isValid = false;
+                } else if (age < 13) {
+                    showError('data_de_nascimento', 'Você deve ter pelo menos 13 anos para se cadastrar');
+                    isValid = false;
+                }
+            }
         }
         
         if (!data.password || data.password.length < 6) {
@@ -307,7 +406,10 @@ document.addEventListener('DOMContentLoaded', function() {
             isValid = false;
         }
         
-        if (data.password !== data.confirmPassword) {
+        if (!data.confirmPassword) {
+            showError('confirmPassword', 'Confirme sua senha');
+            isValid = false;
+        } else if (data.password !== data.confirmPassword) {
             showError('confirmPassword', 'As senhas não coincidem');
             isValid = false;
         }
@@ -363,7 +465,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 genero: data.genero,
                 telefone: data.telefone,
                 dataDeNascimento: data.data_de_nascimento,
-                idade: data.idade
+                idade: data.idade,
+                avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.name)}`
             });
             
             console.log('✅ Novo usuário registrado:', response.user);
@@ -398,6 +501,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (role === 'ARTISTA') {
             window.location.href = '../src/pages/dashboard-artista/index.html';
+        } else if (role === 'CLIENTE') {
+            window.location.href = '../src/pages/dashboard-cliente/index.html';
         } else {
             window.location.href = '../src/pages/explorar/index.html';
         }

@@ -215,8 +215,11 @@ class UserService {
             throw new Error('E-mail ou senha incorretos');
         }
 
+        // Get the full user data including avatar and other fields
+        const fullUserData = await this.getUser(user.id);
+
         return {
-            user,
+            user: fullUserData,
             token: 'mock-jwt-' + user.id // Em produção: usar JWT real
         };
     }

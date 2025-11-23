@@ -1,3 +1,16 @@
+
+// ========================================
+// AUTENTICAÇÃO: BLOQUEIO DE ACESSO
+// ========================================
+(function() {
+    const user = (function() {
+        try { return JSON.parse(localStorage.getItem('userData') || 'null'); } catch(e){ return null; }
+    })();
+    if (!user || !user.id) {
+        window.location.href = '../../../public/login.html';
+    }
+})();
+
 // ========================================
 // DASHBOARD CLIENTE - SERVICE-BACKED
 // ========================================
@@ -8,6 +21,220 @@ let clientData = {
     eventos: [],
     historico: []
 };
+
+// ========================================
+// HELPER: GET USER DATA
+// ========================================
+
+function getUserData() {
+    try {
+        const data = JSON.parse(localStorage.getItem('userData') || '{}');
+        return data || {};
+    } catch (e) {
+        return {};
+    }
+}
+
+// ========================================
+// HELPER: CONVERTE ARQUIVO PARA DATA URL
+// ========================================
+
+function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+        if (!file) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+// ========================================
+// MODAL: EDITAR PERFIL
+// ========================================
+
+function openEditProfileDialog() {
+    const modal = document.getElementById('editProfileModal');
+    if (modal) {
+        modal.classList.add('active');
+        // Popula os campos do modal com dados atuais
+        const user = getUserData();
+        if (user) {
+            document.getElementById('editBio').value = user.bio || '';
+            document.getElementById('editCity').value = user.city || '';
+            
+            // Popula as badges
+            if (user.badges && Array.isArray(user.badges)) {
+                for (let i = 0; i < Math.min(3, user.badges.length); i++) {
+                    document.getElementById(`editBadge${i + 1}`).value = user.badges[i] || '';
+                }
+            }
+            
+            // **IMPORTANTE**: Restaura dados de imagem do userData para dataset
+            if (user.avatar) {
+                const avatarImg = document.getElementById('editAvatarImg');
+                if (avatarImg) {
+                    avatarImg.src = user.avatar;
+                    avatarImg.dataset.avatarData = user.avatar; // Restaura para dataset
+                }
+            }
+            if (user.bannerImage) {
+                const bannerPreview = document.querySelector('.banner-preview');
+                if (bannerPreview) {
+                    bannerPreview.style.backgroundImage = `url('${user.bannerImage}')`;
+                    bannerPreview.dataset.bannerData = user.bannerImage; // Restaura para dataset
+                }
+            }
+        }
+    }
+}
+
+function closeEditProfileDialog() {
+    const modal = document.getElementById('editProfileModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
+// ========================================
+// SETUP: LISTENERS DO MODAL DE EDIÇÃO
+// ========================================
+
+function setupEditProfileListeners() {
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    if (editProfileBtn) {
+        editProfileBtn.addEventListener('click', openEditProfileDialog);
+    }
+
+    // Listener para upload de banner
+    const editBannerFile = document.getElementById('editBannerFile');
+    if (editBannerFile) {
+        editBannerFile.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const bannerPreview = document.querySelector('.banner-preview');
+                    if (bannerPreview) {
+                        bannerPreview.style.backgroundImage = `url('${e.target.result}')`;
+                        bannerPreview.dataset.bannerData = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Listener para upload de avatar
+    const editAvatarFile = document.getElementById('editAvatarFile');
+    if (editAvatarFile) {
+        editAvatarFile.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const avatarImg = document.getElementById('editAvatarImg');
+                    if (avatarImg) {
+                        avatarImg.src = e.target.result;
+                        avatarImg.dataset.avatarData = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    const editProfileForm = document.getElementById('editProfileForm');
+    if (editProfileForm) {
+        editProfileForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                // Coleta dados do formulário
+                const bio = document.getElementById('editBio').value;
+                const city = document.getElementById('editCity').value;
+                
+                // Coleta as badges (apenas as não-vazias)
+                const badges = [];
+                for (let i = 1; i <= 3; i++) {
+                    const badge = document.getElementById(`editBadge${i}`).value.trim();
+                    if (badge) {
+                        badges.push(badge);
+                    }
+                }
+                
+                // Coleta dados de imagem
+                const avatarFile = document.getElementById('editAvatarFile');
+                const bannerFile = document.getElementById('editBannerFile');
+                
+                // Converte arquivos para Data URL se foram selecionados
+                let avatarData = null;
+                let bannerData = null;
+                
+                if (avatarFile && avatarFile.files && avatarFile.files[0]) {
+                    avatarData = await readFileAsDataUrl(avatarFile.files[0]);
+                }
+                
+                if (bannerFile && bannerFile.files && bannerFile.files[0]) {
+                    bannerData = await readFileAsDataUrl(bannerFile.files[0]);
+                }
+                
+                // Obtém usuário atual
+                const user = getUserData();
+                if (!user || !user.id) {
+                    if (typeof showToast === 'function') {
+                        showToast('Erro', 'Usuário não encontrado', 'error');
+                    }
+                    return;
+                }
+                
+                // Prepara dados para atualização
+                const updatePayload = {
+                    bio: bio,
+                    city: city,
+                    badges: badges
+                };
+                
+                // Só sobrescreve avatar/banner se foi alterado
+                if (avatarData) updatePayload.avatar = avatarData;
+                if (bannerData) updatePayload.bannerImage = bannerData;
+                
+                // Chama userService para salvar (persiste no backend/localStorage)
+                if (window.userService && typeof window.userService.updateUser === 'function') {
+                    await window.userService.updateUser(user.id, updatePayload);
+                    
+                    // Recarrega dados do usuário e salva localmente
+                    const updatedUser = await window.userService.getUser(user.id);
+                    localStorage.setItem('userData', JSON.stringify(updatedUser));
+                    
+                    // Atualiza UI
+                    updateUserInterface();
+                    closeEditProfileDialog();
+                    
+                    if (typeof showToast === 'function') {
+                        showToast('Perfil atualizado', 'Suas alterações foram salvas', 'success');
+                    }
+                } else {
+                    // Fallback: salva apenas localmente (não ideal)
+                    Object.assign(user, updatePayload);
+                    localStorage.setItem('userData', JSON.stringify(user));
+                    updateUserInterface();
+                    closeEditProfileDialog();
+                    
+                    if (typeof showToast === 'function') {
+                        showToast('Perfil atualizado', 'Suas alterações foram salvas (local)', 'success');
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Erro ao atualizar perfil:', error);
+                if (typeof showToast === 'function') {
+                    showToast('Erro', 'Não foi possível atualizar o perfil: ' + error.message, 'error');
+                }
+            }
+        });
+    }
+}
 
 // Fallback mock data (usado apenas quando não houver usuário logado ou serviços ausentes)
 const mockFavoritos = [
@@ -112,10 +339,10 @@ function renderFavoritos() {
     container.innerHTML = `
         <div class="obras-grid">
             ${clientData.favoritos.map(obra => `
-                <div class="obra-card">
+                <div class="obra-card" onclick="openArtworkModalFromDashboard('${obra.id}')" style="cursor: pointer;">
                     <div class="obra-card-image-wrapper">
                         <img src="${obra.imageUrl}" alt="${obra.title}" class="obra-card-image">
-                        <button class="btn btn-secondary btn-icon obra-card-delete" onclick="handleRemoveFavorito('${obra.id}')">
+                        <button class="btn btn-secondary btn-icon obra-card-delete" onclick="handleRemoveFavorito('${obra.id}'); event.stopPropagation();" title="Remover dos favoritos">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="3 6 5 6 21 6"/>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -323,20 +550,25 @@ async function handleRemoveFavorito(obraId) {
 
     if (user && user.id && window.artworkService) {
         try {
-            await window.artworkService.toggleFavorite(user.id, obraId);
-            // Recarrega favoritos do serviço para garantir sincronismo
-            const favs = await window.artworkService.getFavorites(user.id);
-            clientData.favoritos = favs.map(f => normalizeArtwork(f.obra || f));
-            updateStats();
-            renderFavoritos();
-
-            if (typeof showToast === 'function') showToast('Removido dos favoritos', 'A obra foi removida', 'success');
+            const result = await window.artworkService.toggleFavorite(user.id, obraId);
+            if (!result.added) {
+                // Recarrega favoritos do serviço para garantir sincronismo
+                const favs = await window.artworkService.getFavorites(user.id);
+                clientData.favoritos = await Promise.all(
+                    favs.map(async f => {
+                        const artwork = normalizeArtwork(f.obra || f);
+                        return await loadArtistName(artwork);
+                    })
+                );
+                updateStats();
+                renderFavoritos();
+                if (typeof showToast === 'function') showToast('Removido dos favoritos', 'A obra foi removida', 'success');
+            }
         } catch (err) {
             console.error('Erro ao remover favorito:', err);
             alert('Não foi possível remover dos favoritos');
         }
     } else {
-        // Fallback local
         clientData.favoritos = clientData.favoritos.filter(o => o.id !== obraId);
         updateStats();
         renderFavoritos();
@@ -445,8 +677,27 @@ function normalizeArtwork(art) {
         title: art.titulo || art.title || art.nome || 'Obra',
         artist: art.artistaNome || art.artist || art.artista || art.nomeArtista || 'Artista',
         price: Number(art.preco || art.price || 0),
-        imageUrl: art.imagemUrl || art.imageUrl || ''
+        imageUrl: art.imagemUrl || art.imageUrl || '',
+        artistaId: art.artistaId || null
     };
+}
+
+// Helper para carregar o nome do artista
+async function loadArtistName(artwork) {
+    if (!artwork.artistaId || artwork.artist !== 'Artista') return artwork;
+    
+    try {
+        if (window.userService && typeof window.userService.getArtist === 'function') {
+            const artist = await window.userService.getArtist(artwork.artistaId);
+            if (artist && artist.nome) {
+                artwork.artist = artist.nome;
+            }
+        }
+    } catch (err) {
+        console.warn('Erro ao carregar nome do artista:', err);
+    }
+    
+    return artwork;
 }
 
 // ========================================
@@ -454,8 +705,13 @@ function normalizeArtwork(art) {
 // ========================================
 
 async function init() {
+    console.log('=== INIT STARTED ==='); // DEBUG
     // Inicializa tabs
     initTabs();
+
+    // **IMPORTANTE**: Atualiza interface com dados do usuário SALVOS (antes de carregar dados do serviço)
+    console.log('Chamando updateUserInterface...'); // DEBUG
+    updateUserInterface();
 
     // Tenta carregar dados do usuário e dos serviços
     const user = (function() {
@@ -466,11 +722,21 @@ async function init() {
         try {
             // Favoritos
             const favs = await window.artworkService.getFavorites(user.id);
-            clientData.favoritos = favs.map(f => normalizeArtwork(f.obra || f));
+            clientData.favoritos = await Promise.all(
+                favs.map(async f => {
+                    const artwork = normalizeArtwork(f.obra || f);
+                    return await loadArtistName(artwork);
+                })
+            );
 
             // Carrinho
             const cartItems = await window.artworkService.getCartItems(user.id);
-            clientData.carrinho = cartItems.map(i => normalizeArtwork(i.obra || i));
+            clientData.carrinho = await Promise.all(
+                cartItems.map(async i => {
+                    const artwork = normalizeArtwork(i.obra || i);
+                    return await loadArtistName(artwork);
+                })
+            );
 
             // Eventos
             if (window.eventService && typeof window.eventService.getUserEvents === 'function') {
@@ -535,9 +801,75 @@ window.handleRemoveCarrinho = handleRemoveCarrinho;
 window.handleCancelarEvento = handleCancelarEvento;
 window.handleFinalizarCompra = handleFinalizarCompra;
 
-// Executa
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
+// ========================================
+// UPDATE USER INTERFACE (deve vir antes de init)
+// ========================================
+
+function updateUserInterface() {
+    const userData = getUserData();
+    console.log('updateUserInterface - userData:', userData); // DEBUG
+
+    // Avatar - SEMPRE atualiza se tiver avatar salvo
+    const avatar = document.getElementById('profileAvatar');
+    if (avatar && userData.avatar) {
+        console.log('Atualizando avatar'); // DEBUG
+        avatar.src = userData.avatar;
+        avatar.alt = userData.nome || userData.name || 'Usuário';
+    }
+
+    // Banner - SEMPRE atualiza se tiver banner salvo
+    const bannerImage = document.querySelector('.profile-banner-image');
+    if (bannerImage && userData.bannerImage) {
+        console.log('Atualizando banner'); // DEBUG
+        bannerImage.src = userData.bannerImage;
+    }
+
+    // Nome - SEMPRE atualiza se tiver nome salvo
+    const name = document.getElementById('profileName');
+    if (name && (userData.nome || userData.name)) {
+        const displayName = userData.nome || userData.name;
+        console.log('Atualizando nome:', displayName); // DEBUG
+        name.textContent = displayName;
+    }
+
+    // Bio - SEMPRE atualiza se tiver bio salva
+    const bio = document.getElementById('profileBio');
+    if (bio && userData.bio) {
+        console.log('Atualizando bio:', userData.bio); // DEBUG
+        bio.textContent = userData.bio;
+    }
+
+    // Cidade - SEMPRE atualiza se tiver cidade salva
+    const city = document.getElementById('profileCity');
+    if (city && userData.city) {
+        console.log('Atualizando cidade:', userData.city); // DEBUG
+        city.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+            </svg>
+            ${userData.city}
+        `;
+    }
+
+    // Badges/Roles - SEMPRE atualiza se tiver badges salvas
+    const profileRoleDiv = document.querySelector('.profile-role');
+    if (profileRoleDiv) {
+        if (userData.badges && Array.isArray(userData.badges) && userData.badges.length > 0) {
+            console.log('Atualizando badges:', userData.badges); // DEBUG
+            profileRoleDiv.innerHTML = userData.badges.map(badge => `<span class="role-badge">${badge}</span>`).join('');
+        } else {
+            profileRoleDiv.innerHTML = '<span class="role-badge">Apreciador de Arte</span>';
+        }
+    }
 }
+
+// ========================================
+// INICIALIZAÇÃO (DOMContentLoaded)
+// ========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOMContentLoaded: Inicializando dashboard...');
+    setupEditProfileListeners();
+    init();
+});

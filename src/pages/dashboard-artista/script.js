@@ -54,12 +54,26 @@ function switchTab(tabName) {
 function updateStats() {
     const statObras = document.getElementById('statObras');
     const statEventos = document.getElementById('statEventos');
+    const statCurtidas = document.getElementById('statCurtidas');
     
     if (statObras) {
         statObras.textContent = artistData.portfolio.length;
     }
     if (statEventos) {
         statEventos.textContent = artistData.eventos.length;
+    }
+    // Sum likes from artworks (defensive: artworks may or may not include likes)
+    if (statCurtidas) {
+        const totalLikes = (artistData.portfolio || []).reduce((sum, obra) => {
+            return sum + (Number(obra.likes) || 0);
+        }, 0);
+
+        // Format: show '1.2k' for thousands, otherwise raw number
+        let display = String(totalLikes);
+        if (totalLikes >= 1000) {
+            display = (totalLikes / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+        }
+        statCurtidas.textContent = display;
     }
 }
 
@@ -74,8 +88,44 @@ function renderPortfolio() {
     if (artistData.portfolio.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                <svg class="logo-icon text-[#c9481d]" version="1.0" xmlns="http://www.w3.org/2000/svg"
+                    width="24" height="24" viewBox="0 0 546.000000 457.000000"
+                    preserveAspectRatio="xMidYMid meet" fill="currentColor">
+                    <g transform="translate(0.000000,457.000000) scale(0.100000,-0.100000)"
+                    stroke="none">
+                        <path d="M2931 3434 c-63 -17 -143 -55 -148 -71 -2 -6 24 -28 59 -49 168 -102
+                        278 -283 278 -454 0 -68 -18 -108 -108 -242 -136 -203 -208 -383 -237 -593 -3
+                        -27 -12 -75 -20 -105 -7 -30 -15 -85 -18 -122 l-5 -68 30 45 c62 94 163 171
+                        415 317 184 106 249 153 330 242 114 124 157 239 157 411 -1 222 -84 428 -230
+                        566 -73 69 -132 103 -209 123 -74 20 -222 20 -294 0z"/>
+                        <path d="M2709 3238 c-45 -70 -50 -146 -14 -223 44 -94 203 -210 296 -216 52
+                        -4 59 5 59 76 0 105 -53 222 -134 293 -49 43 -115 79 -157 87 -30 6 -38 3 -50
+                        -17z"/>
+                        <path d="M2357 3192 c-10 -10 -17 -33 -17 -50 0 -58 71 -88 117 -50 20 16 16
+                        82 -5 101 -25 22 -75 21 -95 -1z"/>
+                        <path d="M2385 2845 c-30 -30 -32 -64 -4 -99 26 -33 79 -36 109 -6 30 30 27
+                        83 -6 109 -35 28 -69 26 -99 -4z"/>
+                        <path d="M1810 2721 c-114 -16 -258 -78 -324 -139 -44 -40 -47 -77 -10 -121
+                        39 -47 110 -74 310 -119 201 -46 291 -75 409 -135 203 -102 345 -229 429 -387
+                        42 -78 46 -69 53 105 5 112 3 142 -16 215 -73 289 -278 494 -566 564 -76 18
+                        -214 27 -285 17z"/>
+                        <path d="M3846 2559 c-20 -16 -26 -29 -26 -59 0 -52 8 -68 41 -85 66 -35 129
+                        1 129 74 0 74 -85 116 -144 70z"/>
+                        <path d="M4050 2244 c-36 -19 -123 -50 -195 -70 -270 -75 -508 -160 -553 -197
+                        -12 -9 -11 -12 5 -18 17 -7 17 -8 -2 -8 -17 -1 -17 -3 -5 -11 12 -8 12 -10 1
+                        -10 -18 0 -6 -65 20 -101 11 -16 19 -44 19 -68 0 -22 6 -46 13 -53 12 -10 -2
+                        -22 -78 -63 -101 -56 -219 -148 -286 -223 -48 -53 -80 -100 -185 -267 -38 -60
+                        -87 -129 -110 -152 l-41 -43 106 0 c332 1 649 126 924 364 62 54 173 181 225
+                        258 84 123 169 334 196 485 16 84 25 214 16 212 -3 -1 -34 -16 -70 -35z"/>
+                        <path d="M1354 2147 c20 -247 141 -518 320 -717 177 -196 428 -360 648 -424
+                        123 -35 158 -36 206 -3 117 82 173 260 138 438 -57 284 -290 527 -630 653 -83
+                        32 -101 35 -112 24 -12 -12 -11 -14 6 -15 11 -1 18 2 15 7 -3 4 4 6 15 3 19
+                        -5 19 -6 -6 -19 -15 -8 -29 -12 -32 -10 -5 6 -62 -69 -62 -81 0 -4 -19 -24
+                        -41 -44 -28 -25 -40 -43 -36 -53 5 -11 0 -16 -13 -16 -11 0 -20 -2 -20 -5 0
+                        -13 62 -59 170 -127 270 -169 359 -244 413 -349 33 -65 57 -143 57 -184 0 -30
+                        -1 -30 -19 10 -34 74 -139 159 -381 305 -85 52 -187 117 -226 146 -146 107
+                        -337 356 -379 494 -4 13 -14 31 -23 39 -14 14 -14 6 -8 -72z"/>
+                    </g>
                 </svg>
                 <p>Você ainda não adicionou obras ao seu portfólio</p>
                 <button class="btn btn-primary" onclick="openAddObraDialog()">Adicionar Primeira Obra</button>
@@ -85,26 +135,35 @@ function renderPortfolio() {
     }
     
     container.innerHTML = `
-        <div class="obras-grid">
-            ${artistData.portfolio.map(obra => `
-                <div class="obra-card">
-                    <div class="obra-card-image-wrapper">
-                        <img src="${obra.imageUrl}" alt="${obra.title}" class="obra-card-image">
-                        <button class="btn btn-secondary btn-icon obra-card-delete" onclick="handleDeleteObra('${obra.id}')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="3 6 5 6 21 6"/>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                            </svg>
-                        </button>
+        ${artistData.portfolio.map(obra => `
+            <div class="obra-card" onclick="openArtworkModalFromDashboard('${obra.id}')" style="cursor: pointer;">
+                <div class="obra-card-image-wrapper">
+                    <img src="${obra.imageUrl || obra.imagemUrl}" alt="${obra.titulo || obra.title}" class="obra-card-image">
+                    <div class="obra-card-badges">
+                        ${obra.isForSale ? '<span class="badge-venda">À Venda</span>' : '<span class="badge-portfolio">Portfólio</span>'}
+                        ${obra.software ? `<span class="badge-software">${obra.software}</span>` : ''}
                     </div>
-                    <div class="obra-card-content">
-                        <h3 class="obra-card-title">${obra.title}</h3>
-                        <p class="obra-card-artist">${obra.category}</p>
-                        <span class="obra-card-price">R$ ${formatPrice(obra.price)}</span>
+                    <button class="btn btn-secondary btn-icon obra-card-delete" onclick="handleDeleteObra('${obra.id}'); event.stopPropagation();" title="Deletar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="obra-card-content">
+                    <h3 class="obra-card-title">${obra.titulo || obra.title}</h3>
+                    <p class="obra-card-category">${obra.categoria || obra.category}</p>
+                    ${obra.tags && obra.tags.length > 0 ? `
+                        <div class="obra-card-tags">
+                            ${obra.tags.slice(0, 3).map(tag => `<span class="tag-small">${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="obra-card-footer">
+                        <span class="obra-card-price">${obra.isForSale ? `R$ ${formatPrice(obra.preco || obra.price)}` : 'Portfólio'}</span>
                     </div>
                 </div>
-            `).join('')}
-        </div>
+            </div>
+        `).join('')}
     `;
 }
 
@@ -187,26 +246,24 @@ function renderFavoritos() {
     }
     
     container.innerHTML = `
-        <div class="obras-grid">
-            ${artistData.favoritos.map(obra => `
-                <div class="obra-card">
-                    <div class="obra-card-image-wrapper">
-                        <img src="${obra.imageUrl}" alt="${obra.title}" class="obra-card-image">
-                            <button class="btn btn-secondary btn-icon obra-card-delete" onclick="window.handleRemoveFavorito('${obra.id}')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="3 6 5 6 21 6"/>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="obra-card-content">
-                        <h3 class="obra-card-title">${obra.title}</h3>
-                        <p class="obra-card-artist">${obra.artist}</p>
-                        <span class="obra-card-price">R$ ${formatPrice(obra.price)}</span>
-                    </div>
+        ${artistData.favoritos.map(obra => `
+            <div class="obra-card" onclick="openArtworkModalFromDashboard('${obra.id}')" style="cursor: pointer;">
+                <div class="obra-card-image-wrapper">
+                    <img src="${obra.imageUrl}" alt="${obra.title}" class="obra-card-image">
+                        <button class="btn btn-secondary btn-icon obra-card-delete" onclick="window.handleRemoveFavorito('${obra.id}'); event.stopPropagation();" title="Remover dos favoritos">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
                 </div>
-            `).join('')}
-        </div>
+                <div class="obra-card-content">
+                    <h3 class="obra-card-title">${obra.title}</h3>
+                    <p class="obra-card-artist">${obra.artist}</p>
+                    <span class="obra-card-price">R$ ${formatPrice(obra.price)}</span>
+                </div>
+            </div>
+        `).join('')}
     `;
 }
 
@@ -356,21 +413,241 @@ function closeObraDialog() {
     modal.classList.remove('active');
     document.body.style.overflow = '';
     editingObra = null;
+    
+    // Limpar formulário e preview
+    const obraForm = document.getElementById('obraForm');
+    if (obraForm) obraForm.reset();
+    
+    uploadedArtworkDataUrl = null;
+    
+    // Resetar preview de imagem
+    const imagePreview = document.getElementById('imagePreview');
+    const uploadBox = document.getElementById('uploadBox');
+    if (imagePreview) imagePreview.classList.add('hidden');
+    if (uploadBox) uploadBox.classList.remove('hidden');
+    
+    // Resetar para modo portfólio
+    const publishPortfolioRadio = document.getElementById('publishPortfolio');
+    if (publishPortfolioRadio) publishPortfolioRadio.checked = true;
+    togglePublishType('portfolio');
+    
+    // Resetar contador de caracteres
+    const descCharCount = document.getElementById('descCharCount');
+    if (descCharCount) descCharCount.textContent = '0/1000';
+}
+
+// Alterna entre modo portfólio e venda
+function togglePublishType(type) {
+    const priceSection = document.getElementById('priceSection');
+    const priceInput = document.getElementById('obraPrice');
+    
+    if (type === 'venda') {
+        priceSection.classList.remove('hidden');
+        priceInput.required = true;
+    } else {
+        priceSection.classList.add('hidden');
+        priceInput.required = false;
+        priceInput.value = '';
+    }
+}
+
+// Atualiza contador de caracteres da descrição
+function setupObraFormListeners() {
+    const obraForm = document.getElementById('obraForm');
+    if (!obraForm) return;
+
+    // Imagem preview
+    const obraFile = document.getElementById('obraFile');
+    if (obraFile) {
+        obraFile.addEventListener('change', (e) => {
+            handleImageUpload(e);
+        });
+    }
+
+    // Descrição - contador de caracteres
+    const obraDescription = document.getElementById('obraDescription');
+    if (obraDescription) {
+        obraDescription.addEventListener('input', (e) => {
+            const count = e.target.value.length;
+            const descCharCount = document.getElementById('descCharCount');
+            if (descCharCount) {
+                descCharCount.textContent = `${count}/1000`;
+            }
+        });
+    }
+
+    // Publicação tipo radio buttons
+    const publishRadios = document.querySelectorAll('input[name="publishType"]');
+    publishRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            togglePublishType(e.target.value);
+        });
+    });
+}
+
+function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validação de tipo
+    if (!file.type.startsWith('image/')) {
+        if (typeof showToast === 'function') {
+            showToast('Erro', 'Por favor, selecione uma imagem válida', 'error');
+        }
+        return;
+    }
+
+    // Validação de tamanho (50MB)
+    if (file.size > 50 * 1024 * 1024) {
+        if (typeof showToast === 'function') {
+            showToast('Erro', 'Arquivo muito grande (máx 50MB)', 'error');
+        }
+        return;
+    }
+
+    // Ler arquivo e criar preview
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        uploadedArtworkDataUrl = event.target.result;
+        
+        // Mostrar preview
+        const imagePreview = document.getElementById('imagePreview');
+        const imagePreviewImg = document.getElementById('obraImagePreviewImg');
+        const uploadBox = document.getElementById('uploadBox');
+        
+        if (imagePreview && imagePreviewImg && uploadBox) {
+            imagePreviewImg.src = uploadedArtworkDataUrl;
+            uploadBox.style.display = 'none';
+            imagePreview.classList.remove('hidden');
+            imagePreview.classList.add('block');
+            
+            // Adicionar botão de remover imagem
+            updateImagePreviewControls();
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+function updateImagePreviewControls() {
+    const imagePreview = document.getElementById('imagePreview');
+    
+    // Remover controles antigos se existirem
+    const existingControls = imagePreview.querySelector('.image-preview-controls');
+    if (existingControls) {
+        existingControls.remove();
+    }
+    
+    // Criar container de controles
+    const controls = document.createElement('div');
+    controls.className = 'image-preview-controls absolute top-0 right-0 flex gap-2 p-3';
+    controls.innerHTML = `
+        <button type="button" class="btn btn-sm bg-[#c9481d] text-white hover:bg-[#a83517] rounded-lg px-3 py-1.5 inline-flex items-center gap-2 text-xs font-medium transition" onclick="changeArtworkImage(); event.preventDefault(); event.stopPropagation();">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Trocar Imagem
+        </button>
+        <button type="button" class="btn btn-sm bg-red-500/20 text-red-600 hover:bg-red-500/30 rounded-lg px-3 py-1.5 inline-flex items-center gap-2 text-xs font-medium transition" onclick="removeArtworkImage(); event.preventDefault(); event.stopPropagation();">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                <line x1="10" y1="11" x2="10" y2="17"/>
+                <line x1="14" y1="11" x2="14" y2="17"/>
+            </svg>
+            Remover
+        </button>
+    `;
+    
+    imagePreview.style.position = 'relative';
+    imagePreview.appendChild(controls);
+}
+
+function changeArtworkImage() {
+    const obraFile = document.getElementById('obraFile');
+    if (obraFile) {
+        obraFile.click();
+    }
+}
+
+function removeArtworkImage() {
+    uploadedArtworkDataUrl = null;
+    
+    const imagePreview = document.getElementById('imagePreview');
+    const uploadBox = document.getElementById('uploadBox');
+    const obraFile = document.getElementById('obraFile');
+    
+    if (imagePreview) {
+        imagePreview.classList.add('hidden');
+        imagePreview.classList.remove('block');
+    }
+    if (uploadBox) uploadBox.style.display = '';
+    if (obraFile) obraFile.value = '';
+    
+    if (typeof showToast === 'function') {
+        showToast('Imagem removida', 'Você pode adicionar outra imagem', 'info');
+    }
 }
 
 async function handleObraSubmit(e) {
     e.preventDefault();
     
     try {
+        const publishType = document.querySelector('input[name="publishType"]:checked').value;
+        const obraTitle = document.getElementById('obraTitle').value.trim();
+        const obraCategory = document.getElementById('obraCategory').value;
+        
+        // Validações básicas
+        if (!obraTitle) {
+            if (typeof showToast === 'function') {
+                showToast('Erro', 'Preencha o título da obra', 'error');
+            }
+            return;
+        }
+        
+        if (!obraCategory) {
+            if (typeof showToast === 'function') {
+                showToast('Erro', 'Selecione uma categoria', 'error');
+            }
+            return;
+        }
+
+        if (!uploadedArtworkDataUrl) {
+            if (typeof showToast === 'function') {
+                showToast('Aviso', 'Adicione uma imagem para sua obra', 'info');
+            }
+            // Continua mesmo sem imagem (usa placeholder), mas avisa
+        }
+        
         const formData = {
-            title: document.getElementById('obraTitle').value,
-            category: document.getElementById('obraCategory').value,
-            price: parseFloat(document.getElementById('obraPrice').value),
-            description: document.getElementById('obraDescription').value
+            title: obraTitle,
+            category: obraCategory,
+            description: document.getElementById('obraDescription').value.trim(),
+            software: document.getElementById('obraSoftware').value.trim(),
+            tags: document.getElementById('obraTags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
+            isForSale: publishType === 'venda'
         };
 
-        // TODO: Implementar upload de imagem real
-        // Use uploaded data URL if available (from file preview), otherwise fallback to placeholder
+        // Price only required if for sale
+        if (formData.isForSale) {
+            const price = parseFloat(document.getElementById('obraPrice').value);
+            if (isNaN(price) || price < 0) {
+                if (typeof showToast === 'function') {
+                    showToast('Erro', 'Preço inválido', 'error');
+                }
+                return;
+            }
+            if (price < 50) {
+                if (typeof showToast === 'function') {
+                    showToast('Aviso', 'Preço recomendado: mínimo R$ 50,00', 'warning');
+                }
+            }
+            formData.price = price;
+        } else {
+            formData.price = 0;
+        }
+
+        // Use uploaded data URL if available, otherwise fallback to placeholder
         formData.imageUrl = uploadedArtworkDataUrl || "https://via.placeholder.com/800x600";
 
         // Cria obra
@@ -381,17 +658,16 @@ async function handleObraSubmit(e) {
         
         // Fecha modal
         closeObraDialog();
-    // clear uploaded preview data after submit
-    uploadedArtworkDataUrl = null;
+        uploadedArtworkDataUrl = null;
         
         if (typeof showToast === 'function') {
-            showToast('Obra adicionada!', 'Sua obra foi publicada com sucesso', 'success');
+            showToast('Sucesso!', 'Sua obra foi publicada com sucesso', 'success');
         }
 
     } catch (error) {
         console.error('Erro ao adicionar obra:', error);
         if (typeof showToast === 'function') {
-            showToast('Erro', 'Não foi possível adicionar a obra', 'error');
+            showToast('Erro', 'Não foi possível publicar a obra', 'error');
         }
     }
 }
@@ -490,12 +766,180 @@ async function handleDeleteEvento(eventoId) {
 }
 
 // ========================================
+// MODAL - EDIT PROFILE
+// ========================================
+
+function openEditProfileDialog() {
+    const modal = document.getElementById('editProfileModal');
+    if (!modal) return;
+
+    const bioEl = document.getElementById('editBio');
+    const cityEl = document.getElementById('editCity');
+    const avatarImg = document.getElementById('editAvatarImg');
+    const bannerPreview = document.getElementById('editBannerPreview');
+    const bannerImgEl = document.querySelector('.profile-banner-image');
+
+    if (bioEl) bioEl.value = (userData?.profileData && userData.profileData.biografia) || (userData.biografia) || '';
+    if (cityEl) cityEl.value = (userData?.profileData && userData.profileData.cidade) || (userData.cidade) || '';
+    if (avatarImg) avatarImg.src = userData?.avatar || avatarImg.src;
+    if (bannerPreview && bannerImgEl) {
+        const inner = bannerPreview.querySelector('div');
+        if (inner) inner.style.backgroundImage = `url('${bannerImgEl.src}')`;
+    }
+
+    // Popula as badges
+    const badges = (userData?.badges && Array.isArray(userData.badges)) ? userData.badges : [];
+    for (let i = 1; i <= 3; i++) {
+        const badgeEl = document.getElementById(`editBadge${i}`);
+        if (badgeEl) {
+            badgeEl.value = badges[i - 1] || '';
+        }
+    }
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeEditProfileDialog() {
+    const modal = document.getElementById('editProfileModal');
+    if (!modal) return;
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+        if (!file) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+async function handleEditProfileSubmit(e) {
+    e.preventDefault();
+    try {
+        const bannerFile = document.getElementById('editBannerFile')?.files?.[0];
+        const avatarFile = document.getElementById('editAvatarFile')?.files?.[0];
+        const bio = document.getElementById('editBio')?.value || '';
+        const city = document.getElementById('editCity')?.value || '';
+
+        // Coleta as badges
+        const badges = [];
+        for (let i = 1; i <= 3; i++) {
+            const badge = document.getElementById(`editBadge${i}`)?.value?.trim();
+            if (badge) {
+                badges.push(badge);
+            }
+        }
+
+        const bannerData = await readFileAsDataUrl(bannerFile);
+        const avatarData = await readFileAsDataUrl(avatarFile);
+
+        const updatePayload = {};
+        if (avatarData) updatePayload.avatar = avatarData;
+        updatePayload.profileData = { biografia: bio, cidade: city };
+        updatePayload.badges = badges;
+        if (bannerData) updatePayload.profileData.banner = bannerData;
+
+        await window.userService.updateUser(userData.id, updatePayload);
+
+        // reload userData and persist locally
+        userData = await window.userService.getUser(userData.id);
+        localStorage.setItem('userData', JSON.stringify(userData));
+
+        // update UI immediately
+        if (avatarData) {
+            const avatar = document.getElementById('profileAvatar');
+            if (avatar) avatar.src = avatarData;
+        }
+        if (bannerData) {
+            const banner = document.querySelector('.profile-banner-image');
+            if (banner) banner.src = bannerData;
+        }
+        const bioEl = document.getElementById('profileBio');
+        if (bioEl) bioEl.textContent = userData.profileData?.biografia || '';
+        const cityEl = document.getElementById('profileCity');
+        if (cityEl) {
+            const icon = cityEl.querySelector('i');
+            cityEl.innerHTML = '';
+            if (icon) cityEl.appendChild(icon);
+            const textNode = document.createTextNode(' ' + (userData.profileData?.cidade || ''));
+            cityEl.appendChild(textNode);
+        }
+
+        // Atualiza as badges na UI
+        const profileRoleDiv = document.querySelector('.profile-role');
+        if (profileRoleDiv) {
+            if (badges && badges.length > 0) {
+                profileRoleDiv.innerHTML = badges.map(badge => `<span class="role-badge">${badge}</span>`).join('');
+            } else {
+                profileRoleDiv.innerHTML = '<span class="role-badge">Artista Digital</span>';
+            }
+        }
+
+        // close modal and refresh dashboard data
+        closeEditProfileDialog();
+        await loadData();
+
+        if (typeof showToast === 'function') showToast('Perfil atualizado', 'Suas alterações foram salvas', 'success');
+    } catch (err) {
+        console.error('Erro ao atualizar perfil:', err);
+        if (typeof showToast === 'function') showToast('Erro', 'Não foi possível atualizar o perfil', 'error');
+    }
+}
+
+// expose helper and modal handlers globally so other scripts can call them if needed
+window.openEditProfileDialog = openEditProfileDialog;
+window.closeEditProfileDialog = closeEditProfileDialog;
+window.handleEditProfileSubmit = handleEditProfileSubmit;
+
+// bind events for file previews and form on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('editProfileBtn');
+    if (btn) btn.addEventListener('click', openEditProfileDialog);
+
+    const editForm = document.getElementById('editProfileForm');
+    if (editForm) editForm.addEventListener('submit', handleEditProfileSubmit);
+
+    const bannerFile = document.getElementById('editBannerFile');
+    if (bannerFile) {
+        bannerFile.addEventListener('change', () => {
+            const f = bannerFile.files[0];
+            if (!f) return;
+            const r = new FileReader();
+            r.onload = () => {
+                const previewDiv = document.querySelector('#editBannerPreview div');
+                if (previewDiv) previewDiv.style.backgroundImage = `url('${r.result}')`;
+            };
+            r.readAsDataURL(f);
+        });
+    }
+
+    const avatarFile = document.getElementById('editAvatarFile');
+    if (avatarFile) {
+        avatarFile.addEventListener('change', () => {
+            const f = avatarFile.files[0];
+            if (!f) return;
+            const r = new FileReader();
+            r.onload = () => {
+                const img = document.getElementById('editAvatarImg');
+                if (img) img.src = r.result;
+            };
+            r.readAsDataURL(f);
+        });
+    }
+});
+
+// ========================================
 // HANDLERS
 // ========================================
 
 async function handleRemoveFavorito(obraId) {
     try {
-        await window.artworkService.toggleFavorite(userData.id, obraId);
+            const result = await window.artworkService.toggleFavorite(userData.id, obraId);
+            if (!result.added) {
         // Recarrega favoritos do serviço para garantir sincronismo
         const favs = await window.artworkService.getFavorites(userData.id);
         artistData.favoritos = favs.map(f => ({
@@ -510,6 +954,7 @@ async function handleRemoveFavorito(obraId) {
         if (typeof showToast === 'function') {
             showToast('Removido dos favoritos', 'A obra foi removida', 'success');
         }
+            }
     } catch (error) {
         console.error('Erro ao remover dos favoritos:', error);
         if (typeof showToast === 'function') {
@@ -790,17 +1235,43 @@ async function loadData() {
         // Normaliza dados para a UI (converte chaves PT-BR -> esperado pela UI em inglês)
         const normalizeArtwork = (a) => {
             if (!a) return null;
-            return {
-                id: a.id || a.id,
-                title: a.titulo || a.title || '',
-                imageUrl: a.imagemUrl || a.imageUrl || '',
-                price: typeof a.preco !== 'undefined' ? Number(a.preco) : (typeof a.price !== 'undefined' ? Number(a.price) : 0),
-                category: a.categoria || a.category || '',
-                artist: a.artistaNome || a.artist || userData.name || userData.nome || ''
+        // attempt to extract a likes/curtidas count from multiple possible API shapes
+        const likesRaw = a.curtidas || a.likes || (a.stats && (a.stats.likes || a.stats.likes_count)) || a.likeCount || a.likesCount || 0;
+        const likes = Number(likesRaw || 0);
+
+        return {
+            id: a.id || a.id,
+            title: a.titulo || a.title || '',
+            imageUrl: a.imagemUrl || a.imageUrl || '',
+            price: typeof a.preco !== 'undefined' ? Number(a.preco) : (typeof a.price !== 'undefined' ? Number(a.price) : 0),
+            category: a.categoria || a.category || '',
+            artist: a.artistaNome || a.artist || userData.name || userData.nome || '',
+            likes: likes
             };
         };
 
         const normalizedPortfolio = (portfolio || []).map(normalizeArtwork).filter(Boolean);
+
+        // If the service exposes a favorites count, fetch likes per artwork so stats are accurate
+        if (window.artworkService && typeof window.artworkService.getFavoritesCount === 'function') {
+            try {
+                const counts = await Promise.all(normalizedPortfolio.map(async (art) => {
+                    try {
+                        const c = await window.artworkService.getFavoritesCount(art.id);
+                        return Number(c || 0);
+                    } catch (err) {
+                        return 0;
+                    }
+                }));
+
+                normalizedPortfolio.forEach((art, idx) => {
+                    art.likes = counts[idx] || 0;
+                });
+            } catch (err) {
+                // ignore: we'll fallback to likes present on artwork objects if any
+                console.warn('Não foi possível recuperar contagens de favoritos por obra:', err);
+            }
+        }
 
         // favoritos: artworkService.getFavorites returns wrappers { ...f, obra }
         const normalizedFavoritos = (favoritos || []).map(f => normalizeArtwork(f.obra)).filter(Boolean);
@@ -869,15 +1340,52 @@ async function loadData() {
 function updateUserInterface() {
     // Avatar
     const avatar = document.getElementById('profileAvatar');
-    if (avatar && userData.avatar) {
-        avatar.src = userData.avatar;
-        avatar.alt = userData.nome;
+    if (avatar) {
+        if (userData.avatar) {
+            avatar.src = userData.avatar;
+        } else {
+            avatar.src = 'https://i.pravatar.cc/150?img=7'; // fallback avatar
+        }
+        avatar.alt = userData.nome || userData.name || 'Usuário';
     }
 
     // Nome
     const name = document.getElementById('profileName');
     if (name) {
-        name.textContent = userData.nome;
+        name.textContent = userData.nome || userData.name || 'Usuário';
+    }
+
+    // Banner (artist profile banner may be stored in profileData.banner or userData.banner)
+    const banner = document.querySelector('.profile-banner-image');
+    if (banner) {
+        const bannerSrc = (userData && userData.profileData && userData.profileData.banner) || userData.banner || banner.src;
+        if (bannerSrc) banner.src = bannerSrc;
+    }
+
+    // Biografia
+    const bioEl = document.getElementById('profileBio');
+    if (bioEl) {
+        bioEl.textContent = (userData && userData.profileData && userData.profileData.biografia) || userData.biografia || bioEl.textContent || '';
+    }
+
+    // Cidade (mantendo o ícone se presente)
+    const cityEl = document.getElementById('profileCity');
+    if (cityEl) {
+        const icon = cityEl.querySelector('i');
+        cityEl.innerHTML = '';
+        if (icon) cityEl.appendChild(icon);
+        const cityText = document.createTextNode(' ' + ((userData && userData.profileData && userData.profileData.cidade) || userData.cidade || ''));
+        cityEl.appendChild(cityText);
+    }
+
+    // Badges/Tags
+    const profileRoleDiv = document.querySelector('.profile-role');
+    if (profileRoleDiv) {
+        if (userData.badges && Array.isArray(userData.badges) && userData.badges.length > 0) {
+            profileRoleDiv.innerHTML = userData.badges.map(badge => `<span class="role-badge">${badge}</span>`).join('');
+        } else {
+            profileRoleDiv.innerHTML = '<span class="role-badge">Artista Digital</span>';
+        }
     }
 }
 
@@ -921,6 +1429,48 @@ function formatDate(dateStr) {
     return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
+// Debounce helper to avoid rapid reloads
+function debounce(fn, wait = 200) {
+    let t;
+    return function(...args) {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), wait);
+    };
+}
+
+// Expose a refresh hook so other pages (e.g. explorar) can notify this dashboard
+// that artworks changed (e.g., likes were toggled). Call `window.refreshArtistStats()`
+// after a like/unlike action in another page, or set localStorage key 'artwork-updated'.
+window.refreshArtistStats = async function() {
+    try {
+        await loadData();
+    } catch (err) {
+        console.error('Erro ao atualizar estatísticas:', err);
+    }
+};
+
+const debouncedLoadData = debounce(() => {
+    // only reload when page is visible (avoid background churn)
+    if (document.visibilityState === 'visible') {
+        loadData().catch(err => console.error('Erro no reload debounced:', err));
+    }
+}, 300);
+
+// If another tab/page updates artworks, it can write localStorage.setItem('artwork-updated', Date.now())
+// which triggers this handler and refreshes data.
+window.addEventListener('storage', (e) => {
+    if (!e) return;
+    if (e.key === 'artwork-updated') {
+        debouncedLoadData();
+    }
+});
+
+// Also refresh when user focuses or returns to the tab
+window.addEventListener('focus', debouncedLoadData);
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') debouncedLoadData();
+});
+
 // ========================================
 // INIT
 // ========================================
@@ -950,6 +1500,9 @@ async function init() {
         // Inicializa upload de arquivos
         initFileUpload();
         
+        // Inicializa listeners do formulário de obra
+        setupObraFormListeners();
+        
         // Carrega dados
         await loadData();
         
@@ -967,6 +1520,10 @@ async function init() {
 // Torna funções globais
 window.openAddObraDialog = openAddObraDialog;
 window.closeObraDialog = closeObraDialog;
+window.togglePublishType = togglePublishType;
+window.handleImageUpload = handleImageUpload;
+window.changeArtworkImage = changeArtworkImage;
+window.removeArtworkImage = removeArtworkImage;
 window.openAddEventoDialog = openAddEventoDialog;
 window.closeEventoDialog = closeEventoDialog;
 window.handleDeleteObra = handleDeleteObra;

@@ -3,23 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Painel - Artista</title>
+    <title>Arte na Mão</title>
+
+    <!-- Tipografia sofisticada e legível -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind (utilitários para design) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <link rel="stylesheet" href="../../../public/assets/css/global.css">
     <link rel="stylesheet" href="../../../public/assets/css/form.css">
     <link rel="stylesheet" href="../../components/navbar.css">
     <link rel="stylesheet" href="../../components/buttons.css">
     <link rel="stylesheet" href="../../components/profileCard.css">
     <link rel="stylesheet" href="../../components/dashboard.css">
+    <link rel="stylesheet" href="../../components/modal-artwork.css">
     <link rel="stylesheet" href="style.css">
+    
     <link rel="icon" type="image/png" href="../../../public/assets/midia/logotipo.png" />
 </head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="nav-container">
-            <a href="../explorar/index.html" class="logo">
-                <svg class="logo-icon" version="1.0" xmlns="http://www.w3.org/2000/svg"
-                    width="28" height="28" viewBox="0 0 546.000000 457.000000"
+<body class="antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)] selection:bg-[#c9481d]/20 selection:text-[var(--foreground)] scroll-pt-24">
+
+    <!-- Background artístico sutil -->
+    <div class="pointer-events-none fixed inset-0 -z-10 page-background">
+        <div class="absolute inset-0 opacity-40 bg-radial"></div>
+        <div class="absolute inset-0 bg-svgpattern"></div>
+    </div>
+
+    <!-- Header - Dark & Minimal -->
+    <header class="header fixed top-0 inset-x-0 z-50 border-b border-[var(--border)] backdrop-blur-xl">
+        <nav class="nav-container mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12 h-14 flex items-center justify-between">
+            <a href="../explorar/index.html" class="logo flex items-center gap-2 text-[var(--foreground)] hover:opacity-80 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d] rounded-md">
+                <svg class="logo-icon text-[#c9481d]" version="1.0" xmlns="http://www.w3.org/2000/svg"
+                    width="24" height="24" viewBox="0 0 546.000000 457.000000"
                     preserveAspectRatio="xMidYMid meet" fill="currentColor">
                     <g transform="translate(0.000000,457.000000) scale(0.100000,-0.100000)"
                     stroke="none">
@@ -57,23 +75,33 @@
                         -337 356 -379 494 -4 13 -14 31 -23 39 -14 14 -14 6 -8 -72z"/>
                     </g>
                 </svg>
-                <span class="logo-text">Arte na Mão</span>
+                <span class="logo-text text-sm font-medium tracking-tight">Arte na Mão</span>
             </a>
 
-            <div class="nav-menu">
-                <a href="../explorar/index.html" class="nav-link">Explorar</a>
-                <a href="../eventos/index.html" class="nav-link">Eventos</a>
+            <div class="nav-menu flex items-center gap-6">
+                <a href="../explorar/index.html" class="nav-link hidden sm:inline-flex text-xs font-medium uppercase tracking-widest text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition px-2 py-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]">Explorar</a>
+                <a href="../eventos/index.html" class="nav-link hidden sm:inline-flex text-xs font-medium uppercase tracking-widest text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition px-2 py-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]">Eventos</a>
 
-                <div class="user-menu">
-                    <button class="btn btn-ghost" onclick="redirectToProfile()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <button id="themeToggle" type="button" class="hidden sm:inline-flex items-center gap-2 text-sm px-2 py-1 rounded-md border border-[var(--border)] hover:bg-[var(--muted)]/60 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]" aria-label="Alternar tema">
+                    <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" class="text-[var(--foreground)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                    </svg>
+                    <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" class="hidden text-[var(--foreground)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+
+                <div class="user-menu flex items-center gap-2">
+                    <button class="btn btn-ghost inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-transparent hover:border-[var(--border)] hover:bg-[var(--muted)]/40 text-xs font-medium text-[var(--foreground)] transition focus-visible:ring-2 focus-visible:ring-[#c9481d] focus:outline-none" onclick="redirectToProfile()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                             <circle cx="12" cy="7" r="4"/>
                         </svg>
                         Perfil
                     </button>
-                    <button class="btn btn-outline" onclick="handleLogout()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button class="btn btn-outline inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-[var(--border)] hover:bg-[var(--muted)]/40 text-xs font-medium text-[var(--foreground)] transition focus-visible:ring-2 focus-visible:ring-[#c9481d] focus:outline-none" onclick="handleLogout()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                             <polyline points="16 17 21 12 16 7"/>
                             <line x1="21" y1="12" x2="9" y2="12"/>
@@ -86,51 +114,196 @@
     </header>
 
     <!-- Main Content -->
-    <main class="dashboard-page">
-        <div class="container">
-            <!-- Profile Card -->
-            <div class="profile-card">
-                <div class="profile-avatar">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop" alt="Maria Silva" id="profileAvatar">
-                </div>
-                <div class="profile-info">
-                    <h1 class="profile-name" id="profileName">Maria Silva</h1>
-                    <p class="profile-role">Artista • Pintora</p>
-                    <p class="profile-location">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                            <circle cx="12" cy="10" r="3"/>
-                        </svg>
-                        Recife, PE
-                    </p>
-                </div>
-                <div class="profile-stats">
-                    <div class="profile-stat">
-                        <span class="profile-stat-value" id="statObras">12</span>
-                        <span class="profile-stat-label">Obras</span>
+    <main class="dashboard-page pt-20">
+        <!-- Hero Profile Section -->
+        <section class="profile-section">
+            <!-- Banner Image -->
+            <div class="profile-banner-wrapper">
+                <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1920&h=400&fit=crop&q=80" 
+                     alt="Profile Banner" 
+                     class="profile-banner-image">
+                <div class="profile-banner-overlay"></div>
+
+                <!-- Edit Profile Button -->
+                <button id="editProfileBtn" type="button" class="absolute right-6 top-6 z-40 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[#000000]/30 text-white border border-[var(--border)] hover:bg-[#000000]/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]">
+                    Editar Perfil
+                </button>
+
+                <!-- Modal: Editar Perfil -->
+                <div class="modal" id="editProfileModal">
+                    <div class="modal-overlay" onclick="closeEditProfileDialog()"></div>
+                    <div class="modal-content max-w-2xl">
+                        <div class="modal-header flex items-center justify-between px-6 py-4 border-b border-[var(--border)] bg-[var(--muted)]/30">
+                            <h2 class="modal-title text-lg font-semibold tracking-tight">Editar Perfil</h2>
+                            <button class="modal-close inline-flex items-center justify-center rounded-full p-2 hover:bg-[var(--muted)]/60 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]" onclick="closeEditProfileDialog()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" class="text-[var(--foreground)]" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <form id="editProfileForm" class="modal-body p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="form-label block text-sm font-medium mb-2">Imagem do Banner</label>
+                                    <input type="file" id="editBannerFile" accept="image/*" class="sr-only">
+                                    <label for="editBannerFile" id="editBannerPreview" class="file-upload-content flex flex-col items-center justify-center gap-2 text-center cursor-pointer border border-dashed rounded-lg p-3 bg-[var(--muted)]/20">
+                                        <div class="w-full h-28 bg-cover bg-center rounded-md banner-preview"></div>
+                                        <span class="text-xs text-[var(--muted-foreground)]">Clique para escolher uma nova imagem de banner</span>
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <label class="form-label block text-sm font-medium mb-2">Avatar de Perfil</label>
+                                    <input type="file" id="editAvatarFile" accept="image/*" class="sr-only">
+                                    <label for="editAvatarFile" id="editAvatarPreview" class="file-upload-content flex items-center gap-3 text-center cursor-pointer border border-dashed rounded-lg p-3 bg-[var(--muted)]/20">
+                                        <div class="w-16 h-16 rounded-full bg-[var(--muted)]/40 overflow-hidden">
+                                            <img id="editAvatarImg" src="https://i.pravatar.cc/150?img=7" class="w-full h-full object-cover" alt="preview">
+                                        </div>
+                                        <div class="text-left">
+                                            <div class="text-sm font-medium">Clique para alterar o avatar</div>
+                                            <div class="text-xs text-[var(--muted-foreground)]">PNG, JPG — Recomendado 400x400</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="editBio" class="form-label block text-sm font-medium mb-2">Biografia</label>
+                                <textarea id="editBio" rows="4" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] transition px-4 py-3"></textarea>
+                            </div>
+
+                            <div>
+                                <label for="editCity" class="form-label block text-sm font-medium mb-2">Cidade</label>
+                                <input id="editCity" type="text" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] transition px-4 py-3">
+                            </div>
+
+                            <div>
+                                <label class="form-label block text-sm font-medium mb-2">Badges/Tags (Máximo 3)</label>
+                                <div class="space-y-2">
+                                    <div>
+                                        <input type="text" id="editBadge1" maxlength="30" placeholder="Badge 1 (opcional)" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] transition px-4 py-3 mb-2">
+                                    </div>
+                                    <div>
+                                        <input type="text" id="editBadge2" maxlength="30" placeholder="Badge 2 (opcional)" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] transition px-4 py-3 mb-2">
+                                    </div>
+                                    <div>
+                                        <input type="text" id="editBadge3" maxlength="30" placeholder="Badge 3 (opcional)" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] transition px-4 py-3">
+                                    </div>
+                                </div>
+                                <p class="text-xs text-[var(--muted-foreground)] mt-2">Exemplos: "Artista Digital", "5 anos de experiência", "Especialista em Pintura"</p>
+                            </div>
+
+                            <div class="modal-footer flex items-center justify-end gap-3 pt-2">
+                                <button type="button" class="btn btn-outline inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border)] hover:bg-[var(--muted)]/60 text-sm font-medium text-[var(--foreground)] transition focus-visible:ring-2 focus-visible:ring-[#c9481d]" onclick="closeEditProfileDialog()">Cancelar</button>
+                                <button type="submit" class="btn btn-primary inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium shadow-lg hover:shadow-xl transition focus-visible:ring-2 focus-visible:ring-[#c9481d]">Salvar</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="profile-stat">
-                        <span class="profile-stat-value" id="statEventos">3</span>
-                        <span class="profile-stat-label">Eventos</span>
+                </div>
+
+            </div>
+            
+            <div class="container">
+                <div class="profile-content flex items-start gap-8 fade-in-up">
+                    <!-- Avatar -->
+                    <div class="profile-avatar">
+                        <div class="avatar-container">
+                            <img src="assets/imagem-do-usuario-com-fundo-preto.png" 
+                                 alt="Foto de perfil do usuário" 
+                                 id="profileAvatar">
+                        </div>
+                        <div class="status-indicator"></div>
                     </div>
-                    <div class="profile-stat">
-                        <span class="profile-stat-value">1.2k</span>
-                        <span class="profile-stat-label">Curtidas</span>
+                    
+                    <div class="profile-info">
+                        <div class="profile-header">
+                            <h1 class="profile-name" id="profileName">Artista</h1>
+                            <div class="profile-role">
+                                <span class="role-badge">Artista Digital</span>
+                                <span class="role-badge">5 anos de experiência</span>
+                            </div>
+                            <p class="profile-bio" id="profileBio">
+                                Olá! Sou artista digital e me apaixono por criar ilustrações vibrantes e únicas. 
+                                Especialista em character design e concept art, adoro dar vida a personagens e histórias através da minha arte.
+                            </p>
+                            <div class="profile-meta">
+                                <span class="meta-item" id="profileCity">
+                                    <i class="ph-fill ph-map-pin"></i>
+                                    Caruaru, PE
+                            </div>
+                            
+                            <div class="profile-stats">
+                                <div class="stat-item">
+                                    <span class="stat-value" id="statObras">12</span>
+                                    <span class="stat-label">Obras</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="stat-value" id="statEventos">3</span>
+                                    <span class="stat-label">Eventos</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="stat-value" id="statCurtidas">1.2k</span>
+                                    <span class="stat-label">Curtidas</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Tabs -->
-            <div class="tabs">
-                <div class="tabs-list" role="tablist">
-                    <button class="tab-trigger active" data-tab="portfolio" role="tab">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
+        <div class="container max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
+            <!-- Tabs - Pinterest Style -->
+            <div class="tabs mt-8">
+                <div class="tabs-list flex items-center gap-1 overflow-x-auto sticky top-14 bg-[var(--background)]/95 backdrop-blur-xl z-40 border-b border-[var(--border)] -mx-4 sm:-mx-6 lg:-mx-12 px-4 sm:px-6 lg:px-12 py-3" role="tablist">
+                    <button class="tab-trigger active whitespace-nowrap inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/40 transition focus-visible:ring-2 focus-visible:ring-[#c9481d] outline-none" data-tab="portfolio" role="tab">
+                        <svg class="logo-icon text-[#c9481d]" version="1.0" xmlns="http://www.w3.org/2000/svg"
+                    width="24" height="24" viewBox="0 0 546.000000 457.000000"
+                    preserveAspectRatio="xMidYMid meet" fill="currentColor">
+                    <g transform="translate(0.000000,457.000000) scale(0.100000,-0.100000)"
+                    stroke="none">
+                        <path d="M2931 3434 c-63 -17 -143 -55 -148 -71 -2 -6 24 -28 59 -49 168 -102
+                        278 -283 278 -454 0 -68 -18 -108 -108 -242 -136 -203 -208 -383 -237 -593 -3
+                        -27 -12 -75 -20 -105 -7 -30 -15 -85 -18 -122 l-5 -68 30 45 c62 94 163 171
+                        415 317 184 106 249 153 330 242 114 124 157 239 157 411 -1 222 -84 428 -230
+                        566 -73 69 -132 103 -209 123 -74 20 -222 20 -294 0z"/>
+                        <path d="M2709 3238 c-45 -70 -50 -146 -14 -223 44 -94 203 -210 296 -216 52
+                        -4 59 5 59 76 0 105 -53 222 -134 293 -49 43 -115 79 -157 87 -30 6 -38 3 -50
+                        -17z"/>
+                        <path d="M2357 3192 c-10 -10 -17 -33 -17 -50 0 -58 71 -88 117 -50 20 16 16
+                        82 -5 101 -25 22 -75 21 -95 -1z"/>
+                        <path d="M2385 2845 c-30 -30 -32 -64 -4 -99 26 -33 79 -36 109 -6 30 30 27
+                        83 -6 109 -35 28 -69 26 -99 -4z"/>
+                        <path d="M1810 2721 c-114 -16 -258 -78 -324 -139 -44 -40 -47 -77 -10 -121
+                        39 -47 110 -74 310 -119 201 -46 291 -75 409 -135 203 -102 345 -229 429 -387
+                        42 -78 46 -69 53 105 5 112 3 142 -16 215 -73 289 -278 494 -566 564 -76 18
+                        -214 27 -285 17z"/>
+                        <path d="M3846 2559 c-20 -16 -26 -29 -26 -59 0 -52 8 -68 41 -85 66 -35 129
+                        1 129 74 0 74 -85 116 -144 70z"/>
+                        <path d="M4050 2244 c-36 -19 -123 -50 -195 -70 -270 -75 -508 -160 -553 -197
+                        -12 -9 -11 -12 5 -18 17 -7 17 -8 -2 -8 -17 -1 -17 -3 -5 -11 12 -8 12 -10 1
+                        -10 -18 0 -6 -65 20 -101 11 -16 19 -44 19 -68 0 -22 6 -46 13 -53 12 -10 -2
+                        -22 -78 -63 -101 -56 -219 -148 -286 -223 -48 -53 -80 -100 -185 -267 -38 -60
+                        -87 -129 -110 -152 l-41 -43 106 0 c332 1 649 126 924 364 62 54 173 181 225
+                        258 84 123 169 334 196 485 16 84 25 214 16 212 -3 -1 -34 -16 -70 -35z"/>
+                        <path d="M1354 2147 c20 -247 141 -518 320 -717 177 -196 428 -360 648 -424
+                        123 -35 158 -36 206 -3 117 82 173 260 138 438 -57 284 -290 527 -630 653 -83
+                        32 -101 35 -112 24 -12 -12 -11 -14 6 -15 11 -1 18 2 15 7 -3 4 4 6 15 3 19
+                        -5 19 -6 -6 -19 -15 -8 -29 -12 -32 -10 -5 6 -62 -69 -62 -81 0 -4 -19 -24
+                        -41 -44 -28 -25 -40 -43 -36 -53 5 -11 0 -16 -13 -16 -11 0 -20 -2 -20 -5 0
+                        -13 62 -59 170 -127 270 -169 359 -244 413 -349 33 -65 57 -143 57 -184 0 -30
+                        -1 -30 -19 10 -34 74 -139 159 -381 305 -85 52 -187 117 -226 146 -146 107
+                        -337 356 -379 494 -4 13 -14 31 -23 39 -14 14 -14 6 -8 -72z"/>
+                    </g>
+                </svg>
                         <span class="tab-trigger-text">Portfólio</span>
                     </button>
-                    <button class="tab-trigger" data-tab="eventos" role="tab">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button class="tab-trigger whitespace-nowrap inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/40 transition focus-visible:ring-2 focus-visible:ring-[#c9481d] outline-none" data-tab="eventos" role="tab">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                             <line x1="16" y1="2" x2="16" y2="6"/>
                             <line x1="8" y1="2" x2="8" y2="6"/>
@@ -138,22 +311,22 @@
                         </svg>
                         <span class="tab-trigger-text">Eventos</span>
                     </button>
-                    <button class="tab-trigger" data-tab="favoritos" role="tab">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button class="tab-trigger whitespace-nowrap inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/40 transition focus-visible:ring-2 focus-visible:ring-[#c9481d] outline-none" data-tab="favoritos" role="tab">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
                         <span class="tab-trigger-text">Favoritos</span>
                     </button>
-                    <button class="tab-trigger" data-tab="carrinho" role="tab">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button class="tab-trigger whitespace-nowrap inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/40 transition focus-visible:ring-2 focus-visible:ring-[#c9481d] outline-none" data-tab="carrinho" role="tab">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <circle cx="9" cy="21" r="1"/>
                             <circle cx="20" cy="21" r="1"/>
                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                         </svg>
                         <span class="tab-trigger-text">Carrinho</span>
                     </button>
-                    <button class="tab-trigger" data-tab="historico" role="tab">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button class="tab-trigger whitespace-nowrap inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]/40 transition focus-visible:ring-2 focus-visible:ring-[#c9481d] outline-none" data-tab="historico" role="tab">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
                             <path d="M3 3v5h5"/>
                             <path d="M12 7v5l4 2"/>
@@ -162,143 +335,194 @@
                     </button>
                 </div>
 
-                <!-- Tab: Portfólio -->
-                <div class="tab-content active" id="portfolio-content">
-                    <div class="tab-header">
-                        <h2 class="tab-title">Meu Portfólio</h2>
-                        <button class="btn btn-primary" onclick="openAddObraDialog()">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <!-- Tab: Portfólio - Pinterest Masonry -->
+                <div class="tab-content active py-8" id="portfolio-content">
+                    <div class="tab-header flex items-center justify-between mb-8">
+                        <h2 class="tab-title text-2xl font-semibold tracking-tight">Meu Portfólio</h2>
+                        <button class="btn btn-primary inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium shadow-lg hover:shadow-xl hover:brightness-110 transition focus-visible:ring-2 focus-visible:ring-[#c9481d] focus:outline-none" onclick="openAddObraDialog()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
                             Adicionar Obra
                         </button>
                     </div>
-                    <div id="portfolio-list"></div>
+                    <div id="portfolio-list" class="obras-grid"></div>
                 </div>
 
                 <!-- Tab: Eventos -->
-                <div class="tab-content" id="eventos-content">
-                    <div class="tab-header">
-                        <h2 class="tab-title">Meus Eventos</h2>
-                        <button class="btn btn-primary" onclick="openAddEventoDialog()">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <div class="tab-content py-8" id="eventos-content">
+                    <div class="tab-header flex items-center justify-between mb-8">
+                        <h2 class="tab-title text-2xl font-semibold tracking-tight">Meus Eventos</h2>
+                        <button class="btn btn-primary inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium shadow-lg hover:shadow-xl hover:brightness-110 transition focus-visible:ring-2 focus-visible:ring-[#c9481d] focus:outline-none" onclick="openAddEventoDialog()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
                             Criar Evento
                         </button>
                     </div>
-                    <div id="eventos-list"></div>
+                    <div id="eventos-list" class="grid-pinterest"></div>
                 </div>
 
                 <!-- Tab: Favoritos -->
-                <div class="tab-content" id="favoritos-content">
-                    <div class="tab-header">
-                        <h2 class="tab-title">Obras Favoritas</h2>
-                        <span class="tab-count" id="favoritos-count">0 itens</span>
+                <div class="tab-content py-8" id="favoritos-content">
+                    <div class="tab-header flex items-center justify-between mb-8">
+                        <h2 class="tab-title text-2xl font-semibold tracking-tight">Obras Favoritas</h2>
+                        <span class="tab-count text-sm text-[var(--muted-foreground)]" id="favoritos-count">0 itens</span>
                     </div>
-                    <div id="favoritos-list"></div>
+                    <div id="favoritos-list" class="grid-pinterest"></div>
                 </div>
                 
                 <!-- Tab: Carrinho -->
-                <div class="tab-content" id="carrinho-content">
-                    <div class="tab-header">
-                        <h2 class="tab-title">Carrinho de Compras</h2>
-                        <span class="tab-count" id="carrinho-count">0 itens</span>
+                <div class="tab-content py-8" id="carrinho-content">
+                    <div class="tab-header flex items-center justify-between mb-8">
+                        <h2 class="tab-title text-2xl font-semibold tracking-tight">Carrinho de Compras</h2>
+                        <span class="tab-count text-sm text-[var(--muted-foreground)]" id="carrinho-count">0 itens</span>
                     </div>
-                    <div id="carrinho-container"></div>
+                    <div id="carrinho-container" class="grid-pinterest"></div>
                 </div>
 
                 <!-- Tab: Histórico -->
-                <div class="tab-content" id="historico-content">
-                    <h2 class="tab-title">Histórico de Vendas</h2>
-                    <div id="historico-list"></div>
+                <div class="tab-content py-8" id="historico-content">
+                    <h2 class="tab-title text-2xl font-semibold tracking-tight mb-8">Histórico de Vendas</h2>
+                    <div id="historico-list" class="grid-pinterest"></div>
                 </div>
             </div>
         </div>
+        
+        <div class="py-24"></div>
     </main>
 
-    <!-- Modal: Adicionar Obra -->
+    <!-- Modal: Adicionar Obra - REDESIGNED -->
     <div class="modal" id="obraModal">
         <div class="modal-overlay" onclick="closeObraDialog()"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Adicionar Obra</h2>
-                <button class="modal-close" onclick="closeObraDialog()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <div class="modal-content max-w-2xl max-h-[90vh] overflow-hidden flex flex-col bg-[var(--background)]">
+            <div class="modal-header flex items-center justify-between px-8 py-6 border-b border-[var(--border)] bg-[var(--muted)]/30">
+                <div>
+                    <h2 class="modal-title text-2xl font-bold tracking-tight" id="modalTitle">Compartilhar Obra</h2>
+                    <p class="text-xs text-[var(--muted-foreground)] mt-1">Adicione sua criação ao portfólio ou coloque à venda</p>
+                </div>
+                <button class="modal-close inline-flex items-center justify-center rounded-full p-2 hover:bg-[var(--muted)]/60 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]" onclick="closeObraDialog()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" class="text-[var(--foreground)]" fill="none" stroke="currentColor" stroke-width="1.5">
                         <line x1="18" y1="6" x2="6" y2="18"/>
                         <line x1="6" y1="6" x2="18" y2="18"/>
                     </svg>
                 </button>
             </div>
 
-            <form id="obraForm" class="modal-body">
-                <input type="hidden" id="obraId">
+            <form id="obraForm" class="overflow-y-auto flex-1">
+                <div class="modal-body p-8 space-y-6">
+                    <input type="hidden" id="obraId">
 
-                <div class="form-group">
-                    <label for="obraTitle" class="form-label">Título da Obra</label>
-                    <input type="text" id="obraTitle" class="form-input" placeholder="Digite o título" required>
-                    <span class="form-error" id="obraTitle-error"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="obraCategory" class="form-label">Categoria</label>
-                    <select id="obraCategory" class="form-input form-select" required>
-                        <option value="">Selecione uma categoria</option>
-                        <option value="Pintura">Pintura</option>
-                        <option value="Escultura">Escultura</option>
-                        <option value="Fotografia">Fotografia</option>
-                        <option value="Arte Digital">Arte Digital</option>
-                        <option value="Artesanato">Artesanato</option>
-                    </select>
-                    <span class="form-error" id="obraCategory-error"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="obraPrice" class="form-label">Preço (R$)</label>
-                    <input type="number" id="obraPrice" class="form-input" placeholder="0.00" step="0.01" min="0" required>
-                    <span class="form-error" id="obraPrice-error"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="obraFile" class="form-label">Upload de Arquivo</label>
-                    
-                    <div class="file-upload-box" id="uploadBox">
-                        <input 
-                            type="file" 
-                            id="obraFile" 
-                            name="uploadedFile" 
-                            accept=".jpg,.jpeg,.png,.gif,.webp,.mp4,.mov,.webm,.avi,.pdf"
-                            multiple 
-                            class="file-upload-input"
-                        >
-                        <div class="file-upload-content">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="file-upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <span id="fileUploadLabel" class="file-upload-text">
-                                Arraste ou clique para enviar arquivos
-                            </span>
-                            <span class="file-upload-subtext">
-                                (Aceita imagens, vídeos e PDFs - máx 50MB)
-                            </span>
+                    <!-- Imagem Preview -->
+                    <div class="form-group">
+                        <label class="form-label block text-sm font-medium mb-3">Imagem da Obra</label>
+                        <div id="imagePreviewContainer" class="relative">
+                            <input type="file" id="obraFile" accept="image/*" class="sr-only">
+                            
+                            <!-- Upload Box (mostrado inicialmente) -->
+                            <label for="obraFile" id="uploadBox" class="file-upload-box border-2 border-dashed border-[var(--border)] rounded-2xl p-8 bg-[var(--muted)]/20 hover:bg-[var(--muted)]/40 hover:border-[#c9481d]/50 transition cursor-pointer flex flex-col items-center justify-center gap-4">
+                                <div class="w-16 h-16 rounded-2xl bg-[#c9481d]/20 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#c9481d]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div class="text-center">
+                                    <span class="block text-sm font-semibold text-[var(--foreground)]">Clique ou arraste para adicionar imagem</span>
+                                    <span class="block text-xs text-[var(--muted-foreground)] mt-1">PNG, JPG, GIF, WebP até 50MB</span>
+                                </div>
+                            </label>
+                            
+                            <!-- Image Preview (inicialmente oculto) -->
+                            <div id="imagePreview" class="hidden w-full aspect-video bg-[var(--muted)]/30 rounded-2xl overflow-hidden border border-[var(--border)] relative">
+                                <img id="obraImagePreviewImg" src="" alt="Preview" class="w-full h-full object-cover">
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Container onde os previews vão aparecer -->
-                    <div id="previewContainer" class="preview-container"></div>
+
+                    <!-- Informações Básicas -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="form-group sm:col-span-2">
+                            <label for="obraTitle" class="form-label block text-sm font-medium mb-2">Título da Obra *</label>
+                            <input type="text" id="obraTitle" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] focus:border-transparent transition px-4 py-3" placeholder="Ex: Noturno em Cores Vibrantes" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="obraCategory" class="form-label block text-sm font-medium mb-2">Categoria *</label>
+                            <select id="obraCategory" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] focus:ring-2 focus:ring-[#c9481d] focus:border-transparent transition px-4 py-3" required>
+                                <option value="">Selecione...</option>
+                                <option value="Pintura">Pintura</option>
+                                <option value="Escultura">Escultura</option>
+                                <option value="Fotografia">Fotografia</option>
+                                <option value="Arte Digital">Arte Digital</option>
+                                <option value="Artesanato">Artesanato</option>
+                                <option value="Desenho">Desenho</option>
+                                <option value="Ilustração">Ilustração</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="obraSoftware" class="form-label block text-sm font-medium mb-2">Software/Técnica</label>
+                            <input type="text" id="obraSoftware" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] focus:border-transparent transition px-4 py-3" placeholder="Ex: Photoshop, Procreate, Óleo, Acrílica..." maxlength="50">
+                        </div>
+                    </div>
+
+                    <!-- Modo de Compartilhamento -->
+                    <div class="form-group space-y-3">
+                        <label class="form-label block text-sm font-medium">Tipo de Publicação *</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center p-4 rounded-xl border-2 border-[var(--border)] bg-[var(--muted)]/20 cursor-pointer hover:bg-[var(--muted)]/40 transition" onclick="togglePublishType('portfolio')">
+                                <input type="radio" name="publishType" id="publishPortfolio" value="portfolio" checked class="w-4 h-4 text-[#c9481d] focus:ring-[#c9481d]">
+                                <div class="ml-3 flex-1">
+                                    <span class="font-medium text-sm">Apenas Portfólio</span>
+                                    <p class="text-xs text-[var(--muted-foreground)] mt-0.5">Exiba sua arte como inspiração, sem venda</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center p-4 rounded-xl border-2 border-[var(--border)] bg-[var(--muted)]/20 cursor-pointer hover:bg-[var(--muted)]/40 transition" onclick="togglePublishType('venda')">
+                                <input type="radio" name="publishType" id="publishVenda" value="venda" class="w-4 h-4 text-[#c9481d] focus:ring-[#c9481d]">
+                                <div class="ml-3 flex-1">
+                                    <span class="font-medium text-sm">Colocar à Venda</span>
+                                    <p class="text-xs text-[var(--muted-foreground)] mt-0.5">Defina um preço e coloque sua obra no mercado</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Preço (Condicional) -->
+                    <div id="priceSection" class="hidden form-group">
+                        <label for="obraPrice" class="form-label block text-sm font-medium mb-2">Preço de Venda *</label>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[var(--foreground)] font-medium">R$</span>
+                            <input type="number" id="obraPrice" class="form-input flex-1 rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] focus:border-transparent transition px-4 py-3" placeholder="0,00" step="0.01" min="0">
+                        </div>
+                        <p class="text-xs text-[var(--muted-foreground)] mt-2">Preço mínimo recomendado: R$ 50,00</p>
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="form-group">
+                        <label for="obraTags" class="form-label block text-sm font-medium mb-2">Tags/Palavras-chave</label>
+                        <input type="text" id="obraTags" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] focus:border-transparent transition px-4 py-3" placeholder="Ex: abstrato, minimalista, colorido (separe com vírgula)" maxlength="200">
+                        <p class="text-xs text-[var(--muted-foreground)] mt-2">Máximo 10 tags para melhor categorização</p>
+                    </div>
+
+                    <!-- Descrição -->
+                    <div class="form-group">
+                        <label for="obraDescription" class="form-label block text-sm font-medium mb-2">Descrição da Obra</label>
+                        <textarea id="obraDescription" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] focus:border-transparent transition px-4 py-3 resize-none" rows="4" placeholder="Conte a história por trás de sua criação, inspirações, técnicas utilizadas..." maxlength="1000"></textarea>
+                        <p class="text-xs text-[var(--muted-foreground)] mt-2" id="descCharCount">0/1000</p>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="obraDescription" class="form-label">Descrição (opcional)</label>
-                    <textarea id="obraDescription" class="form-input form-textarea" rows="3" placeholder="Descreva sua obra..."></textarea>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline" onclick="closeObraDialog()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Obra</button>
+                <!-- Footer -->
+                <div class="modal-footer flex items-center justify-between gap-3 px-8 py-4 border-t border-[var(--border)] bg-[var(--muted)]/20">
+                    <button type="button" class="btn btn-outline inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-[var(--border)] hover:bg-[var(--muted)]/60 text-sm font-medium text-[var(--foreground)] transition focus-visible:ring-2 focus-visible:ring-[#c9481d] focus:outline-none" onclick="closeObraDialog()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium shadow-lg hover:shadow-xl hover:brightness-110 transition focus-visible:ring-2 focus-visible:ring-[#c9481d] focus:outline-none">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Publicar Obra
+                    </button>
                 </div>
             </form>
         </div>
@@ -308,37 +532,118 @@
     <div class="modal" id="eventoModal">
         <div class="modal-overlay" onclick="closeEventoDialog()"></div>
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Criar Evento</h2>
-                <button class="modal-close" onclick="closeEventoDialog()">
+            <div class="modal-header flex items-center justify-between px-8 py-6 border-b border-[var(--border)] bg-[var(--muted)]/30">
+                <h2 class="modal-title text-xl font-semibold tracking-tight">Criar Evento</h2>
+                <button class="modal-close inline-flex items-center justify-center rounded-full p-2 hover:bg-[var(--muted)]/60 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]" onclick="closeEventoDialog()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" class="text-[var(--foreground)]" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="eventoForm" class="modal-body p-8 space-y-6">
+                <div class="form-group">
+                    <label class="form-label block text-sm font-medium mb-2">Título do Evento</label>
+                    <input type="text" id="eventoTitle" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] focus:border-[#c9481d] transition px-4 py-3" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label block text-sm font-medium mb-2">Data</label>
+                    <input type="date" id="eventoDate" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] focus:ring-2 focus:ring-[#c9481d] focus:border-[#c9481d] transition px-4 py-3" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label block text-sm font-medium mb-2">Localização</label>
+                    <input type="text" id="eventoLocation" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] focus:border-[#c9481d] transition px-4 py-3" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label block text-sm font-medium mb-2">URL da Imagem</label>
+                    <input type="url" id="eventoImage" class="form-input w-full rounded-xl border border-[var(--border)] bg-[var(--muted)]/30 text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:ring-2 focus:ring-[#c9481d] focus:border-[#c9481d] transition px-4 py-3" required>
+                </div>
+                <div class="modal-footer flex items-center justify-end gap-3 pt-4">
+                    <button type="button" class="btn btn-outline inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-[var(--border)] hover:bg-[var(--muted)]/60 text-sm font-medium text-[var(--foreground)] transition focus-visible:ring-2 focus-visible:ring-[#c9481d] focus:outline-none" onclick="closeEventoDialog()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium shadow-lg hover:shadow-xl hover:brightness-110 transition focus-visible:ring-2 focus-visible:ring-[#c9481d] focus:outline-none">Criar Evento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Arte -->
+    <div id="artworkModal" class="artwork-modal hidden">
+        <div class="artwork-modal-overlay" onclick="closeArtworkModal()"></div>
+        <div class="artwork-modal-container">
+            <div class="artwork-modal-header">
+                <h2 id="modalArtworkTitle" class="modal-title">Título da Obra</h2>
+                <button class="modal-close-btn" onclick="closeArtworkModal()" title="Fechar">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"/>
                         <line x1="6" y1="6" x2="18" y2="18"/>
                     </svg>
                 </button>
             </div>
-            <form id="eventoForm" class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Título do Evento</label>
-                    <input type="text" id="eventoTitle" class="form-input" required>
+            <div class="artwork-modal-content">
+                <div class="modal-image-section">
+                    <img id="modalArtworkImage" src="" alt="Obra" class="modal-artwork-image">
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Data</label>
-                    <input type="date" id="eventoDate" class="form-input" required>
+                <div class="modal-info-section">
+                    <div class="modal-info-card">
+                        <div class="info-item">
+                            <span class="info-label">Artista:</span>
+                            <div class="artist-link-container">
+                                <img id="modalArtistPhoto" src="" alt="Artista" class="modal-artist-photo">
+                                <span id="modalArtistName" class="info-value artist-name-link">Artista</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Preço:</span>
+                            <span id="modalPrice" class="info-value price-value">R$ 0,00</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Categoria:</span>
+                            <span id="modalCategory" class="info-value">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Descrição:</span>
+                            <p id="modalDescription" class="info-value description-text">Sem descrição</p>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-primary" onclick="handleAddToCartModal()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="9" cy="21" r="1"/>
+                                    <circle cx="20" cy="21" r="1"/>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                </svg>
+                                Adicionar ao Carrinho
+                            </button>
+                            <button id="modalLikeBtn" class="btn btn-outline" onclick="handleToggleLikeModal()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                Favoritar
+                            </button>
+                        </div>
+                    </div>
+                    <div id="modalSuggestionsSection" class="modal-suggestions-section hidden">
+                        <h3 class="suggestions-title">Outras obras do artista</h3>
+                        <div id="modalSuggestions" class="suggestions-grid"></div>
+                    </div>
+                    <div class="modal-comments-section">
+                        <h3 class="comments-title">Comentários</h3>
+                        <div id="modalCommentForm" class="comment-form">
+                            <div class="comment-input-group">
+                                <input type="text" id="modalCommentInput" class="comment-input" placeholder="Deixe um comentário..." maxlength="500">
+                                <span id="commentCharCount" class="char-count">0/500</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="handleSubmitComment()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                                Enviar
+                            </button>
+                        </div>
+                        <div id="modalCommentsList" class="comments-list"></div>
+                        <div id="modalNoComments" class="no-comments-message">Nenhum comentário ainda. Seja o primeiro a comentar!</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Localização</label>
-                    <input type="text" id="eventoLocation" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">URL da Imagem</label>
-                    <input type="url" id="eventoImage" class="form-input" required>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline" onclick="closeEventoDialog()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Criar Evento</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 
@@ -346,9 +651,12 @@
     <script src="../../../public/assets/js/services/userService.js"></script>
     <script src="../../../public/assets/js/services/artworkService.js"></script>
     <script src="../../../public/assets/js/services/eventService.js"></script>
+    <script src="../../../public/assets/js/services/commentService.js"></script>
     
     <!-- Main Scripts -->
     <script src="../../../public/assets/js/main.js"></script>
     <script src="script.js"></script>
+    <script src="dashboard-artista.js"></script>
+    <script src="../explorar/script.js"></script>
 </body>
 </html>

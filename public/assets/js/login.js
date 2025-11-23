@@ -238,6 +238,8 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (role === 'ARTISTA') {
             window.location.href = '../src/pages/dashboard-artista/index.html';
+        } else if (role === 'CLIENTE') {
+            window.location.href = '../src/pages/dashboard-cliente/index.html';
         } else {
             window.location.href = '../src/pages/explorar/index.html';
         }

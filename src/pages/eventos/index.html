@@ -4,19 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eventos Culturais</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="../../components/buttons.css">
+
+    <!-- Tipografia e utilitários (igual ao dashboard) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind (utilitários para design) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <link rel="stylesheet" href="../../../public/assets/css/global.css">
+    <link rel="stylesheet" href="../../../public/assets/css/form.css">
     <link rel="stylesheet" href="../../components/navbar.css">
+    <link rel="stylesheet" href="../../components/buttons.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="../../../public/assets/midia/logotipo.png" />
 </head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="nav-container">
-            <a href="../explorar/index.html" class="logo">
-                <svg class="logo-icon" version="1.0" xmlns="http://www.w3.org/2000/svg"
-                    width="28" height="28" viewBox="0 0 546.000000 457.000000"
+<body class="antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)] selection:bg-[#c9481d]/20 selection:text-[var(--foreground)] scroll-pt-24">
+    <!-- Header - Dark & Minimal (copied from dashboard for parity) -->
+    <header class="header fixed top-0 inset-x-0 z-50 border-b border-[var(--border)] backdrop-blur-xl">
+        <nav class="nav-container mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12 h-14 flex items-center justify-between">
+            <a href="../explorar/index.html" class="logo flex items-center gap-2 text-[var(--foreground)] hover:opacity-80 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d] rounded-md">
+                <svg class="logo-icon text-[#c9481d]" version="1.0" xmlns="http://www.w3.org/2000/svg"
+                    width="24" height="24" viewBox="0 0 546.000000 457.000000"
                     preserveAspectRatio="xMidYMid meet" fill="currentColor">
                     <g transform="translate(0.000000,457.000000) scale(0.100000,-0.100000)"
                     stroke="none">
@@ -54,23 +64,33 @@
                         -337 356 -379 494 -4 13 -14 31 -23 39 -14 14 -14 6 -8 -72z"/>
                     </g>
                 </svg>
-                <span class="logo-text">Arte na Mão</span>
+                <span class="logo-text text-sm font-medium tracking-tight">Arte na Mão</span>
             </a>
 
-            <div class="nav-menu">
-                <a href="../explorar/index.html" class="nav-link">Explorar</a>
-                <a href="../eventos/index.html" class="nav-link active">Eventos</a>
+            <div class="nav-menu flex items-center gap-6">
+                <a href="../explorar/index.html" class="nav-link hidden sm:inline-flex text-xs font-medium uppercase tracking-widest text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition px-2 py-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]">Explorar</a>
+                <a href="../eventos/index.html" class="nav-link hidden sm:inline-flex text-xs font-medium uppercase tracking-widest text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition px-2 py-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]">Eventos</a>
 
-                <div class="user-menu">
-                    <button class="btn btn-ghost" onclick="redirectToProfile()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <button id="themeToggle" type="button" class="hidden sm:inline-flex items-center gap-2 text-sm px-2 py-1 rounded-md border border-[var(--border)] hover:bg-[var(--muted)]/60 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]" aria-label="Alternar tema">
+                    <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" class="text-[var(--foreground)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                    </svg>
+                    <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" class="hidden text-[var(--foreground)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+
+                <div class="user-menu flex items-center gap-2">
+                    <button class="btn btn-ghost inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-transparent hover:border-[var(--border)] hover:bg-[var(--muted)]/40 text-xs font-medium text-[var(--foreground)] transition focus-visible:ring-2 focus-visible:ring-[#c9481d] focus:outline-none" onclick="redirectToProfile()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                             <circle cx="12" cy="7" r="4"/>
                         </svg>
                         Perfil
                     </button>
-                    <button class="btn btn-outline" onclick="handleLogout()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button class="btn btn-outline inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-[var(--border)] hover:bg-[var(--muted)]/40 text-xs font-medium text-[var(--foreground)] transition focus-visible:ring-2 focus-visible:ring-[#c9481d] focus:outline-none" onclick="handleLogout()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                             <polyline points="16 17 21 12 16 7"/>
                             <line x1="21" y1="12" x2="9" y2="12"/>
@@ -83,7 +103,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="events-page">
+    <main class="events-page pt-20">
         <div class="container">
             <div class="events-wrapper">
                 <!-- Hero Section -->
@@ -127,6 +147,9 @@
     <script src="../../../public/assets/js/services/userService.js"></script>
     <script src="../../../public/assets/js/services/artworkService.js"></script>
     <script src="../../../public/assets/js/services/eventService.js"></script>
+
+    <!-- Shared header script (theme toggle for this header) -->
+    <script src="../../../public/assets/js/header.js"></script>
 
     <script src="../../../public/assets/js/main.js"></script>
     <script src="script.js"></script>

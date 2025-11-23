@@ -4,20 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Explorar - Arte na Mão</title>
+    <!-- Match fonts and Tailwind used by artist profile so navbar renders identically -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <link rel="stylesheet" href="../../../public/assets/css/global.css">
+    <link rel="stylesheet" href="../../../public/assets/css/form.css">
     <link rel="stylesheet" href="../../components/artcard.css">
     <link rel="stylesheet" href="../../components/buttons.css">
     <link rel="stylesheet" href="../../components/navbar.css">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="../../../public/assets/midia/logotipo.png" />
 </head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="nav-container">
-            <a href="../index.html" class="logo">
-                <svg class="logo-icon" version="1.0" xmlns="http://www.w3.org/2000/svg"
-                    width="28" height="28" viewBox="0 0 546.000000 457.000000"
+<body class="antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)] selection:bg-[#c9481d]/20 selection:text-[var(--foreground)] scroll-pt-24">
+    <!-- Header - same as artist dashboard for consistent navbar -->
+    <header class="header fixed top-0 inset-x-0 z-50 border-b border-[var(--border)] backdrop-blur-xl">
+        <nav class="nav-container mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12 h-14 flex items-center justify-between">
+            <a href="../explorar/index.html" class="logo flex items-center gap-2 text-[var(--foreground)] hover:opacity-80 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d] rounded-md">
+                <svg class="logo-icon text-[#c9481d]" version="1.0" xmlns="http://www.w3.org/2000/svg"
+                    width="24" height="24" viewBox="0 0 546.000000 457.000000"
                     preserveAspectRatio="xMidYMid meet" fill="currentColor">
                     <g transform="translate(0.000000,457.000000) scale(0.100000,-0.100000)"
                     stroke="none">
@@ -55,23 +62,33 @@
                         -337 356 -379 494 -4 13 -14 31 -23 39 -14 14 -14 6 -8 -72z"/>
                     </g>
                 </svg>
-                <span class="logo-text">Arte na Mão</span>
+                <span class="logo-text text-sm font-medium tracking-tight">Arte na Mão</span>
             </a>
 
-            <div class="nav-menu">
-                <a href="index.html" class="nav-link active">Explorar</a>
-                <a href="../eventos/index.html" class="nav-link">Eventos</a>
+            <div class="nav-menu flex items-center gap-6">
+                <a href="../explorar/index.html" class="nav-link hidden sm:inline-flex text-xs font-medium uppercase tracking-widest text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition px-2 py-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]">Explorar</a>
+                <a href="../eventos/index.html" class="nav-link hidden sm:inline-flex text-xs font-medium uppercase tracking-widest text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition px-2 py-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]">Eventos</a>
 
-                <div class="user-menu">
-                    <button class="btn btn-ghost" onclick="redirectToProfile()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <button id="themeToggle" type="button" class="hidden sm:inline-flex items-center gap-2 text-sm px-2 py-1 rounded-md border border-[var(--border)] hover:bg-[var(--muted)]/60 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d]" aria-label="Alternar tema">
+                    <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" class="text-[var(--foreground)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                    </svg>
+                    <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" class="hidden text-[var(--foreground)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+
+                <div class="user-menu flex items-center gap-2">
+                    <button class="btn btn-ghost inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-transparent hover:border-[var(--border)] hover:bg-[var(--muted)]/40 text-xs font-medium text-[var(--foreground)] transition focus-visible:ring-2 focus-visible:ring-[#c9481d] focus:outline-none" onclick="redirectToProfile()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                             <circle cx="12" cy="7" r="4"/>
                         </svg>
                         Perfil
                     </button>
-                    <button class="btn btn-outline" onclick="handleLogout()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button class="btn btn-outline inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-[var(--border)] hover:bg-[var(--muted)]/40 text-xs font-medium text-[var(--foreground)] transition focus-visible:ring-2 focus-visible:ring-[#c9481d] focus:outline-none" onclick="handleLogout()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                             <polyline points="16 17 21 12 16 7"/>
                             <line x1="21" y1="12" x2="9" y2="12"/>
@@ -84,13 +101,128 @@
     </header>
 
     <!-- Artworks Section -->
-    <section class="artworks-section">
+    <section class="artworks-section pt-20">
         <div class="container">
             <div class="section-header">
                 <div>
                     <h2 class="section-title">Explore Todas as Obras</h2>
                     <p class="section-subtitle">Descubra a diversidade criativa dos artistas nordestinos</p>
                 </div>
+            </div>
+
+            <!-- Toolbar: Search, Filters, Category -->
+            <div class="toolbar">
+                <!-- Search Bar -->
+                <div class="search-bar-container">
+                    <div class="search-bar-wrapper">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Buscar por título da obra, artista..." maxlength="100">
+                        <button class="search-btn" onclick="handleSearch()" title="Buscar">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button id="clearSearchBtn" class="clear-search-btn hidden" onclick="handleClearSearch()" title="Limpar busca">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Filters: Time Period and Category -->
+                <div class="filters-container">
+                    <!-- Time Period Filter -->
+                    <div class="filter-group">
+                        <label for="timeFilter" class="filter-label">Período:</label>
+                        <select id="timeFilter" class="filter-select" onchange="handleTimeFilterChange()">
+                            <option value="all">Todos</option>
+                            <option value="today">Hoje</option>
+                            <option value="week">Esta Semana</option>
+                            <option value="month">Este Mês</option>
+                            <option value="year">Este Ano</option>
+                        </select>
+                    </div>
+
+                    <!-- Category Filter (Dropdown) -->
+                    <div class="category-filter-wrapper">
+                        <button class="category-filter-btn" onclick="toggleCategoryDropdown()" title="Filtrar por categoria">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                            <span id="selectedCategoryText">Todas</span>
+                        </button>
+                        
+                        <!-- Category Dropdown Menu -->
+                        <div id="categoryDropdown" class="category-dropdown hidden">
+                            <div class="category-option" onclick="handleCategoryFilter('all')">
+                                <input type="radio" name="category" value="all" id="cat-all" checked>
+                                <label for="cat-all">Todas as Categorias</label>
+                            </div>
+                            <div class="category-option" onclick="handleCategoryFilter('Pintura')">
+                                <input type="radio" name="category" value="Pintura" id="cat-pintura">
+                                <label for="cat-pintura">Pintura</label>
+                            </div>
+                            <div class="category-option" onclick="handleCategoryFilter('Escultura')">
+                                <input type="radio" name="category" value="Escultura" id="cat-escultura">
+                                <label for="cat-escultura">Escultura</label>
+                            </div>
+                            <div class="category-option" onclick="handleCategoryFilter('Fotografia')">
+                                <input type="radio" name="category" value="Fotografia" id="cat-fotografia">
+                                <label for="cat-fotografia">Fotografia</label>
+                            </div>
+                            <div class="category-option" onclick="handleCategoryFilter('Arte Digital')">
+                                <input type="radio" name="category" value="Arte Digital" id="cat-digital">
+                                <label for="cat-digital">Arte Digital</label>
+                            </div>
+                            <div class="category-option" onclick="handleCategoryFilter('Artesanato')">
+                                <input type="radio" name="category" value="Artesanato" id="cat-artesanato">
+                                <label for="cat-artesanato">Artesanato</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs for sections: Em Alta, Recente, Comunidade -->
+            <div class="sections-tabs">
+                <button class="section-tab active" data-section="trending" onclick="handleSectionChange('trending')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                        <polyline points="17 6 23 6 23 12"/>
+                    </svg>
+                    Em Alta
+                </button>
+                <button class="section-tab" data-section="recent" onclick="handleSectionChange('recent')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    Recente
+                </button>
+                <button class="section-tab" data-section="community" onclick="handleSectionChange('community')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    Comunidade
+                </button>
+            </div>
+
+            <!-- No results message -->
+            <div id="noResultsMessage" class="no-results-message hidden">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <h3>Nenhuma obra encontrada</h3>
+                <p id="noResultsText">Nenhuma arte foi encontrada com os termos digitados.</p>
             </div>
 
             <div class="artworks-grid" id="artworksGrid">
@@ -118,11 +250,125 @@
         </div>
     </footer>
 
+    <!-- Modal de Arte -->
+    <div id="artworkModal" class="artwork-modal hidden">
+        <div class="artwork-modal-overlay" onclick="closeArtworkModal()"></div>
+        
+        <div class="artwork-modal-container">
+            <!-- Header -->
+            <div class="artwork-modal-header">
+                <h2 id="modalArtworkTitle" class="modal-title">Título da Obra</h2>
+                <button class="modal-close-btn" onclick="closeArtworkModal()" title="Fechar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="artwork-modal-content">
+                <!-- Left: Imagem Grande -->
+                <div class="modal-image-section">
+                    <img id="modalArtworkImage" src="" alt="Obra" class="modal-artwork-image">
+                </div>
+
+                <!-- Right: Info e Comentários -->
+                <div class="modal-info-section">
+                    <!-- Informações -->
+                    <div class="modal-info-card">
+                        <div class="info-item">
+                            <span class="info-label">Artista:</span>
+                            <div class="artist-link-container">
+                                <img id="modalArtistPhoto" src="" alt="Artista" class="modal-artist-photo">
+                                <span id="modalArtistName" class="info-value artist-name-link">Artista</span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Preço:</span>
+                            <span id="modalPrice" class="info-value price-value">R$ 0,00</span>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Categoria:</span>
+                            <span id="modalCategory" class="info-value">-</span>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Descrição:</span>
+                            <p id="modalDescription" class="info-value description-text">Sem descrição</p>
+                        </div>
+
+                        <div class="modal-actions">
+                            <button class="btn btn-primary" onclick="handleAddToCartModal()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="9" cy="21" r="1"/>
+                                    <circle cx="20" cy="21" r="1"/>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                </svg>
+                                Adicionar ao Carrinho
+                            </button>
+                            <button id="modalLikeBtn" class="btn btn-outline" onclick="handleToggleLikeModal()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                Favoritar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sugestões do Artista -->
+                    <div id="modalSuggestionsSection" class="modal-suggestions-section hidden">
+                        <h3 class="suggestions-title">Outras obras do artista</h3>
+                        <div id="modalSuggestions" class="suggestions-grid">
+                            <!-- Cards de sugestão aqui -->
+                        </div>
+                    </div>
+
+                    <!-- Comentários -->
+                    <div class="modal-comments-section">
+                        <h3 class="comments-title">Comentários</h3>
+
+                        <!-- Form para novo comentário -->
+                        <div id="modalCommentForm" class="comment-form">
+                            <div class="comment-input-group">
+                                <input type="text" 
+                                       id="modalCommentInput" 
+                                       class="comment-input" 
+                                       placeholder="Deixe um comentário..." 
+                                       maxlength="500">
+                                <span id="commentCharCount" class="char-count">0/500</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="handleSubmitComment()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                                Enviar
+                            </button>
+                        </div>
+
+                        <!-- Lista de comentários -->
+                        <div id="modalCommentsList" class="comments-list">
+                            <!-- Comentários serão renderizados aqui -->
+                        </div>
+
+                        <div id="modalNoComments" class="no-comments-message">
+                            Nenhum comentário ainda. Seja o primeiro a comentar!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Services (required by main.js) -->
     <script src="../../../public/assets/js/services/userService.js"></script>
     <script src="../../../public/assets/js/services/artworkService.js"></script>
     <script src="../../../public/assets/js/services/eventService.js"></script>
+    <script src="../../../public/assets/js/services/commentService.js"></script>
 
+    <script src="../../../public/assets/js/header.js"></script>
     <script src="../../../public/assets/js/main.js"></script>
     <script src="script.js"></script>
 </body>
