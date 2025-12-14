@@ -109,27 +109,46 @@ http://localhost:8000
 ## 🎯 Estrutura do Projeto
 
 ```
-arte-na-mao-frontend/
-├── index.html              # Página inicial
-├── css/
-│   ├── style.css          # Estilos globais
-│   ├── home.css           # Estilos da home
-│   ├── product.css        # Estilos de produto
-│   ├── events.css         # Estilos de eventos
-│   └── profile.css        # Estilos de perfil
-├── js/
-│   ├── main.js            # Script principal
-│   ├── products.js        # Lógica de produtos
-│   ├── events.js          # Lógica de eventos
-│   ├── cart.js            # Carrinho de compras
-│   └── favorites.js       # Sistema de favoritos
-├── images/                 # Imagens e assets
-├── pages/                  # Páginas HTML adicionais
-│   ├── catalog.html
-│   ├── product-detail.html
-│   ├── events.html
-│   ├── profile.html
-│   └── checkout.html
+arte-na-mao/
+├── images/                      # Imagens e recursos visuais
+├── public/                      # Arquivos públicos
+│   └── assets/
+│       ├── css/                # Folhas de estilo
+│       ├── js/                 # Scripts JavaScript
+│       └── midia/              # Arquivos de mídia
+├── src/                        # Código fonte principal
+│   ├── components/             # Componentes reutilizáveis CSS
+│   │   ├── artcard.css        # Card de obra de arte
+│   │   ├── buttons.css        # Botões do sistema
+│   │   ├── dashboard.css      # Dashboard comum
+│   │   ├── modal-artwork.css  # Modal de visualização de obra
+│   │   ├── navbar.css         # Barra de navegação
+│   │   └── profileCard.css    # Card de perfil
+│   └── pages/                  # Páginas da aplicação
+│       ├── dashboard-artista/  # Painel do artista
+│       │   ├── assets/
+│       │   ├── dashboard-artista.js
+│       │   ├── index.html
+│       │   ├── script.js
+│       │   └── style.css
+│       ├── dashboard-cliente/  # Painel do cliente
+│       │   ├── index.html
+│       │   ├── script.js
+│       │   └── style.css
+│       ├── eventos/            # Página de eventos
+│       │   ├── index.html
+│       │   ├── script.js
+│       │   └── style.css
+│       └── explorar/           # Página de exploração
+│           ├── index.html
+│           ├── script.js
+│           └── style.css
+├── index.html                  # Página inicial
+├── login.html                  # Página de login
+├── register.html               # Página de cadastro
+├── .gitignore
+├── LICENSE
+├── package-lock.json
 └── README.md
 ```
 
