@@ -34,64 +34,21 @@ function redirectToProfile() {
     const token = getAuthToken();
     const userData = getUserData();
 
-    // Não logado → redireciona para login
     if (!token || !userData || !userData.role) {
-        console.log('❌ Usuário não logado. Redirecionando para login.');
-        
         if (typeof showToast === 'function') {
             showToast('Login necessário', 'Você precisa estar logado para acessar seu perfil', 'info');
         }
-        
-        // Determina caminho correto baseado na URL atual
-        const currentPath = window.location.pathname;
-        let loginPath;
-        
-        if (currentPath.includes('/pages/')) {
-            loginPath = '../../login.html';
-        } else if (currentPath.includes('/public/')) {
-            loginPath = 'login.html';
-        } else {
-            loginPath = '/login.html';
-        }
-        
-        setTimeout(() => {
-            window.location.href = loginPath;
-        }, 1000);
+        setTimeout(() => { window.location.href = '/login'; }, 1000);
         return;
     }
 
-    console.log('✅ Usuário autenticado:', userData.name, '| Role:', userData.role);
-
-    // Redireciona para o dashboard correto baseado no role
-    const currentPath = window.location.pathname;
-    let dashboardPath;
-    
     if (userData.role === 'ARTISTA') {
-        if (currentPath.includes('/pages/')) {
-            dashboardPath = '../dashboard-artista/index.html';
-        } else if (currentPath.includes('/public/')) {
-            dashboardPath = '../src/pages/dashboard-artista/index.html';
-        } else {
-            dashboardPath = 'src/pages/dashboard-artista/index.html';
-        }
+        window.location.href = '/dashboard-artista';
     } else if (userData.role === 'CLIENTE') {
-        if (currentPath.includes('/pages/')) {
-            dashboardPath = '../dashboard-cliente/index.html';
-        } else if (currentPath.includes('/public/')) {
-            dashboardPath = '../src/pages/dashboard-cliente/index.html';
-        } else {
-            dashboardPath = 'src/pages/dashboard-cliente/index.html';
-        }
+        window.location.href = '/dashboard-cliente';
     } else {
         console.error('⚠️ Role desconhecido:', userData.role);
-        if (typeof showToast === 'function') {
-            showToast('Erro', 'Tipo de usuário não reconhecido', 'error');
-        }
-        return;
     }
-    
-    console.log('🔄 Redirecionando para:', dashboardPath);
-    window.location.href = dashboardPath;
 }
 
 /**
@@ -161,36 +118,17 @@ function updateAuthUI(isLoggedIn) {
  */
 async function handleLogout() {
     try {
-        console.log('🚪 Realizando logout...');
-        
-        // Limpa os dados locais
         localStorage.removeItem('authToken');
         localStorage.removeItem('userData');
         localStorage.removeItem('authData');
-        
+
         if (typeof showToast === 'function') {
             showToast('Logout realizado', 'Até logo!', 'success');
         }
-        
-        // Atualiza a UI
+
         updateAuthUI(false);
-        
-        // Redireciona para a home após 1 segundo
-        setTimeout(() => {
-            // Determina caminho correto baseado na URL atual
-            const currentPath = window.location.pathname;
-            let homePath;
-            
-            if (currentPath.includes('/pages/')) {
-                homePath = '../../../public/index.html';
-            } else if (currentPath.includes('/public/')) {
-                homePath = 'index.html';
-            } else {
-                homePath = '/index.html';
-            }
-            
-            window.location.href = homePath;
-        }, 1000);
+
+        setTimeout(() => { window.location.href = '/'; }, 1000);
     } catch (error) {
         console.error('Erro ao fazer logout:', error);
         alert('Erro ao fazer logout. Tente novamente.');

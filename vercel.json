@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/dashboard-artista", "destination": "/src/pages/dashboard-artista/index.html" },
+    { "source": "/dashboard-cliente", "destination": "/src/pages/dashboard-cliente/index.html" },
+    { "source": "/eventos",           "destination": "/src/pages/eventos/index.html" },
+    { "source": "/explorar",          "destination": "/src/pages/explorar/index.html" },
+    { "source": "/login",             "destination": "/login.html" },
+    { "source": "/register",          "destination": "/register.html" }
+  ]
+}
