@@ -13,16 +13,16 @@
     <!-- Tailwind (utilitários para design) -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="stylesheet" href="/public/assets/css/global.css">
-    <link rel="stylesheet" href="/public/assets/css/form.css">
-    <link rel="stylesheet" href="src/components/navbar.css">
-    <link rel="stylesheet" href="../../components/buttons.css">
-    <link rel="stylesheet" href="../../components/profileCard.css">
-    <link rel="stylesheet" href="../../components/dashboard.css">
-    <link rel="stylesheet" href="../../components/modal-artwork.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="stylesheet" href="/assets/css/form.css">
+    <link rel="stylesheet" href="/src/components/navbar.css">
+    <link rel="stylesheet" href="/src/components/buttons.css">
+    <link rel="stylesheet" href="/src/components/profileCard.css">
+    <link rel="stylesheet" href="/src/components/dashboard.css">
+    <link rel="stylesheet" href="/src/components/modal-artwork.css">
+    <link rel="stylesheet" href="/src/pages/dashboard-artista/style.css">
     
-    <link rel="icon" type="image/png" href="../../../public/assets/midia/logotipo.png" />
+    <link rel="icon" type="image/png" href="/assets/midia/logotipo.png" />
 </head>
 <body class="antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)] selection:bg-[#c9481d]/20 selection:text-[var(--foreground)] scroll-pt-24">
 
@@ -35,7 +35,7 @@
     <!-- Header - Dark & Minimal -->
     <header class="header fixed top-0 inset-x-0 z-50 border-b border-[var(--border)] backdrop-blur-xl">
         <nav class="nav-container mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12 h-14 flex items-center justify-between">
-            <a href="../explorar/index.html" class="logo flex items-center gap-2 text-[var(--foreground)] hover:opacity-80 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d] rounded-md">
+            <a href="/explorar" class="logo flex items-center gap-2 text-[var(--foreground)] hover:opacity-80 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9481d] rounded-md">
                 <svg class="logo-icon text-[#c9481d]" version="1.0" xmlns="http://www.w3.org/2000/svg"
                     width="24" height="24" viewBox="0 0 546.000000 457.000000"
                     preserveAspectRatio="xMidYMid meet" fill="currentColor">
@@ -648,13 +648,13 @@
     </div>
 
     <!-- Services -->
-    <script src="/public/assets/js/services/userService.js"></script>
-    <script src="/public/assets/js/services/artworkService.js"></script>
-    <script src="/public/assets/js/services/eventService.js"></script>
-    <script src="/public/assets/js/services/commentService.js"></script>
+    <script src="/assets/js/services/userService.js"></script>
+    <script src="/assets/js/services/artworkService.js"></script>
+    <script src="/assets/js/services/eventService.js"></script>
+    <script src="/assets/js/services/commentService.js"></script>
     
     <!-- Main Scripts -->
-    <script src="/public/assets/js/main.js"></script>
+    <script src="/assets/js/main.js"></script>
     <script src="/src/pages/dashboard-artista/dashboard-artista.js"></script>
     <script src="/src/pages/explorar/script.js"></script>
 </body>
