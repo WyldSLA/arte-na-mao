@@ -6,7 +6,7 @@
         try { return JSON.parse(localStorage.getItem('userData') || 'null'); } catch(e){ return null; }
     })();
     if (!user || !user.id) {
-        window.location.href = '../../../public/login.html';
+        window.location.href = '/login';
     }
 })();
 

@@ -500,11 +500,11 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('🔄 Redirecionando para dashboard:', role);
         
         if (role === 'ARTISTA') {
-            window.location.href = '../src/pages/dashboard-artista/index.html';
+            window.location.href = '/dashboard-artista';
         } else if (role === 'CLIENTE') {
-            window.location.href = '../src/pages/dashboard-cliente/index.html';
+            window.location.href = '/dashboard-cliente';
         } else {
-            window.location.href = '../src/pages/explorar/index.html';
+            window.location.href = '/explorar/';
         }
     }
     

@@ -1480,13 +1480,13 @@ async function init() {
         // Verifica autenticação
         const token = localStorage.getItem('authToken');
         if (!token) {
-            window.location.href = '../../../public/login.html';
+            window.location.href = '/login';
             return;
         }
 
         // Carrega dados do usuário
         userData = JSON.parse(localStorage.getItem('userData'));
-        if (!userData || userData.tipo !== 'ARTISTA') {
+        if (!userData || (userData.tipo !== 'ARTISTA' && userData.role !== 'ARTISTA')) {
             handleLogout();
             return;
         }
