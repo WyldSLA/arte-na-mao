@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria Atelier 27 — Arte na Mão</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="stylesheet" href="/src/components/navbar.css">
+    <link rel="stylesheet" href="/src/components/buttons.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="gallery-header">
+    <nav class="nav-container">
+        <a href="/" class="logo-link">
+            <svg class="logo-icon" width="28" height="28" version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 546 457" preserveAspectRatio="xMidYMid meet" fill="currentColor">
+                <g transform="translate(0,457) scale(0.1,-0.1)" stroke="none">
+                    <path d="M2931 3434 c-63 -17 -143 -55 -148 -71 -2 -6 24 -28 59 -49 168 -102 278 -283 278 -454 0 -68 -18 -108 -108 -242 -136 -203 -208 -383 -237 -593 -3 -27 -12 -75 -20 -105 -7 -30 -15 -85 -18 -122 l-5 -68 30 45 c62 94 163 171 415 317 184 106 249 153 330 242 114 124 157 239 157 411 -1 222 -84 428 -230 566 -73 69 -132 103 -209 123 -74 20 -222 20 -294 0z"/>
+                    <path d="M2709 3238 c-45 -70 -50 -146 -14 -223 44 -94 203 -210 296 -216 52 -4 59 5 59 76 0 105 -53 222 -134 293 -49 43 -115 79 -157 87 -30 6 -38 3 -50 -17z"/>
+                    <path d="M1810 2721 c-114 -16 -258 -78 -324 -139 -44 -40 -47 -77 -10 -121 39 -47 110 -74 310 -119 201 -46 291 -75 409 -135 203 -102 345 -229 429 -387 42 -78 46 -69 53 105 5 112 3 142 -16 215 -73 289 -278 494 -566 564 -76 18 -214 27 -285 17z"/>
+                    <path d="M1354 2147 c20 -247 141 -518 320 -717 177 -196 428 -360 648 -424 123 -35 158 -36 206 -3 117 82 173 260 138 438 -57 284 -290 527 -630 653 -83 32 -101 35 -112 24 -12 -12 -11 -14 6 -15 11 -1 18 2 15 7 -3 4 4 6 15 3 19 -5 19 -6 -6 -19 -15 -8 -29 -12 -32 -10 -5 6 -62 -69 -62 -81 0 -4 -19 -24 -41 -44 -28 -25 -40 -43 -36 -53 5 -11 0 -16 -13 -16 -11 0 -20 -2 -20 -5 0 -13 62 -59 170 -127 270 -169 359 -244 413 -349 33 -65 57 -143 57 -184 0 -30 -1 -30 -19 10 -34 74 -139 159 -381 305 -85 52 -187 117 -226 146 -146 107 -337 356 -379 494 -4 13 -14 31 -23 39 -14 14 -14 6 -8 -72z"/>
+                </g>
+            </svg>
+            <span class="logo-text">Arte na Mão</span>
+        </a>
+        <div class="nav-menu">
+            <a href="/explorar" class="nav-link">Explorar</a>
+            <a href="/eventos" class="nav-link">Eventos</a>
+            <button class="btn btn-outline btn-sm" onclick="redirectToProfile()">Perfil</button>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Sair</button>
+        </div>
+    </nav>
+</header>
+
+<!-- BANNER -->
+<section class="gallery-hero">
+    <div class="gallery-banner">
+        <img src="https://images.unsplash.com/photo-1577083552431-6e5fd01988ec?w=1920&h=600&fit=crop" alt="Banner da galeria" class="banner-img">
+        <div class="banner-overlay"></div>
+    </div>
+
+    <div class="gallery-profile-container">
+        <div class="gallery-profile">
+            <div class="gallery-avatar-wrap">
+                <img src="https://images.unsplash.com/photo-1545987796-200677ee1011?w=300&h=300&fit=crop" alt="Avatar da galeria" class="gallery-avatar">
+                <span class="verified-badge" title="Galeria verificada">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </span>
+            </div>
+
+            <div class="gallery-info">
+                <div class="gallery-name-row">
+                    <h1 class="gallery-name">Galeria Atelier 27</h1>
+                    <span class="badge-verified">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Galeria verificada
+                    </span>
+                </div>
+                <div class="gallery-meta">
+                    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> São Paulo, SP — Vila Madalena</span>
+                    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Fundada em 2014</span>
+                    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> atelier27.art</span>
+                    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg> @atelier27</span>
+                </div>
+                <p class="gallery-about">Espaço dedicado à arte contemporânea brasileira. Representamos artistas emergentes e consagrados, com curadoria voltada à pintura, fotografia e arte multimídia.</p>
+                <div class="gallery-actions">
+                    <button class="btn btn-primary gap-2">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        Seguir
+                    </button>
+                    <button class="btn btn-outline gap-2">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        Mensagem
+                    </button>
+                    <button class="btn btn-outline gap-2">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        Contato
+                    </button>
+                </div>
+            </div>
+
+            <div class="gallery-stats-card">
+                <div class="stat-block">
+                    <span class="stat-val">28</span>
+                    <span class="stat-lbl">Artistas</span>
+                </div>
+                <div class="stat-block">
+                    <span class="stat-val">312</span>
+                    <span class="stat-lbl">Obras</span>
+                </div>
+                <div class="stat-block">
+                    <span class="stat-val">47</span>
+                    <span class="stat-lbl">Mostras</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TABS -->
+<main class="gallery-main">
+    <div class="tabs-sticky">
+        <div class="tabs-bar" role="tablist">
+            <button class="tab-btn active" data-tab="overview" role="tab">Visão Geral</button>
+            <button class="tab-btn" data-tab="artists" role="tab">Artistas</button>
+            <button class="tab-btn" data-tab="artworks" role="tab">Obras</button>
+            <button class="tab-btn" data-tab="inventory" role="tab">Inventário</button>
+            <button class="tab-btn" data-tab="events" role="tab">Eventos</button>
+            <button class="tab-btn" data-tab="reports" role="tab">Relatórios</button>
+            <button class="tab-btn" data-tab="messages" role="tab">Mensagens</button>
+            <button class="tab-btn" data-tab="reviews" role="tab">Avaliações</button>
+            <button class="tab-btn" data-tab="contracts" role="tab">Contratos</button>
+        </div>
+    </div>
+
+    <!-- ==================== OVERVIEW ==================== -->
+    <div class="tab-content active" id="tab-overview">
+
+        <section class="section">
+            <div class="section-header-row">
+                <div>
+                    <h2 class="section-title">Obras em destaque</h2>
+                    <p class="section-subtitle">Seleção curatorial atual</p>
+                </div>
+            </div>
+            <div class="artworks-grid" id="overview-artworks"></div>
+        </section>
+
+        <section class="section">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                    <div class="metric-trend">+12%</div>
+                    <p class="metric-val">R$ 84.200</p>
+                    <p class="metric-lbl">Receita do mês</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+                    <div class="metric-trend">+8%</div>
+                    <p class="metric-val">24.1k</p>
+                    <p class="metric-lbl">Visualizações</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+                    <div class="metric-trend">+0.6%</div>
+                    <p class="metric-val">3.4%</p>
+                    <p class="metric-lbl">Conversão</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header-row">
+                <div>
+                    <h2 class="section-title">Artistas em destaque</h2>
+                    <p class="section-subtitle">Representados pela galeria</p>
+                </div>
+            </div>
+            <div class="artists-grid" id="overview-artists"></div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title" style="margin-bottom:1.5rem">Próximos eventos</h2>
+            <div class="events-grid" id="overview-events"></div>
+        </section>
+    </div>
+
+    <!-- ==================== ARTISTS ==================== -->
+    <div class="tab-content" id="tab-artists">
+        <div class="section-header-row">
+            <div>
+                <h2 class="section-title">Artistas representados</h2>
+                <p class="section-subtitle">Gerencie associações, contratos e selos</p>
+            </div>
+            <button class="btn btn-primary gap-2">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Solicitar associação
+            </button>
+        </div>
+        <div class="artists-grid expanded" id="artists-list"></div>
+    </div>
+
+    <!-- ==================== ARTWORKS ==================== -->
+    <div class="tab-content" id="tab-artworks">
+        <div class="section-header-row" style="margin-bottom:1.5rem">
+            <div>
+                <h2 class="section-title">Obras representadas</h2>
+                <p class="section-subtitle">Aparecem no perfil da galeria e dos artistas</p>
+            </div>
+        </div>
+        <div class="masonry-grid" id="artworks-masonry"></div>
+    </div>
+
+    <!-- ==================== INVENTORY ==================== -->
+    <div class="tab-content" id="tab-inventory">
+        <div class="metrics-grid" style="margin-bottom:2rem" id="inventory-metrics"></div>
+
+        <div class="card">
+            <div class="inventory-toolbar">
+                <div class="search-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" id="inventory-search" placeholder="Buscar obra ou artista" class="search-input">
+                </div>
+                <button class="btn btn-outline gap-2">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                    Filtros
+                </button>
+                <button class="btn btn-primary gap-2" onclick="openAddArtworkModal()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Adicionar obra
+                </button>
+            </div>
+            <div class="table-wrap">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>Obra</th><th>Artista</th><th>Tipo</th><th>Preço</th><th>Status</th><th style="text-align:right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== EVENTS ==================== -->
+    <div class="tab-content" id="tab-events">
+        <div class="section-header-row" style="margin-bottom:1.5rem">
+            <div>
+                <h2 class="section-title">Eventos</h2>
+                <p class="section-subtitle">Exposições, vernissages e mais</p>
+            </div>
+            <button class="btn btn-primary gap-2" onclick="openAddEventModal()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Criar evento
+            </button>
+        </div>
+        <div class="events-grid" id="events-list"></div>
+    </div>
+
+    <!-- ==================== REPORTS ==================== -->
+    <div class="tab-content" id="tab-reports">
+        <div class="metrics-grid" style="margin-bottom:2rem">
+            <div class="metric-card"><div class="metric-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="metric-trend">+18%</div><p class="metric-val">R$ 524.800</p><p class="metric-lbl">Receita total</p></div>
+            <div class="metric-card"><div class="metric-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="metric-trend">+9%</div><p class="metric-val">142k</p><p class="metric-lbl">Visualizações</p></div>
+            <div class="metric-card"><div class="metric-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="metric-trend">+22%</div><p class="metric-val">1.2k</p><p class="metric-lbl">Novos seguidores</p></div>
+            <div class="metric-card"><div class="metric-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><div class="metric-trend">+3%</div><p class="metric-val">14%</p><p class="metric-lbl">Crescimento</p></div>
+        </div>
+
+        <div class="card" style="margin-bottom:1.5rem">
+            <div class="card-header">
+                <h3 class="card-title">Performance mensal</h3>
+            </div>
+            <div class="bar-chart">
+                <div class="bars-wrap" id="monthly-chart"></div>
+                <div class="bars-labels">
+                    <span>Jan</span><span>Fev</span><span>Mar</span><span>Abr</span><span>Mai</span><span>Jun</span>
+                    <span>Jul</span><span>Ago</span><span>Set</span><span>Out</span><span>Nov</span><span>Dez</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="two-cols">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Artistas com melhor performance</h3></div>
+                <div id="top-artists"></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Obras mais vistas</h3></div>
+                <div id="top-artworks"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MESSAGES ==================== -->
+    <div class="tab-content" id="tab-messages">
+        <div class="messages-layout">
+            <aside class="messages-sidebar">
+                <div class="messages-search">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" placeholder="Buscar conversa">
+                </div>
+                <div class="contacts-list" id="contacts-list"></div>
+            </aside>
+            <div class="chat-area">
+                <div class="chat-header" id="chat-header"></div>
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="chat-input-bar">
+                    <button class="btn btn-ghost btn-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    </button>
+                    <input type="text" id="msg-input" placeholder="Escreva uma mensagem..." class="msg-input" onkeydown="if(event.key==='Enter') sendMessage()">
+                    <button class="btn btn-primary btn-icon" onclick="sendMessage()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== REVIEWS ==================== -->
+    <div class="tab-content" id="tab-reviews">
+        <div class="reviews-layout">
+            <div class="card rating-summary">
+                <p class="rating-label">Avaliação geral</p>
+                <div class="rating-big">4.8 <span>/ 5</span></div>
+                <div class="stars-row">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <p class="rating-count">Baseado em 128 avaliações</p>
+                <div class="rating-bars" id="rating-bars"></div>
+            </div>
+            <div class="reviews-list" id="reviews-list"></div>
+        </div>
+    </div>
+
+    <!-- ==================== CONTRACTS ==================== -->
+    <div class="tab-content" id="tab-contracts">
+        <div class="card premium-card">
+            <div class="premium-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div>
+                <h3 class="card-title">Plano Premium</h3>
+                <p class="section-subtitle" style="margin-top:0.25rem;margin-bottom:1rem">Desbloqueie envios ilimitados de obras, selo prioritário e relatórios avançados.</p>
+                <button class="btn btn-primary">Fazer upgrade</button>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:1.5rem">
+            <div class="card-header"><h3 class="card-title">Documentos e verificação</h3></div>
+            <div class="docs-grid" id="docs-list"></div>
+        </div>
+
+        <div class="card" style="margin-top:1.5rem">
+            <div class="card-header">
+                <h3 class="card-title">Status do contrato</h3>
+                <span class="status-badge status-active">Ativo</span>
+            </div>
+            <div class="contract-statuses">
+                <div class="contract-status active"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Ativo</span></div>
+                <div class="contract-status"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Pendente</span></div>
+                <div class="contract-status"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span>Expirado</span></div>
+                <div class="contract-status"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg><span>Encerrado</span></div>
+            </div>
+            <button class="btn btn-outline gap-2" style="margin-top:1rem">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Enviar novo documento
+            </button>
+        </div>
+    </div>
+</main>
+
+<!-- ==================== MODAL ADICIONAR OBRA ==================== -->
+<div class="modal" id="modal-artwork">
+    <div class="modal-overlay" onclick="closeModal('modal-artwork')"></div>
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2>Nova obra no inventário</h2>
+            <button class="modal-close" onclick="closeModal('modal-artwork')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Título</label>
+                <input type="text" id="new-title" class="form-input" placeholder="Nome da obra">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Artista</label>
+                <input type="text" id="new-artist" class="form-input" placeholder="Nome do artista">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Preço (R$)</label>
+                    <input type="number" id="new-price" class="form-input" placeholder="0,00">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tipo</label>
+                    <select id="new-type" class="form-input">
+                        <option>Pintura</option>
+                        <option>Escultura</option>
+                        <option>Fotografia</option>
+                        <option>Arte Digital</option>
+                        <option>Gravura</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('modal-artwork')">Cancelar</button>
+            <button class="btn btn-primary" onclick="addArtwork()">Adicionar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODAL CRIAR EVENTO ==================== -->
+<div class="modal" id="modal-event">
+    <div class="modal-overlay" onclick="closeModal('modal-event')"></div>
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2>Novo evento</h2>
+            <button class="modal-close" onclick="closeModal('modal-event')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Título</label>
+                <input type="text" id="ev-title" class="form-input" placeholder="Nome do evento">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Data</label>
+                    <input type="date" id="ev-date" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Hora</label>
+                    <input type="time" id="ev-time" class="form-input">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Local</label>
+                <input type="text" id="ev-location" class="form-input" placeholder="Local do evento">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Preço (R$)</label>
+                    <input type="number" id="ev-price" class="form-input" placeholder="0 = gratuito">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tipo</label>
+                    <select id="ev-type" class="form-input">
+                        <option>Exposição</option>
+                        <option>Vernissage</option>
+                        <option>Workshop</option>
+                        <option>Festival</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('modal-event')">Cancelar</button>
+            <button class="btn btn-primary" onclick="addEvent()">Criar evento</button>
+        </div>
+    </div>
+</div>
+
+<footer class="gallery-footer">
+    <p>© 2025 Arte na Mão — Plataforma para galerias e artistas independentes.</p>
+</footer>
+
+<script src="/assets/js/main.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
