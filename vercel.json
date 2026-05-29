@@ -11,8 +11,6 @@
     { "source": "/eventos", "destination": "/src/pages/eventos/index.html" },
     { "source": "/explorar", "destination": "/src/pages/explorar/index.html" },
 
-    { "source": "/galeria", "destination": "/src/pages/galeria/index.html" },
-
     { "source": "/login", "destination": "/login.html" },
     { "source": "/register", "destination": "/register.html" }
   ]
