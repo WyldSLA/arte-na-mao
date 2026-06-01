@@ -6,12 +6,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth.schema";
 import { LogoIcon } from "@/components/ui/logo";
+import { MOCK_USUARIOS } from "@/lib/mock-users";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -21,8 +25,33 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       console.log("Login enviado:", data);
+
+      // Procura se o e-mail digitado pertence a algum dos nossos usuários mockados
+      const usuarioLogado = Object.values(MOCK_USUARIOS).find(
+        (user) => user.email === data.email,
+      );
+
+      if (!usuarioLogado) {
+        // Se não achar o e-mail nos mocks (digitou qualquer outra coisa), assume Cliente por padrão
+        router.push("/dashboard/cliente");
+        return;
+      }
+
+      // Redirecionamento baseado no tipo do usuário mockado
+      switch (usuarioLogado.tipoUsuario) {
+        case "ARTISTA":
+          router.push("/dashboard/artista");
+          break;
+        case "GALERIA":
+          router.push("/galeria");
+          break;
+        case "CLIENTE":
+        default:
+          router.push("/dashboard/cliente");
+          break;
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Erro ao fazer login:", error);
     }
   };
 
@@ -66,7 +95,43 @@ export default function LoginPage() {
               Acesse sua conta para continuar
             </p>
           </div>
-
+          {process.env.NODE_ENV === "development" && (
+            <div className="mb-6 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex flex-wrap gap-2 items-center justify-center animate-[fadeInUp_0.4s_ease-out]">
+              <span className="text-xs font-bold text-(--color-muted-foreground)">
+                ⚡ Logar como:
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setValue("email", MOCK_USUARIOS.CLIENTE.email);
+                  setValue("senha", "123456");
+                }}
+                className="px-2 py-1 bg-(--color-card) hover:bg-(--color-muted) border border-(--color-border) text-xs font-medium rounded cursor-pointer text-(--color-foreground)"
+              >
+                Cliente
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setValue("email", MOCK_USUARIOS.ARTISTA.email);
+                  setValue("senha", "123456");
+                }}
+                className="px-2 py-1 bg-(--color-card) hover:bg-(--color-muted) border border-(--color-border) text-xs font-medium rounded cursor-pointer text-(--color-foreground)"
+              >
+                Artista
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setValue("email", MOCK_USUARIOS.GALERIA.email);
+                  setValue("senha", "123456");
+                }}
+                className="px-2 py-1 bg-(--color-card) hover:bg-(--color-muted) border border-(--color-border) text-xs font-medium rounded cursor-pointer text-(--color-foreground)"
+              >
+                Galeria
+              </button>
+            </div>
+          )}
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
