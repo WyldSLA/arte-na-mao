@@ -20,7 +20,7 @@ export const enderecoSchema = z.object({
 
 export const cadastroSchema = z
   .object({
-    tipoUsuario: z.enum(["ARTISTA", "CLIENTE"]),
+    tipoUsuario: z.enum(["ARTISTA", "CLIENTE", "GALERIA"]),
     nome: z.string().min(2, "Nome muito curto"),
     email: z.string().email("Informe um e-mail válido"),
     senha: z.string().min(6, "Mínimo de 6 caracteres"),
@@ -51,7 +51,7 @@ export const cadastroSchema = z
   })
   .refine(
     (data) => {
-      if (data.tipoUsuario === "ARTISTA") {
+      if (data.tipoUsuario === "ARTISTA" || data.tipoUsuario === "GALERIA") {
         return !!data.cnpj && data.cnpj.length > 0;
       }
       return true;

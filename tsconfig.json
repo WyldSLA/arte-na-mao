@@ -28,7 +28,10 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    "src/app/._components/NavbarHome.tsx",
+    "src/app/._components/NewsletterForm.tsx",
+    "src/app/._components/FooterHome.tsx"
   ],
   "exclude": ["node_modules"]
 }
