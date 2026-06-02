@@ -43,7 +43,7 @@ export default function LoginPage() {
           router.push("/dashboard/artista");
           break;
         case "GALERIA":
-          router.push("/galeria");
+          router.push("/dashboard/galeria");
           break;
         case "CLIENTE":
         default:

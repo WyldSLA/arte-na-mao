@@ -251,7 +251,7 @@ const formatPrice = (v: number) =>
   );
 
 const Stat = ({ label, value }: { label: string; value: number | string }) => (
-  <div className="text-center min-w-[70px]">
+  <div className="text-center min-w-17.5">
     <p className="font-serif text-2xl text-primary">{value}</p>
     <p className="text-[11px] uppercase tracking-wider text-muted-foreground mt-0.5">
       {label}
@@ -282,7 +282,7 @@ type EventItem = (typeof eventsMock)[number];
 
 const ArtworkCard = ({ a }: { a: Artwork }) => (
   <Card className="group overflow-hidden border-border/60 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-    <div className="relative overflow-hidden aspect-[4/5]">
+    <div className="relative overflow-hidden aspect-4/5">
       <img
         src={a.img}
         alt={a.title}
@@ -371,7 +371,7 @@ const ArtistCard = ({
 
 const EventCard = ({ e }: { e: EventItem }) => (
   <Card className="overflow-hidden group hover:shadow-2xl transition-all hover:-translate-y-1">
-    <div className="relative aspect-[16/9] overflow-hidden">
+    <div className="relative aspect-video overflow-hidden">
       <img
         src={e.banner}
         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
@@ -582,37 +582,17 @@ const Gallery = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 h-14 flex items-center justify-between">
-          <Link
-            href="/galeria"
-            className="flex items-center gap-2 font-serif text-lg tracking-tight"
-          >
-            <Sparkles className="h-5 w-5 text-primary" />
-            Arte na Mão
-          </Link>
-          <nav className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/">Início</Link>
-            </Button>
-            <Button variant="outline" size="sm">
-              Modo galeria
-            </Button>
-          </nav>
-        </div>
-      </header>
-
       <section className="relative">
-        <div className="relative h-[280px] sm:h-[360px] lg:h-[440px] overflow-hidden">
+        <div className="relative h-70 sm:h-90 lg:h-110 overflow-hidden">
           <img
             src={galleryData.banner}
             alt="Banner da galeria"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/10" />
+          <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-background/10" />
         </div>
 
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 -mt-20 sm:-mt-24 relative z-10">
+        <div className="max-w-350 mx-auto px-4 sm:px-6 lg:px-12 -mt-20 sm:-mt-24 relative z-10">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             <div className="relative shrink-0">
               <Avatar className="h-32 w-32 sm:h-40 sm:w-40 border-4 border-background shadow-2xl ring-1 ring-border">
@@ -687,7 +667,7 @@ const Gallery = () => {
         </div>
       </section>
 
-      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 py-10">
+      <main className="max-w-350 mx-auto px-4 sm:px-6 lg:px-12 py-10">
         <Tabs defaultValue="overview" className="w-full">
           <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 lg:-mx-12 px-4 sm:px-6 lg:px-12 bg-background/85 backdrop-blur-xl border-b border-border py-3 mb-8">
             <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/60">
@@ -819,7 +799,7 @@ const Gallery = () => {
 
             <Card className="p-5">
               <div className="flex flex-wrap items-center gap-3 mb-5">
-                <div className="relative flex-1 min-w-[220px]">
+                <div className="relative flex-1 min-w-55">
                   <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     placeholder="Buscar obra ou artista"
@@ -1138,7 +1118,7 @@ const Gallery = () => {
                       className="flex-1 flex flex-col items-center gap-2"
                     >
                       <div
-                        className="w-full rounded-t bg-gradient-to-t from-primary/70 to-primary transition-all hover:opacity-80"
+                        className="w-full rounded-t bg-linear-to-t from-primary/70 to-primary transition-all hover:opacity-80"
                         style={{ height: `${h}%` }}
                       />
                       <span className="text-xs text-muted-foreground">
@@ -1221,7 +1201,7 @@ const Gallery = () => {
           </TabsContent>
 
           <TabsContent value="messages" className="animate-fade-in">
-            <Card className="grid md:grid-cols-[280px_1fr] overflow-hidden h-[600px]">
+            <Card className="grid md:grid-cols-[280px_1fr] overflow-hidden h-150">
               <aside className="border-r border-border bg-muted/30">
                 <div className="p-4 border-b border-border">
                   <div className="relative">
@@ -1361,7 +1341,7 @@ const Gallery = () => {
           </TabsContent>
 
           <TabsContent value="contracts" className="space-y-6 animate-fade-in">
-            <Card className="p-6 bg-gradient-to-br from-primary/10 via-accent/5 to-transparent border-primary/20">
+            <Card className="p-6 bg-linear-to-br from-primary/10 via-accent/5 to-transparent border-primary/20">
               <div className="flex items-start gap-4">
                 <div className="h-12 w-12 rounded-xl bg-primary/15 flex items-center justify-center text-primary">
                   <Crown className="h-6 w-6" />
